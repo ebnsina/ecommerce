@@ -13,6 +13,7 @@
 		Share2,
 		MessageCircle,
 		ShieldCheck,
+		Palette,
 		PanelBottom,
 		Search
 	} from '@lucide/svelte';
@@ -24,6 +25,7 @@
 	import MediaPicker from '$lib/ui/MediaPicker.svelte';
 	import FieldInput from '$lib/admin/FieldInput.svelte';
 	import type { Field } from '$lib/blocks/schema';
+	import { PRESETS, SURFACES, normalizeTheme } from '$lib/theme';
 
 	let { data, form } = $props();
 
@@ -78,6 +80,10 @@
 		itemKey: 'text',
 		fields: [{ key: 'text', type: 'text', label: 'Hint' }]
 	};
+
+	const initialTheme = normalizeTheme(s.theme);
+	let preset = $state<string>(initialTheme.preset);
+	let surface = $state<string>(initialTheme.surface);
 
 	let logoMode = $state(s.store.logo?.mode ?? 'text');
 	let logoImage = $state(s.store.logo?.image ?? '');
@@ -371,6 +377,77 @@
 			'Order channels',
 			'How shoppers can reach you straight from a product page.',
 			contactBody
+		)}
+
+		{#snippet themeBody()}
+			<div class="flex flex-col gap-5">
+				<div>
+					<span class="mb-2 block text-sm font-medium text-ink">Colour</span>
+					<input type="hidden" name="preset" value={preset} />
+					<div class="flex flex-wrap gap-2">
+						{#each Object.entries(PRESETS) as [key, p] (key)}
+							<button
+								type="button"
+								onclick={() => (preset = key)}
+								aria-pressed={preset === key}
+								class="flex items-center gap-2.5 rounded-2xl border px-3 py-2 transition-colors duration-[180ms] ease-brand
+								       {preset === key ? 'border-primary bg-primary-soft' : 'border-border hover:border-brand-300'}"
+							>
+								<!-- Three stops, because a single swatch does not show how a
+								     palette behaves across a page. -->
+								<span class="flex">
+									{#each [2, 5, 7] as stop, i (stop)}
+										<span
+											class="size-5 rounded-full ring-2 ring-surface {i > 0 ? '-ml-2' : ''}"
+											style="background: {p.ramp[stop]}"
+										></span>
+									{/each}
+								</span>
+								<span class="text-sm text-ink">{p.label}</span>
+							</button>
+						{/each}
+					</div>
+				</div>
+
+				<div>
+					<span class="mb-2 block text-sm font-medium text-ink">Page background</span>
+					<input type="hidden" name="surface" value={surface} />
+					<div class="flex flex-wrap gap-2">
+						{#each Object.entries(SURFACES) as [key, sf] (key)}
+							<button
+								type="button"
+								onclick={() => (surface = key)}
+								aria-pressed={surface === key}
+								class="flex items-center gap-2.5 rounded-2xl border px-3 py-2 text-left transition-colors duration-[180ms] ease-brand
+								       {surface === key
+									? 'border-primary bg-primary-soft'
+									: 'border-border hover:border-brand-300'}"
+							>
+								<span
+									class="size-8 shrink-0 rounded-lg border border-border"
+									style="background: {sf.page}"
+								></span>
+								<span>
+									<span class="block text-sm text-ink">{sf.label}</span>
+									<span class="block text-xs text-ink-muted">{sf.hint}</span>
+								</span>
+							</button>
+						{/each}
+					</div>
+				</div>
+
+				<p class="text-xs text-ink-muted">
+					Every palette here is checked for legibility: buttons, links and their labels stay
+					readable whichever you pick.
+				</p>
+			</div>
+		{/snippet}
+		{@render section(
+			'theme',
+			Palette,
+			'Theme',
+			'The colour of your storefront and this admin.',
+			themeBody
 		)}
 
 		{#snippet assuranceBody()}

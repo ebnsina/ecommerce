@@ -21,6 +21,7 @@ export type StoreSettings = {
 	assurances: { icon: string; title: string; note: string }[];
 	/** Rotating hints typed out in the header search box. */
 	search: { hints: string[] };
+	theme: { preset: string; surface: string };
 	promo: {
 		text: string;
 		textBn: string;
@@ -47,6 +48,7 @@ const FALLBACK: StoreSettings = {
 	footer: { paymentMethods: [], note: '' },
 	assurances: [],
 	search: { hints: [] },
+	theme: { preset: 'blue', surface: 'warm' },
 	promo: { text: '', textBn: '', href: '', active: false, dismissible: true, background: 'ink' }
 };
 

@@ -3,6 +3,7 @@ import { db } from '$lib/server/db';
 import { settings } from '$lib/server/db/schema';
 import { getSettings } from '$lib/server/settings';
 import { parseTk } from '$lib/money';
+import { normalizeTheme } from '$lib/theme';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => ({ settings: await getSettings() });
@@ -106,6 +107,14 @@ export const actions: Actions = {
 			callEnabled: on(f, 'callEnabled')
 		});
 		return { saved: 'contact' };
+	},
+
+	theme: async ({ request }) => {
+		const f = await request.formData();
+		// normalizeTheme rejects anything not in the preset list, so a hand-posted
+		// value cannot inject arbitrary CSS into every page.
+		await put('theme', normalizeTheme({ preset: str(f, 'preset'), surface: str(f, 'surface') }));
+		return { saved: 'theme' };
 	},
 
 	assurances: async ({ request }) => {

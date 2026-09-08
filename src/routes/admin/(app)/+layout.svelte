@@ -25,6 +25,10 @@
 	);
 </script>
 
+<svelte:head>
+	{@html `<style>${data.themeCss}</style>`}
+</svelte:head>
+
 <div class="min-h-screen bg-surface-alt">
 	<!-- Fixed sidebar + normal document scroll. The previous h-screen shell with an
 	     inner scroller let the document scroll past it and show blank space below. -->

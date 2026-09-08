@@ -5,6 +5,12 @@
 	let { data, children } = $props();
 </script>
 
+<!-- Theme variables land in the head, so a change in Settings re-themes every
+     page at once with no rebuild. -->
+<svelte:head>
+	{@html `<style>${data.themeCss}</style>`}
+</svelte:head>
+
 <div class="flex min-h-screen flex-col">
 	<Header
 		nav={data.nav}

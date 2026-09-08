@@ -118,10 +118,12 @@
 		       {size === 'compact' ? 'flex-row items-center gap-3 p-3' : 'p-3'}"
 	>
 		<a href="/p/{product.slug}" class="contents">
-			{@render media(size === 'compact' ? 'size-16 rounded-xl' : 'aspect-square w-full')}
+			{@render media(
+				size === 'compact' ? 'size-16 rounded-xl' : 'aspect-square w-full rounded-none'
+			)}
 		</a>
 
-		<div class="flex min-w-0 flex-1 flex-col gap-1.5 {size === 'compact' ? '' : 'px-1 pb-1'}">
+		<div class="flex min-w-0 flex-1 flex-col gap-1.5 {size === 'compact' ? '' : 'px-3 pb-3'}">
 			<a
 				href="/p/{product.slug}"
 				class="line-clamp-2 text-sm text-ink transition-colors hover:text-primary"
@@ -130,6 +132,9 @@
 			</a>
 			<Rating rating={product.rating} count={product.reviewCount} size={12} />
 			{@render price()}
+			{#if !product.hasVariants && product.stock > 0 && product.stock <= 5}
+				<span class="num text-xs font-medium text-sale">Only {product.stock} left</span>
+			{/if}
 		</div>
 
 		{#if size !== 'compact'}

@@ -4,7 +4,18 @@ User-facing changes, newest first.
 
 ## Unreleased
 
+### Added
+
+- **Theme picker.** Six colour presets and a choice of white or warm page
+  background, set in Settings and applied across both the storefront and the
+  admin without a rebuild. Every palette is checked for legibility before it
+  ships, so no choice can make buttons or links unreadable.
+
 ### Changed
+
+- **Product cards give the photo the room.** Images now run to the card edge,
+  padding is tighter, discounts shout, and anything down to its last few units
+  says so.
 
 - **Status badges are readable.** Five of the seven order statuses failed
   contrast as coloured text. Badges are now neutral tags — grey border, black

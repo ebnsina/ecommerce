@@ -4,6 +4,7 @@ import { categories, menus } from '$lib/server/db/schema';
 import { getSettings } from '$lib/server/settings';
 import { findCart, getLines, summarise } from '$lib/server/cart';
 import { getCompareIds } from '$lib/server/compare';
+import { normalizeTheme, themeCss } from '$lib/theme';
 import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async (event) => {
@@ -38,6 +39,7 @@ export const load: LayoutServerLoad = async (event) => {
 		settings: config,
 		customer: locals.user?.kind === 'customer' ? locals.user : null,
 		cartCount: cartSummary.count,
-		compareIds: getCompareIds(event)
+		compareIds: getCompareIds(event),
+		themeCss: themeCss(normalizeTheme(config.theme))
 	};
 };
