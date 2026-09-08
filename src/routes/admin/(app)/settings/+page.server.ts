@@ -109,6 +109,18 @@ export const actions: Actions = {
 		return { saved: 'contact' };
 	},
 
+	recovery: async ({ request }) => {
+		const f = await request.formData();
+		const hours = Number(str(f, 'delayHours'));
+		await put('recovery', {
+			enabled: on(f, 'enabled'),
+			// Under an hour is nagging; over a week the cart is cold.
+			delayHours: Number.isFinite(hours) ? Math.min(168, Math.max(1, Math.round(hours))) : 6,
+			message: str(f, 'message')
+		});
+		return { saved: 'recovery' };
+	},
+
 	analytics: async ({ request }) => {
 		const f = await request.formData();
 		// Digits only: the id is interpolated into the pixel snippet.

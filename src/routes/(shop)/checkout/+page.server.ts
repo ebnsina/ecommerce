@@ -1,7 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { eq, sql } from 'drizzle-orm';
 import { db } from '$lib/server/db';
-import { addresses, customers, orders } from '$lib/server/db/schema';
+import { addresses, carts, customers, orders } from '$lib/server/db/schema';
 import { findCart, getLines, summarise } from '$lib/server/cart';
 import { applyCoupon, shippingFor, placeOrder } from '$lib/server/orders';
 import { getSettings } from '$lib/server/settings';
@@ -66,6 +66,21 @@ export const actions: Actions = {
 		const result = await applyCoupon(String(form.get('code') ?? ''), subtotal, shipping);
 		if (!result.ok) return fail(400, { couponError: result.error });
 		return { coupon: { code: result.code, discount: result.discount, label: result.label } };
+	},
+
+	/** Stores who the cart belongs to, so an abandoned one can be followed up.
+	    Silent by design: a failure here must never block checkout. */
+	identify: async (event) => {
+		const form = await event.request.formData();
+		const phone = normalizePhone(String(form.get('phone') ?? ''));
+		const cart = await findCart(event);
+		if (!phone || !cart) return { identified: false };
+
+		await db
+			.update(carts)
+			.set({ phone, name: String(form.get('name') ?? '').trim() || null, remindedAt: null })
+			.where(eq(carts.id, cart.id));
+		return { identified: true };
 	},
 
 	place: async (event) => {

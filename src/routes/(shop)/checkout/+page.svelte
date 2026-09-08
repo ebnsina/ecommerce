@@ -109,11 +109,21 @@
 	});
 	const addressValid = $derived(Object.values(addressErrors).every((e) => !e));
 
+	/** Leaving the contact step with a good number is what makes this cart
+	    recoverable if the shopper never comes back. Fire-and-forget. */
+	function remember() {
+		const body = new FormData();
+		body.set('phone', phone);
+		body.set('name', name);
+		fetch('?/identify', { method: 'POST', body }).catch(() => {});
+	}
+
 	function next() {
 		if (step === 0 && !addressValid) {
 			touched = true;
 			return;
 		}
+		if (step === 0) remember();
 		touched = false;
 		dir = 1;
 		step = Math.min(steps.length - 1, step + 1);

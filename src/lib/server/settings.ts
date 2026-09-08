@@ -23,6 +23,7 @@ export type StoreSettings = {
 	search: { hints: string[] };
 	theme: { preset: string; surface: string };
 	analytics: { metaPixelId: string };
+	recovery: { enabled: boolean; delayHours: number; message: string };
 	promo: {
 		text: string;
 		textBn: string;
@@ -51,6 +52,11 @@ const FALLBACK: StoreSettings = {
 	search: { hints: [] },
 	theme: { preset: 'blue', surface: 'white' },
 	analytics: { metaPixelId: '' },
+	recovery: {
+		enabled: false,
+		delayHours: 6,
+		message: '{name}, you left {items} in your cart at {store}. Finish your order here: {link}'
+	},
 	promo: { text: '', textBn: '', href: '', active: false, dismissible: true, background: 'ink' }
 };
 

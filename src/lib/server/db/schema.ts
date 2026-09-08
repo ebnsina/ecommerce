@@ -301,6 +301,12 @@ export const carts = pgTable(
 		id: id(),
 		token: text().notNull().unique(), // cookie value for guests
 		customerId: uuid('customer_id').references(() => customers.id, { onDelete: 'cascade' }),
+		/** Captured at checkout as soon as the shopper types a valid number, which
+		    is what makes an abandoned cart recoverable at all. */
+		phone: text(),
+		name: text(),
+		/** Set when a recovery message goes out, so nobody is pestered twice. */
+		remindedAt: timestamp('reminded_at', { withTimezone: true }),
 		updatedAt: now()
 	},
 	(t) => [index('carts_customer_idx').on(t.customerId)]

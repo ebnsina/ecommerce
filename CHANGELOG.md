@@ -6,6 +6,12 @@ User-facing changes, newest first.
 
 ### Added
 
+- **Abandoned cart reminders.** Once a shopper types their phone number at
+  checkout, a cart they never finish shows up under Sales → Abandoned carts with
+  its value, and can be followed up by one text — by hand, or automatically after
+  a delay you choose. The link in the message reopens their cart on any device,
+  no login. One reminder per cart; ordering removes it from the list.
+
 - **Facebook ads tracking.** Add your Meta Pixel ID in Settings and the
   storefront reports page views, add-to-cart and purchases back to Meta, so ads
   can be judged on the orders they actually produced. Purchases are also sent

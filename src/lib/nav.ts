@@ -6,6 +6,7 @@ import {
 	FolderTree,
 	Images,
 	ShoppingCart,
+	ShoppingBasket,
 	TicketPercent,
 	Users,
 	MessageSquare,
@@ -36,6 +37,7 @@ export const navGroups: NavGroup[] = [
 		items: [
 			{ href: '/admin/inbox', icon: InboxIcon, label: 'Inbox' },
 			{ href: '/admin/orders', icon: ShoppingCart, label: 'Orders' },
+			{ href: '/admin/abandoned', icon: ShoppingBasket, label: 'Abandoned carts' },
 			{ href: '/admin/coupons', icon: TicketPercent, label: 'Coupons' },
 			{ href: '/admin/customers', icon: Users, label: 'Customers' },
 			{ href: '/admin/reviews', icon: MessageSquare, label: 'Reviews & Q&A' }

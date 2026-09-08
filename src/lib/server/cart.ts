@@ -70,6 +70,18 @@ export async function getOrCreateCart(event: RequestEvent) {
 	return row;
 }
 
+/** Points this browser at an existing cart — used by recovery links, which are
+    opened on whatever device read the SMS, not necessarily the original one. */
+export function adoptCart(event: RequestEvent, token: string) {
+	event.cookies.set(COOKIE, token, {
+		path: '/',
+		httpOnly: true,
+		sameSite: 'lax',
+		secure: !import.meta.env.DEV,
+		maxAge: DAYS * 86400
+	});
+}
+
 /** Called after a customer signs in — folds the guest cart into theirs. */
 export async function mergeGuestCart(event: RequestEvent, customerId: string) {
 	const token = event.cookies.get(COOKIE);

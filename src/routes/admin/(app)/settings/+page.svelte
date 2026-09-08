@@ -5,6 +5,7 @@
 	import type { Snippet } from 'svelte';
 	import {
 		ChartNoAxesColumn,
+		ShoppingBasket,
 		Check,
 		Store,
 		Megaphone,
@@ -22,6 +23,7 @@
 	import Button from '$lib/ui/Button.svelte';
 	import Input from '$lib/ui/Input.svelte';
 	import Checkbox from '$lib/ui/Checkbox.svelte';
+	import Textarea from '$lib/ui/Textarea.svelte';
 	import Select from '$lib/ui/Select.svelte';
 	import MediaPicker from '$lib/ui/MediaPicker.svelte';
 	import FieldInput from '$lib/admin/FieldInput.svelte';
@@ -503,6 +505,37 @@
 			</div>
 		{/snippet}
 		{@render section('search', Search, 'Search hints', 'What the search box suggests.', searchBody)}
+
+		{#snippet recoveryBody()}
+			<div class="flex flex-col gap-4">
+				<Checkbox
+					name="enabled"
+					checked={s.recovery?.enabled ?? false}
+					label="Text people who leave without ordering"
+				/>
+				<Input
+					label="Wait before texting (hours)"
+					name="delayHours"
+					value={String(s.recovery?.delayHours ?? 6)}
+					numeric
+					hint="Long enough that they have really gone, short enough to still matter. Six hours is a good start."
+				/>
+				<Textarea
+					label="Message"
+					name="message"
+					value={s.recovery?.message ?? ''}
+					rows={3}
+					hint="{'{name}'}, {'{items}'}, {'{store}'} and {'{link}'} are filled in for each shopper. Keep it under 160 characters or it is billed as two texts."
+				/>
+			</div>
+		{/snippet}
+		{@render section(
+			'recovery',
+			ShoppingBasket,
+			'Cart reminders',
+			'A single text to shoppers who got as far as their phone number and stopped.',
+			recoveryBody
+		)}
 
 		{#snippet analyticsBody()}
 			<div class="flex flex-col gap-4">
