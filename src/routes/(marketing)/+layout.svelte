@@ -180,24 +180,27 @@
 					Built with love in Bangladesh
 				</p>
 			</div>
+
+			<!-- The picture credits. Small and quiet, because nobody came here to
+			     read them — but not invisible: the Nilgiri photograph is CC BY-SA,
+			     which asks for attribution that a reader can actually find. Muted
+			     rather than faint, so it still clears 4.5:1. -->
+			<p class="pb-6 text-[0.6875rem] text-ink-muted">
+				Nilgiri photograph by Tanvir Rahat,
+				<a href="https://creativecommons.org/licenses/by-sa/4.0/" class="rounded underline">
+					CC BY-SA 4.0
+				</a>. Haor photograph from Unsplash.
+			</p>
 		</div>
 
-		<!-- The photograph, with its credit sitting on it rather than as a line of
-		     small print above. Unsplash asks for no attribution at all; this is
-		     here because saying where a picture came from is decent, and it is
-		     the only text anywhere on the artwork. Bottom left, over the water,
-		     which is the emptiest part of the frame. -->
-		<div class="relative">
-			<img
-				src="/img/footer-scene.jpg"
-				alt=""
-				class="band"
-				width="2400"
-				height="1350"
-				loading="lazy"
-			/>
-			<p class="credit credit-on-photo absolute bottom-3 left-4 sm:left-6">from Unsplash</p>
-		</div>
+		<img
+			src="/img/footer-scene.jpg"
+			alt=""
+			class="band"
+			width="2400"
+			height="1350"
+			loading="lazy"
+		/>
 	</footer>
 
 	<nav class="dock" aria-label="Main">

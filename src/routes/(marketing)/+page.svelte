@@ -315,12 +315,7 @@
 	<!-- The picture, and nothing else. A browser frame around a product grid was
 	     a drawing of a shop; this is Nilgiri in Bandarban, which is the country
 	     the shop is in. The buttons sit over its top edge, which is why the crop
-	     is taken from the hazy upper third rather than the hills.
-
-	     Its credit sits on the picture, bottom left, rather than in a line of
-	     small print in the footer — this one is CC BY-SA, which asks for an
-	     attribution a reader can find. It lands where the image has already
-	     faded out, so it is ink on the page's own ground. -->
+	     is taken from the hazy upper third rather than the hills. -->
 	<img
 		src="/img/hero-banner.jpg"
 		alt=""
@@ -328,12 +323,6 @@
 		height="1080"
 		class="hero-shot absolute inset-x-0 bottom-0"
 	/>
-	<p class="credit absolute bottom-3 left-4 z-10 sm:left-6">
-		Nilgiri, Bandarban — Tanvir Rahat,
-		<a href="https://creativecommons.org/licenses/by-sa/4.0/" class="rounded underline">
-			CC BY-SA 4.0
-		</a>
-	</p>
 </section>
 
 <!-- ── The reframe ───────────────────────────────────────────────────────

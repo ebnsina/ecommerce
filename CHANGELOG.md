@@ -142,11 +142,6 @@ User-facing changes, newest first.
   order is a timeline on a rail with times against it, and Insights is a search
   box mid-query, finding nothing. The rest of the platform is filed in a Finder
   window with a sidebar and a status line.
-- **Picture credits sit on the pictures**, bottom left and small, instead of a
-  line of small print in the footer. "from Unsplash" on the footer photograph;
-  the hero's is CC BY-SA, which asks for an attribution a reader can find, so
-  it names the photographer and links the licence. Both measured against the
-  pixels they land on: 5.0:1 and better.
 - **A landscape under the footer.** A wide brand block with two columns of
   quick links beside it, a rule, the small print, and then a photograph of boats
   on the haor running full width as the last thing on the page — the country

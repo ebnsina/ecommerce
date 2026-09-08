@@ -445,26 +445,6 @@
 	display: none;
 }
 
-/* A picture credit, sitting on the picture. Two of them on the page, so the
-   size and weight live here rather than being typed twice.
-
-   The colour is not the muted token: measured against the pixels the hero
-   credit actually lands on it came out at 3.98:1, because the photograph is
-   still faintly there under it. This is the shaded band's darker muted, which
-   takes the same spot to 5.2:1. */
-.marketing .credit {
-	font-size: 0.6875rem;
-	letter-spacing: 0.01em;
-	color: #576375;
-}
-
-/* On the footer photograph there is no fade to sit in, so the credit is white
-   over the water — the emptiest and darkest part of that frame. */
-.marketing .credit-on-photo {
-	color: #fff;
-	text-shadow: 0 1px 2px rgb(15 23 42 / 0.45);
-}
-
 /* ── The footer scene ────────────────────────────────────────────────────
    A landscape under the footer links, full width, as the last thing on the
    page. Nothing is ever set on top of it, so it needs no overlay and clears no
