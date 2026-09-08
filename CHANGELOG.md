@@ -6,6 +6,18 @@ User-facing changes, newest first.
 
 ### Added
 
+- **Reviews and Questions are now two screens**, each with its own search,
+  filters and bulk actions — publishing five reviews at once no longer means
+  five clicks in two directions. Answering a question happens in a dialog and
+  publishes both the question and the answer on the product.
+- **Every admin list works the same way.** Title and count on the left with the
+  page's actions on the right, search and filters above the table, an action
+  menu on each row, and a footer with rows-per-page and where you are. The
+  search, the filters and the page all live in the URL and are applied by the
+  database, so a filtered view is a link you can send someone and a long list
+  stays fast.
+- **Orders export to CSV**, respecting whatever the list is filtered to.
+
 - **Compare works from every product grid.** The compare button now sits on all
   card sizes and lights up when a product is already on the shortlist, so the
   compare page in the header can actually be filled.

@@ -1033,6 +1033,77 @@ if (process.env.SEED_DEMO) {
 			});
 	}
 	console.log(`demo: ${threads.length} conversations`);
+
+	/* Reviews and questions. Ratings alone left the product tabs empty, which
+	   made the demo store look broken rather than new. */
+	const productRows = await db
+		.select({ id: s2.products.id })
+		.from(s2.products)
+		.limit(120);
+
+	const reviewTitles = [
+		'Exactly as described',
+		'Good value for the price',
+		'Delivery was quick',
+		'Packaging could be better',
+		'Buying again',
+		'Works well so far'
+	] as const;
+	const reviewBodies = [
+		'Ordered on Sunday and it reached Dhaka on Tuesday. The product is genuine, box was sealed.',
+		'Using it for two weeks now, no problem. The price here was lower than the showroom.',
+		'Product is fine but the carton was slightly dented. The delivery man waited while I checked.',
+		'Bought this for my mother and she is happy with it. Cash on delivery made it easy.',
+		'Quality is good for the money. Would have liked a longer warranty.',
+		'Second time ordering from this shop. They called to confirm before sending.'
+	] as const;
+	const askerNames = ['Rahim', 'Sumaiya', 'Tanvir', 'Nusrat', 'Imran', 'Farhana', 'Jamil'] as const;
+	const questionTexts = [
+		'Is cash on delivery available outside Dhaka?',
+		'How many days for delivery to Chattogram?',
+		'Is this the original one or a copy?',
+		'Does it come with a warranty card?',
+		'Can I exchange it if the size does not fit?',
+		'Is there any discount for two pieces?'
+	] as const;
+	const answerTexts = [
+		'Yes, cash on delivery works anywhere in Bangladesh.',
+		'Two to five days outside Dhaka, one to two days inside.',
+		'It is genuine, supplied by the authorised distributor.',
+		'Yes, the warranty card is inside the box.'
+	] as const;
+
+	const reviewValues = productRows.flatMap((p) =>
+		Array.from({ length: between(0, 4) }, () => {
+			const stars = between(3, 5);
+			return {
+				productId: p.id,
+				authorName: pick(askerNames),
+				rating: stars,
+				title: pick(reviewTitles),
+				body: pick(reviewBodies),
+				// Most are published; a few wait, so the admin has something to do.
+				approved: Math.random() > 0.15
+			};
+		})
+	);
+	if (reviewValues.length) await db.insert(s2.productReviews).values(reviewValues);
+
+	const questionValues = productRows.flatMap((p) =>
+		Array.from({ length: between(0, 2) }, () => {
+			const answered = Math.random() > 0.4;
+			return {
+				productId: p.id,
+				authorName: pick(askerNames),
+				question: pick(questionTexts),
+				answer: answered ? pick(answerTexts) : null,
+				answeredAt: answered ? new Date() : null
+			};
+		})
+	);
+	if (questionValues.length) await db.insert(s2.productQuestions).values(questionValues);
+
+	console.log(`demo: ${reviewValues.length} reviews, ${questionValues.length} questions`);
 }
 
 console.log(`seeded — admin: ${email} / ${password}`);

@@ -3,6 +3,7 @@
 	import {
 		createTable,
 		FlexRender,
+		renderSnippet,
 		tableFeatures,
 		rowSelectionFeature
 	} from '@tanstack/svelte-table';
@@ -52,10 +53,25 @@
 
 	const features = tableFeatures({ rowSelectionFeature });
 
+	/* The tick column is added here rather than by each page, so selection looks
+	   and behaves the same everywhere it is switched on. */
+	const allColumns = $derived(
+		bulk
+			? [
+					{
+						id: 'select',
+						header: () => renderSnippet(headerTick, null),
+						cell: (c: any) => renderSnippet(rowTick, c.row)
+					} as ColumnDef<any, T>,
+					...columns
+				]
+			: columns
+	);
+
 	const table = createTable({
 		features,
 		get columns() {
-			return columns as any;
+			return allColumns as any;
 		},
 		get data() {
 			return rows as any;
@@ -88,6 +104,25 @@
 		searchValue = q;
 	});
 </script>
+
+{#snippet headerTick()}
+	<Checkbox
+		checked={table.getIsAllRowsSelected()}
+		indeterminate={table.getIsSomeRowsSelected()}
+		label="Select every row on this page"
+		hideLabel
+		onchange={() => table.toggleAllRowsSelected()}
+	/>
+{/snippet}
+
+{#snippet rowTick(row: any)}
+	<Checkbox
+		checked={row.getIsSelected()}
+		label="Select this row"
+		hideLabel
+		onchange={() => row.toggleSelected()}
+	/>
+{/snippet}
 
 <div class="flex flex-col gap-4">
 	<!-- Toolbar: search left, filters right — outside the table, as its controls
@@ -159,7 +194,7 @@
 						</tr>
 					{:else}
 						<tr>
-							<td colspan={columns.length} class="px-4 py-16 text-center text-sm text-ink-faint">
+							<td colspan={allColumns.length} class="px-4 py-16 text-center text-sm text-ink-faint">
 								{empty}
 							</td>
 						</tr>

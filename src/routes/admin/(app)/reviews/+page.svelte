@@ -1,156 +1,153 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { Check, Trash2, EyeOff, Star, MessageCircleQuestion, Send } from '@lucide/svelte';
+	import { renderSnippet } from '@tanstack/svelte-table';
+	import type { ColumnDef, RowSelectionState } from '@tanstack/svelte-table';
+	import { Check, EyeOff, Trash2, ExternalLink, Star } from '@lucide/svelte';
+	import Select from '$lib/ui/Select.svelte';
 	import Button from '$lib/ui/Button.svelte';
-	import Textarea from '$lib/ui/Textarea.svelte';
-	import Tabs from '$lib/ui/Tabs.svelte';
+	import DataTable from '$lib/admin/DataTable.svelte';
+	import PageHeader from '$lib/admin/PageHeader.svelte';
+	import RowActions from '$lib/admin/RowActions.svelte';
+	import MenuItem from '$lib/admin/MenuItem.svelte';
+	import { setParams } from '$lib/admin/listQuery';
 
-	let { data, form } = $props();
+	let { data } = $props();
+	type Review = (typeof data)['rows'][number];
 
-	let tab = $state<'reviews' | 'questions'>('reviews');
+	let selection = $state<RowSelectionState>({});
 
 	const when = (d: Date | string) =>
 		new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+
+	const columns: ColumnDef<any, Review>[] = [
+		{ id: 'review', header: 'Review', cell: (c) => renderSnippet(reviewCell, c.row.original) },
+		{ id: 'product', header: 'Product', cell: (c) => renderSnippet(productCell, c.row.original) },
+		{ id: 'rating', header: 'Rating', cell: (c) => renderSnippet(ratingCell, c.row.original) },
+		{ id: 'state', header: 'Shown', cell: (c) => renderSnippet(stateCell, c.row.original) },
+		{ id: 'actions', header: '', cell: (c) => renderSnippet(actionsCell, c.row.original) }
+	];
 </script>
 
-<svelte:head><title>Reviews &amp; Q&amp;A · Admin</title></svelte:head>
+{#snippet reviewCell(r: Review)}
+	<div class="max-w-md">
+		<span class="block text-sm font-medium text-ink">{r.title || r.authorName}</span>
+		{#if r.body}
+			<span class="line-clamp-2 block text-xs text-ink-muted">{r.body}</span>
+		{/if}
+		<span class="block text-xs text-ink-faint">{r.authorName} · {when(r.createdAt)}</span>
+	</div>
+{/snippet}
 
-<h1 class="text-2xl font-semibold tracking-tight text-ink">Reviews &amp; Q&amp;A</h1>
-<p class="mt-1 text-sm text-ink-muted">
-	Reviews stay hidden until you approve them. Questions stay private until you answer.
-</p>
+{#snippet productCell(r: Review)}
+	<a href="/p/{r.productSlug}" class="text-sm text-primary hover:underline">{r.productTitle}</a>
+{/snippet}
 
-{#if form?.error}
-	<p
-		class="mt-4 rounded-2xl border border-sale/30 bg-sale/8 px-4 py-3 text-sm text-sale"
-		role="alert"
-	>
-		{form.error}
-	</p>
-{/if}
+{#snippet ratingCell(r: Review)}
+	<span class="flex items-center gap-1">
+		<Star size={14} class="fill-warn-fg text-warn-fg" />
+		<span class="num text-sm text-ink">{r.rating}</span>
+	</span>
+{/snippet}
+
+{#snippet stateCell(r: Review)}
+	<!-- A word, not just a colour: the state has to survive a greyscale print. -->
+	<span class="flex items-center gap-1.5 text-xs">
+		{#if r.approved}
+			<Check size={14} class="text-ok-fg" />
+			<span class="text-ink">Published</span>
+		{:else}
+			<EyeOff size={14} class="text-warn-fg" />
+			<span class="text-ink">Waiting</span>
+		{/if}
+	</span>
+{/snippet}
+
+{#snippet actionsCell(r: Review)}
+	<div class="flex justify-end">
+		<RowActions label="Actions for {r.authorName}’s review">
+			{#snippet menu()}
+				<form method="POST" action={r.approved ? '?/unapprove' : '?/approve'} use:enhance>
+					<input type="hidden" name="id" value={r.id} />
+					<MenuItem>
+						{#if r.approved}<EyeOff size={15} />Hide from the shop{:else}<Check
+								size={15}
+							/>Publish{/if}
+					</MenuItem>
+				</form>
+				<MenuItem href="/p/{r.productSlug}">
+					<ExternalLink size={15} />
+					See the product
+				</MenuItem>
+				<form method="POST" action="?/remove" use:enhance>
+					<input type="hidden" name="id" value={r.id} />
+					<MenuItem danger>
+						<Trash2 size={15} />
+						Delete
+					</MenuItem>
+				</form>
+			{/snippet}
+		</RowActions>
+	</div>
+{/snippet}
+
+<svelte:head><title>Reviews · Admin</title></svelte:head>
+
+<PageHeader
+	title="Reviews"
+	count={data.total}
+	description="Reviews stay hidden from the shop until you publish them."
+>
+	{#snippet actions()}
+		{#if data.pending}
+			<Button variant="secondary" size="sm" onclick={() => setParams({ status: 'pending' })}>
+				<EyeOff size={15} />
+				{data.pending} waiting
+			</Button>
+		{/if}
+	{/snippet}
+</PageHeader>
 
 <div class="mt-6">
-	<Tabs
-		tabs={[
-			{ value: 'reviews', label: 'Reviews', badge: data.pendingReviews },
-			{ value: 'questions', label: 'Questions', badge: data.unanswered }
-		]}
-		bind:value={tab}
-	/>
-</div>
+	<DataTable
+		{columns}
+		rows={data.rows}
+		total={data.total}
+		page={data.page}
+		perPage={data.perPage}
+		q={data.filters.q}
+		bind:selection
+		rowId={(r) => r.id}
+		searchPlaceholder="Reviewer, product or wording"
+		empty="No reviews match this view."
+	>
+		{#snippet filters()}
+			<Select
+				value={data.filters.status}
+				class="w-44"
+				options={[
+					{ value: '', label: 'All reviews' },
+					{ value: 'pending', label: 'Waiting' },
+					{ value: 'approved', label: 'Published' }
+				]}
+				onchange={(v) => setParams({ status: v })}
+			/>
+		{/snippet}
 
-<div class="mt-4 overflow-hidden rounded-3xl border border-border bg-surface">
-	{#if tab === 'reviews'}
-		{#each data.reviews as r (r.id)}
-			<article class="flex flex-wrap gap-4 border-b border-border p-5 last:border-0">
-				<div class="min-w-0 flex-1">
-					<div class="flex flex-wrap items-center gap-2">
-						<span class="flex" aria-label="{r.rating} out of 5">
-							{#each [1, 2, 3, 4, 5] as n (n)}
-								<Star
-									size={13}
-									class={n <= r.rating ? 'fill-star text-star' : 'fill-border text-border'}
-								/>
-							{/each}
-						</span>
-						<span class="text-sm font-medium text-ink">{r.authorName}</span>
-						<span class="text-xs text-ink-faint">{when(r.createdAt)}</span>
-						{#if !r.approved}
-							<span class="rounded-lg bg-star/15 px-2 py-0.5 text-xs text-ink">Pending</span>
-						{/if}
-					</div>
-
-					<a
-						href="/p/{r.productSlug}"
-						target="_blank"
-						rel="noopener"
-						class="mt-1 block text-xs text-primary"
-					>
-						{r.productTitle}
-					</a>
-
-					{#if r.title}<p class="mt-2 text-sm font-medium text-ink">{r.title}</p>{/if}
-					{#if r.body}<p class="mt-1 text-sm whitespace-pre-line text-ink-muted">{r.body}</p>{/if}
-				</div>
-
-				<div class="flex shrink-0 items-start gap-2">
-					{#if r.approved}
-						<form method="POST" action="?/unapprove" use:enhance>
-							<input type="hidden" name="id" value={r.id} />
-							<Button size="sm" variant="secondary" type="submit">
-								<EyeOff size={14} />
-								Hide
-							</Button>
-						</form>
-					{:else}
-						<form method="POST" action="?/approve" use:enhance>
-							<input type="hidden" name="id" value={r.id} />
-							<Button size="sm" type="submit">
-								<Check size={14} />
-								Approve
-							</Button>
-						</form>
-					{/if}
-					<form method="POST" action="?/deleteReview" use:enhance>
-						<input type="hidden" name="id" value={r.id} />
-						<button
-							class="grid size-9 place-items-center rounded-xl text-ink-faint transition-colors hover:bg-sale/8 hover:text-sale"
-							aria-label="Delete review"
-						>
-							<Trash2 size={15} />
-						</button>
-					</form>
-				</div>
-			</article>
-		{:else}
-			<p class="px-5 py-16 text-center text-sm text-ink-faint">No reviews yet.</p>
-		{/each}
-	{:else}
-		{#each data.questions as q (q.id)}
-			<article class="border-b border-border p-5 last:border-0">
-				<div class="flex items-start gap-3">
-					<MessageCircleQuestion size={17} class="mt-0.5 shrink-0 text-primary" />
-					<div class="min-w-0 flex-1">
-						<p class="text-sm font-medium text-ink">{q.question}</p>
-						<p class="text-xs text-ink-faint">
-							{q.authorName} · {when(q.createdAt)} ·
-							<a href="/p/{q.productSlug}" target="_blank" rel="noopener" class="text-primary">
-								{q.productTitle}
-							</a>
-						</p>
-
-						{#if q.answer}
-							<p class="mt-2 rounded-xl bg-surface-alt p-3 text-sm text-ink-muted">{q.answer}</p>
-						{/if}
-
-						<form method="POST" action="?/answer" use:enhance class="mt-3 flex flex-col gap-2">
-							<input type="hidden" name="id" value={q.id} />
-							<Textarea
-								name="answer"
-								rows={2}
-								value={q.answer ?? ''}
-								placeholder="Your answer appears on the product page."
-							/>
-							<Button size="sm" type="submit" class="self-start">
-								<Send size={14} />
-								{q.answer ? 'Update answer' : 'Publish answer'}
-							</Button>
-						</form>
-					</div>
-
-					<form method="POST" action="?/deleteQuestion" use:enhance>
-						<input type="hidden" name="id" value={q.id} />
-						<button
-							class="grid size-9 place-items-center rounded-xl text-ink-faint transition-colors hover:bg-sale/8 hover:text-sale"
-							aria-label="Delete question"
-						>
-							<Trash2 size={15} />
-						</button>
-					</form>
-				</div>
-			</article>
-		{:else}
-			<p class="px-5 py-16 text-center text-sm text-ink-faint">No questions yet.</p>
-		{/each}
-	{/if}
+		{#snippet bulk({ ids, clear })}
+			<form method="POST" action="?/approve" use:enhance={() => () => clear()}>
+				<input type="hidden" name="ids" value={ids.join(',')} />
+				<Button size="sm" variant="secondary">
+					<Check size={15} />
+					Publish
+				</Button>
+			</form>
+			<form method="POST" action="?/remove" use:enhance={() => () => clear()}>
+				<input type="hidden" name="ids" value={ids.join(',')} />
+				<Button size="sm" variant="secondary">
+					<Trash2 size={15} />
+					Delete
+				</Button>
+			</form>
+		{/snippet}
+	</DataTable>
 </div>

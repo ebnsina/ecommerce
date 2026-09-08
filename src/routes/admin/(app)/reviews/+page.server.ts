@@ -1,12 +1,27 @@
-import { fail } from '@sveltejs/kit';
-import { desc, eq, isNull, sql } from 'drizzle-orm';
+import { and, desc, eq, ilike, or, count } from 'drizzle-orm';
 import { db } from '$lib/server/db';
-import { productReviews, productQuestions, products } from '$lib/server/db/schema';
+import { productReviews, products } from '$lib/server/db/schema';
 import { refreshRating } from '$lib/server/reviews';
+import { listParams } from '$lib/admin/listQuery';
 import type { Actions, PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async () => {
-	const [reviews, questions] = await Promise.all([
+export const load: PageServerLoad = async ({ url }) => {
+	const { q, page, perPage } = listParams(url);
+	const status = url.searchParams.get('status') ?? '';
+
+	const where = and(
+		q
+			? or(
+					ilike(productReviews.authorName, `%${q}%`),
+					ilike(productReviews.body, `%${q}%`),
+					ilike(products.title, `%${q}%`)
+				)
+			: undefined,
+		status === 'pending' ? eq(productReviews.approved, false) : undefined,
+		status === 'approved' ? eq(productReviews.approved, true) : undefined
+	);
+
+	const [rows, [{ n: total }], [{ n: pending }]] = await Promise.all([
 		db
 			.select({
 				id: productReviews.id,
@@ -22,86 +37,56 @@ export const load: PageServerLoad = async () => {
 			})
 			.from(productReviews)
 			.innerJoin(products, eq(products.id, productReviews.productId))
+			// Unapproved first: they are the ones waiting on someone.
+			.where(where)
 			.orderBy(productReviews.approved, desc(productReviews.createdAt))
-			.limit(100),
-
+			.limit(perPage)
+			.offset((page - 1) * perPage),
 		db
-			.select({
-				id: productQuestions.id,
-				productTitle: products.title,
-				productSlug: products.slug,
-				authorName: productQuestions.authorName,
-				question: productQuestions.question,
-				answer: productQuestions.answer,
-				createdAt: productQuestions.createdAt
-			})
-			.from(productQuestions)
-			.innerJoin(products, eq(products.id, productQuestions.productId))
-			.orderBy(sql`${productQuestions.answer} is not null`, desc(productQuestions.createdAt))
-			.limit(100)
+			.select({ n: count() })
+			.from(productReviews)
+			.innerJoin(products, eq(products.id, productReviews.productId))
+			.where(where),
+		db.select({ n: count() }).from(productReviews).where(eq(productReviews.approved, false))
 	]);
 
-	return {
-		reviews,
-		questions,
-		pendingReviews: reviews.filter((r) => !r.approved).length,
-		unanswered: questions.filter((q) => !q.answer).length
-	};
+	return { rows, total, page, perPage, pending, filters: { q, status } };
 };
+
+/** The star rating on a product is a cache, so every change refreshes it. */
+async function setApproved(id: string, approved: boolean) {
+	const [row] = await db
+		.update(productReviews)
+		.set({ approved })
+		.where(eq(productReviews.id, id))
+		.returning({ productId: productReviews.productId });
+	if (row) await refreshRating(row.productId);
+}
+
+const ids = (f: FormData) =>
+	String(f.get('ids') ?? f.get('id') ?? '')
+		.split(',')
+		.filter(Boolean);
 
 export const actions: Actions = {
 	approve: async ({ request }) => {
-		const id = String((await request.formData()).get('id') ?? '');
-		const [row] = await db
-			.update(productReviews)
-			.set({ approved: true })
-			.where(eq(productReviews.id, id))
-			.returning({ productId: productReviews.productId });
-		if (row) await refreshRating(row.productId); // the star rating is a cache
+		for (const id of ids(await request.formData())) await setApproved(id, true);
 		return { ok: true };
 	},
 
 	unapprove: async ({ request }) => {
-		const id = String((await request.formData()).get('id') ?? '');
-		const [row] = await db
-			.update(productReviews)
-			.set({ approved: false })
-			.where(eq(productReviews.id, id))
-			.returning({ productId: productReviews.productId });
-		if (row) await refreshRating(row.productId);
+		for (const id of ids(await request.formData())) await setApproved(id, false);
 		return { ok: true };
 	},
 
-	deleteReview: async ({ request }) => {
-		const id = String((await request.formData()).get('id') ?? '');
-		const [row] = await db
-			.delete(productReviews)
-			.where(eq(productReviews.id, id))
-			.returning({ productId: productReviews.productId });
-		if (row) await refreshRating(row.productId);
-		return { ok: true };
-	},
-
-	answer: async ({ request, locals }) => {
-		const f = await request.formData();
-		const answer = String(f.get('answer') ?? '').trim();
-		if (!answer) return fail(400, { error: 'Write an answer first.' });
-
-		await db
-			.update(productQuestions)
-			.set({
-				answer,
-				answeredAt: new Date(),
-				answeredBy: locals.user?.kind === 'admin' ? locals.user.id : null
-			})
-			.where(eq(productQuestions.id, String(f.get('id') ?? '')));
-		return { ok: true };
-	},
-
-	deleteQuestion: async ({ request }) => {
-		await db
-			.delete(productQuestions)
-			.where(eq(productQuestions.id, String((await request.formData()).get('id') ?? '')));
+	remove: async ({ request }) => {
+		for (const id of ids(await request.formData())) {
+			const [row] = await db
+				.delete(productReviews)
+				.where(eq(productReviews.id, id))
+				.returning({ productId: productReviews.productId });
+			if (row) await refreshRating(row.productId);
+		}
 		return { ok: true };
 	}
 };

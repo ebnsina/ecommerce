@@ -6,19 +6,30 @@
 		checked = $bindable(false),
 		label,
 		hint,
+		/** Keeps the accessible name while hiding the visible text — for a tick
+		    in a table cell, where the column header is the visible label. */
+		hideLabel = false,
 		indeterminate = false,
 		...rest
 	}: {
 		checked?: boolean;
 		label?: string;
 		hint?: string;
+		hideLabel?: boolean;
 		indeterminate?: boolean;
 	} & HTMLInputAttributes = $props();
 </script>
 
 <!-- Native input kept for a11y and form posting; visually replaced by our own box. -->
 <label class="group flex cursor-pointer items-start gap-2.5 select-none">
-	<input type="checkbox" bind:checked {indeterminate} class="peer sr-only" {...rest} />
+	<input
+		type="checkbox"
+		bind:checked
+		{indeterminate}
+		aria-label={hideLabel ? label : undefined}
+		class="peer sr-only"
+		{...rest}
+	/>
 	<span
 		aria-hidden="true"
 		class="mt-0.5 grid size-5 shrink-0 place-items-center rounded-md border border-border bg-surface
@@ -40,7 +51,7 @@
 			/>
 		{/if}
 	</span>
-	{#if label}
+	{#if label && !hideLabel}
 		<span class="flex flex-col gap-0.5">
 			<span class="text-sm text-ink">{label}</span>
 			{#if hint}<span class="text-xs text-ink-muted">{hint}</span>{/if}

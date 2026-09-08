@@ -10,6 +10,7 @@ import {
 	TicketPercent,
 	Users,
 	MessageSquare,
+	MessageCircleQuestion,
 	Inbox as InboxIcon,
 	FileText,
 	Menu as MenuIcon,
@@ -40,7 +41,8 @@ export const navGroups: NavGroup[] = [
 			{ href: '/admin/abandoned', icon: ShoppingBasket, label: 'Abandoned carts' },
 			{ href: '/admin/coupons', icon: TicketPercent, label: 'Coupons' },
 			{ href: '/admin/customers', icon: Users, label: 'Customers' },
-			{ href: '/admin/reviews', icon: MessageSquare, label: 'Reviews & Q&A' }
+			{ href: '/admin/reviews', icon: MessageSquare, label: 'Reviews' },
+			{ href: '/admin/questions', icon: MessageCircleQuestion, label: 'Questions' }
 		]
 	},
 	{
