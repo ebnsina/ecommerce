@@ -3,6 +3,7 @@ import { channelStatus } from '$lib/server/channels';
 import { courierStatusList } from '$lib/server/couriers';
 import { isAiConfigured, provider } from '$lib/server/ai';
 import { capiConfigured } from '$lib/server/meta';
+import { searchConfigured } from '$lib/server/search';
 import { getSettings } from '$lib/server/settings';
 import type { PageServerLoad } from './$types';
 
@@ -159,6 +160,21 @@ export const load: PageServerLoad = async () => {
 					purpose:
 						'Traffic and ecommerce reporting. Leave it blank if Analytics is already loaded through Tag Manager.',
 					vars: [],
+					webhook: null
+				}
+			]
+		},
+		{
+			title: 'Search',
+			blurb: 'Typo-tolerant search. Without it the shop matches only what a shopper types exactly.',
+			items: [
+				{
+					key: 'typesense',
+					name: 'Typesense',
+					connected: searchConfigured(),
+					purpose:
+						'Forgives spelling and ranks by relevance. The shop falls back to the database when this is off, so nothing breaks — searches just get stricter.',
+					vars: ['TYPESENSE_HOST', 'TYPESENSE_PORT', 'TYPESENSE_PROTOCOL', 'TYPESENSE_API_KEY'],
 					webhook: null
 				}
 			]

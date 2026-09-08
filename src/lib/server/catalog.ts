@@ -79,6 +79,23 @@ export async function listProducts({
 	page = 1,
 	perPage = 24
 }: ListOptions) {
+	/* A worded search goes to Typesense when it is set up: it tolerates typos
+	   and ranks by relevance, neither of which `ilike` can do. Browsing a
+	   category with no query stays on the database, which is already exact and
+	   saves a network hop. Import is deferred to keep the cycle
+	   catalog → search → catalog from biting at module load. */
+	if (q) {
+		const { searchProducts } = await import('./search');
+		const hit = await searchProducts({ q, categoryIds, sort, page, perPage });
+		if (hit)
+			return {
+				rows: hit.rows,
+				total: hit.total,
+				pages: Math.max(1, Math.ceil(hit.total / perPage)),
+				page
+			};
+	}
+
 	const where = and(
 		eq(products.status, 'active'),
 		q ? or(ilike(products.title, `%${q}%`), ilike(products.brand, `%${q}%`)) : undefined,

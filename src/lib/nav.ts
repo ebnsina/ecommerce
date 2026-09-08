@@ -16,6 +16,7 @@ import {
 	FileText,
 	Menu as MenuIcon,
 	Settings,
+	SearchCode,
 	Plug,
 	type Icon
 } from '@lucide/svelte';
@@ -62,6 +63,7 @@ export const navGroups: NavGroup[] = [
 	{
 		title: 'System',
 		items: [
+			{ href: '/admin/search', icon: SearchCode, label: 'Search' },
 			{ href: '/admin/settings', icon: Settings, label: 'Settings' },
 			{ href: '/admin/connections', icon: Plug, label: 'Connections' }
 		]

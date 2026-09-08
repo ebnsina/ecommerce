@@ -6,6 +6,14 @@ User-facing changes, newest first.
 
 ### Added
 
+- **Search that forgives spelling.** With Typesense connected, "kettel" finds
+  the kettle and "washing mashine" finds the washing machine — the database
+  search matched only exactly what was typed, and this shop's own numbers show
+  a search that finds nothing is the clearest lost sale there is. It is
+  optional: with nothing connected the shop searches the database as before.
+  A new Search screen shows what is indexed, rebuilds it after a bulk import,
+  and lists what shoppers looked for and what came back empty.
+
 - **Insights.** A new screen showing what shoppers searched for, what they
   looked at, and what they actually bought — including the two things sales
   figures cannot tell you apart: searches that found nothing (demand you have

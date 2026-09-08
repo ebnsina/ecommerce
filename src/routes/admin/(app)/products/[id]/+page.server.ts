@@ -11,6 +11,7 @@ import {
 } from '$lib/server/db/schema';
 import { slugify, uniqueSlug } from '$lib/slug';
 import { parseTk } from '$lib/money';
+import { reindexProduct, removeProduct } from '$lib/server/search';
 import type { Actions, PageServerLoad } from './$types';
 
 const EMPTY = {
@@ -217,6 +218,9 @@ export const actions: Actions = {
 			return productId;
 		});
 
+		// Keep the search index in step with the edit. Never throws into a save.
+		await reindexProduct(id);
+
 		if (isNew) redirect(303, `/admin/products/${id}`);
 		return { ok: true };
 	},
@@ -224,6 +228,7 @@ export const actions: Actions = {
 	remove: async ({ params }) => {
 		if (params.id === 'new') redirect(303, '/admin/products');
 		await db.delete(products).where(eq(products.id, params.id));
+		await removeProduct(params.id).catch(() => {});
 		redirect(303, '/admin/products');
 	}
 };
