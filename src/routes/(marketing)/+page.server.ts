@@ -1,13 +1,21 @@
 import { productsBy } from '$lib/server/catalog';
+import { topSearches, unmetDemand } from '$lib/server/intent';
 import type { PageServerLoad } from './$types';
 
 /**
- * Real products for the hero.
+ * Real rows for the hero panel.
  *
- * A mocked-up screenshot of a shop is a drawing of a promise. These are the
- * actual rows the demo is selling, rendered by the same card the shop uses, so
- * what the page shows and what it links to cannot drift apart.
+ * Both the platforms this page competes with lead on a picture of their own
+ * interface. This one leads on the interface itself, rendered live from the
+ * demo's data — so it can never drift from what the demo actually shows, and
+ * there is no screenshot to re-take when the design moves.
  */
-export const load: PageServerLoad = async () => ({
-	preview: await productsBy('best-seller', 4)
-});
+export const load: PageServerLoad = async () => {
+	const [preview, searches, unmet] = await Promise.all([
+		productsBy('best-seller', 8),
+		topSearches(30, 4),
+		unmetDemand(30, 4)
+	]);
+
+	return { preview, searches, unmet };
+};
