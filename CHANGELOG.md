@@ -6,6 +6,12 @@ User-facing changes, newest first.
 
 ### Added
 
+- **A proper filter panel on search.** Category, price, rating, brand, in-stock
+  and on-offer, in a sidebar on a desktop and a sheet on a phone. Every choice
+  is in the web address, so a filtered view is a link you can send or come back
+  to, and the filtering happens in the database — the page never holds products
+  it did not ask for.
+
 - **Search that forgives spelling.** With Typesense connected, "kettel" finds
   the kettle and "washing mashine" finds the washing machine — the database
   search matched only exactly what was typed, and this shop's own numbers show
@@ -54,7 +60,11 @@ User-facing changes, newest first.
 - **The newsletter strip is now a "talk to us" band** with call and WhatsApp
   buttons. Most shoppers here message rather than subscribe.
 - **Homepage categories fit on one row** with clearer labels.
-- **Product cards no longer flicker on hover.**
+- **Product cards no longer flicker on hover**, their picture is rounded to
+  match the card, and the text below lines up with its edge.
+- **Softer neutrals.** Tab tracks and other structural greys were heavier than
+  they should be; they now sit just above invisible, with contrast saved for
+  the things that carry meaning.
 - **Banner grids sit on the page** rather than inside a coloured pad, with each
   row on one aspect ratio so the images line up.
 

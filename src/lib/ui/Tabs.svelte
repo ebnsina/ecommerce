@@ -61,15 +61,14 @@
 	}
 </script>
 
-<!-- Track: the shadcn TabsList shape. It carries a hairline border as well as a
-     fill, because the admin's own page ground is surface-alt — a fill alone is
-     invisible there. -->
+<!-- Track: the shadcn TabsList shape — a soft fill, no border. The token sits a
+     step under surface-alt so it still separates on the admin's own ground. -->
 <div
 	bind:this={list}
 	role="tablist"
 	tabindex="-1"
 	class="relative inline-flex h-9 w-fit max-w-full [scrollbar-width:none] items-center justify-center
-	       overflow-x-auto rounded-lg border border-border bg-track p-[3px] [&::-webkit-scrollbar]:hidden {klass}"
+	       overflow-x-auto rounded-lg bg-track p-[3px] [&::-webkit-scrollbar]:hidden {klass}"
 	onkeydown={onKey}
 >
 	<!-- The moving pill. shadcn uses a soft shadow here rather than a border. -->
@@ -100,7 +99,7 @@
 			{#if tab.badge}
 				<span
 					class="num grid h-4.5 min-w-4.5 place-items-center rounded px-1 text-[11px] font-semibold
-					       {value === tab.value ? 'bg-primary text-white' : 'bg-border text-ink-muted'}"
+					       {value === tab.value ? 'bg-primary text-white' : 'bg-track text-ink-muted'}"
 				>
 					{tab.badge}
 				</span>

@@ -76,7 +76,7 @@
 											<button
 												type="button"
 												onclick={() => copy(v, item.key + v)}
-												class="inline-flex items-center gap-1 rounded-lg bg-surface-alt px-2 py-1 font-mono text-xs text-ink transition-colors hover:bg-border"
+												class="inline-flex items-center gap-1 rounded-lg bg-surface-alt px-2 py-1 font-mono text-xs text-ink transition-colors hover:bg-track"
 												title="Copy name"
 											>
 												{v}

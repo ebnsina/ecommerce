@@ -42,6 +42,11 @@ Specifically:
 - **Themes are ramps, not hues.** A store theme supplies a full nine-stop ramp;
   the 700 stop backs button labels and links, so it must clear 4.5:1 both as text
   on white and under white text. Check a new preset before adding it.
+- **Soft, never aggressive.** Surfaces, tracks, tints and dividers stay barely
+  there — a tab track sits around **1.1:1** against its ground, a border around
+  **1.2:1**. If a neutral element announces itself, it is too strong. Saturation
+  and contrast are spent on the things that carry meaning: prices, status
+  icons, the primary button. This applies everywhere, not just tabs.
 - **Borders, not shadows** — with one deliberate exception: the shadcn-style tab
   indicator. A border must be visible against its own background (~1.3:1); an
   invisible border is worse than none.

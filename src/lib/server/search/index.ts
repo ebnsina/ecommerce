@@ -12,7 +12,8 @@ import {
 	removeProduct,
 	searchProductIds,
 	searchConfigured,
-	type ProductDoc
+	type ProductDoc,
+	type SearchFilters
 } from './typesense';
 
 export { searchConfigured, removeProduct };
@@ -28,6 +29,7 @@ export async function documentsFor(ids?: string[]): Promise<ProductDoc[]> {
 			description: products.description,
 			slug: products.slug,
 			price: products.price,
+			compareAtPrice: products.compareAtPrice,
 			rating: products.rating,
 			soldCount: products.soldCount,
 			stock: products.stock,
@@ -74,7 +76,8 @@ export async function documentsFor(ids?: string[]): Promise<ProductDoc[]> {
 		price: r.price,
 		rating: r.rating,
 		soldCount: r.soldCount,
-		inStock: r.hasVariants || r.stock > 0
+		inStock: r.hasVariants || r.stock > 0,
+		onSale: (r.compareAtPrice ?? 0) > r.price
 	}));
 }
 
@@ -102,13 +105,15 @@ export async function reindexProduct(id: string) {
  * Full-text product search. Falls back to the database whenever Typesense has
  * nothing to say — not configured, unreachable, or mid-reindex.
  */
-export async function searchProducts(opts: {
-	q: string;
-	categoryIds?: string[];
-	sort?: string;
-	page?: number;
-	perPage?: number;
-}) {
+export async function searchProducts(
+	opts: {
+		q: string;
+		categoryIds?: string[];
+		sort?: string;
+		page?: number;
+		perPage?: number;
+	} & SearchFilters
+) {
 	const hit = await searchProductIds(opts);
 	if (!hit) return null;
 	if (!hit.ids.length) return { rows: [], total: hit.total };

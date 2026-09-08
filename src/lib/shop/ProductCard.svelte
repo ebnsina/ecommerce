@@ -131,11 +131,11 @@
 		>
 			<a href="/p/{product.slug}" class="contents">
 				{@render media(
-					size === 'compact' ? 'size-16 rounded-xl' : 'aspect-square w-full rounded-none'
+					size === 'compact' ? 'size-16 rounded-xl' : 'aspect-square w-full rounded-2xl'
 				)}
 			</a>
 
-			<div class="flex min-w-0 flex-1 flex-col gap-1.5 {size === 'compact' ? '' : 'px-3 pb-3'}">
+			<div class="flex min-w-0 flex-1 flex-col gap-1.5">
 				<a
 					href="/p/{product.slug}"
 					class="line-clamp-2 text-sm text-ink transition-colors hover:text-primary"

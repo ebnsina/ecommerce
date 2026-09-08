@@ -1,5 +1,5 @@
 /** Product queries shared by the homepage, category pages and search. */
-import { and, desc, eq, ilike, or, sql, count, asc, gt } from 'drizzle-orm';
+import { and, asc, count, desc, eq, gt, gte, ilike, inArray, lte, or, sql } from 'drizzle-orm';
 import { db } from './db';
 import { products, productImages, productCategories, categories } from './db/schema';
 
@@ -31,6 +31,21 @@ const ordering = {
 		/ nullif(${products.compareAtPrice}, 0)`)
 };
 
+/** Shared by the database path here and, in another shape, by Typesense. */
+function filterConditions(f: ProductFilters) {
+	return [
+		f.minPrice !== undefined ? gte(products.price, f.minPrice) : undefined,
+		f.maxPrice !== undefined ? lte(products.price, f.maxPrice) : undefined,
+		f.brands?.length ? inArray(products.brand, f.brands) : undefined,
+		// Ratings are stored ×10, so four stars is 40.
+		f.minRating ? gte(products.rating, f.minRating * 10) : undefined,
+		// A product with variants carries its stock on the variants, so it is
+		// never counted as out of stock here.
+		f.inStock ? sql`(${products.hasVariants} or ${products.stock} > 0)` : undefined,
+		f.onSale ? gt(products.compareAtPrice, products.price) : undefined
+	];
+}
+
 /** The one query behind every product section on the storefront. */
 export function productsBy(source: Source, limit = 10) {
 	return db
@@ -56,7 +71,19 @@ export async function categoryBySlug(slug: string) {
 	return cat ?? null;
 }
 
-type ListOptions = {
+export type ProductFilters = {
+	/** Poisha, inclusive. */
+	minPrice?: number;
+	maxPrice?: number;
+	brands?: string[];
+	/** Whole stars, 1–5: "4 and up". */
+	minRating?: number;
+	inStock?: boolean;
+	/** Only products marked down from a compare-at price. */
+	onSale?: boolean;
+};
+
+type ListOptions = ProductFilters & {
 	categoryIds?: string[];
 	q?: string;
 	sort?: string;
@@ -77,7 +104,8 @@ export async function listProducts({
 	q,
 	sort = 'newest',
 	page = 1,
-	perPage = 24
+	perPage = 24,
+	...filters
 }: ListOptions) {
 	/* A worded search goes to Typesense when it is set up: it tolerates typos
 	   and ranks by relevance, neither of which `ilike` can do. Browsing a
@@ -86,7 +114,7 @@ export async function listProducts({
 	   catalog → search → catalog from biting at module load. */
 	if (q) {
 		const { searchProducts } = await import('./search');
-		const hit = await searchProducts({ q, categoryIds, sort, page, perPage });
+		const hit = await searchProducts({ q, categoryIds, sort, page, perPage, ...filters });
 		if (hit)
 			return {
 				rows: hit.rows,
@@ -103,7 +131,8 @@ export async function listProducts({
 			? sql`exists (select 1 from ${productCategories}
 					where ${productCategories.productId} = ${products.id}
 					  and ${productCategories.categoryId} in ${categoryIds})`
-			: undefined
+			: undefined,
+		...filterConditions(filters)
 	);
 
 	const [rows, [{ n: total }]] = await Promise.all([
