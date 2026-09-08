@@ -4,25 +4,51 @@
 	import Button from '$lib/ui/Button.svelte';
 	import Input from '$lib/ui/Input.svelte';
 	import Dialog from '$lib/ui/Dialog.svelte';
+	import PageHeader from '$lib/admin/PageHeader.svelte';
+	import TourButton from '$lib/admin/TourButton.svelte';
+	import type { Tour } from '$lib/admin/tour';
 
 	let { data, form } = $props();
 	let open = $state(false);
+
+	const tour: Tour = {
+		key: 'pages-list',
+		steps: [
+			{
+				element: '[data-tour="pages-list"]',
+				popover: {
+					title: 'Your shop’s pages',
+					description:
+						'The homepage is here, along with any landing page you build. Click one to change what it says. The count beside each is how many sections it is made of.'
+				}
+			},
+			{
+				element: '[data-tour="new-page"]',
+				popover: {
+					title: 'Make a new page',
+					description:
+						'Give it a title — an Eid sale, a brand page — and it gets its own web address you can share or link from a menu.'
+				}
+			}
+		]
+	};
 </script>
 
 <svelte:head><title>Pages · Admin</title></svelte:head>
 
-<div class="flex flex-wrap items-start justify-between gap-4">
-	<div>
-		<h1 class="text-2xl font-semibold tracking-tight text-ink">Pages</h1>
-		<p class="mt-1 text-sm text-ink-muted">
-			The homepage and any landing pages, built from sections.
-		</p>
-	</div>
-	<Button onclick={() => (open = true)}>
-		<Plus size={16} />
-		New page
-	</Button>
-</div>
+<PageHeader
+	title="Pages"
+	count={data.list.length}
+	description="The homepage and any landing pages, built from sections."
+>
+	{#snippet actions()}
+		<TourButton {tour} />
+		<Button size="sm" onclick={() => (open = true)} data-tour="new-page">
+			<Plus size={15} />
+			New page
+		</Button>
+	{/snippet}
+</PageHeader>
 
 {#if form?.error}
 	<p
@@ -33,7 +59,10 @@
 	</p>
 {/if}
 
-<div class="mt-6 overflow-hidden rounded-3xl border border-border bg-surface">
+<div
+	class="mt-6 overflow-hidden rounded-3xl border border-border bg-surface"
+	data-tour="pages-list"
+>
 	{#each data.list as p (p.id)}
 		<div class="flex items-center gap-3 border-b border-border px-4 py-3 last:border-0">
 			<span

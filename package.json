@@ -61,6 +61,7 @@
 		"@tiptap/extension-link": "^3.31.3",
 		"@tiptap/starter-kit": "^3.31.3",
 		"aws4fetch": "^1.0.20",
+		"driver.js": "^1.8.0",
 		"postgres": "^3.4.9"
 	}
 }

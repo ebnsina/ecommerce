@@ -6,19 +6,52 @@
 	import { fadeIn } from '$lib/motion';
 	import Button from '$lib/ui/Button.svelte';
 	import MenuEditor from '$lib/admin/MenuEditor.svelte';
+	import PageHeader from '$lib/admin/PageHeader.svelte';
+	import TourButton from '$lib/admin/TourButton.svelte';
+	import type { Tour } from '$lib/admin/tour';
 
 	let { data, form } = $props();
 
 	let header = $state(structuredClone(untrack(() => data.header)));
 	let footer = $state(structuredClone(untrack(() => data.footer)));
+
+	const tour: Tour = {
+		key: 'menus',
+		steps: [
+			{
+				element: '[data-tour="header-menu"]',
+				popover: {
+					title: 'The bar across the top',
+					description:
+						'Leave this empty and the shop lists your visible categories by itself. Add items only when you want something different — a landing page, a custom link, another order.'
+				}
+			},
+			{
+				element: '[data-tour="footer-menu"]',
+				popover: {
+					title: 'The footer columns',
+					description:
+						'Each top-level item becomes one column heading, and the items under it become that column’s links. This is where your delivery, returns and contact pages belong.'
+				}
+			},
+			{
+				element: '[data-tour="save-header"]',
+				popover: {
+					title: 'Each menu saves on its own',
+					description: 'Save the one you changed. The shop picks it up immediately — no rebuild.'
+				}
+			}
+		]
+	};
 </script>
 
 <svelte:head><title>Menus · Admin</title></svelte:head>
 
-<h1 class="text-2xl font-semibold tracking-tight text-ink">Menus</h1>
-<p class="mt-1 text-sm text-ink-muted">
-	What shoppers see in the header bar and the footer columns.
-</p>
+<PageHeader title="Menus" description="What shoppers see in the header bar and the footer columns.">
+	{#snippet actions()}
+		<TourButton {tour} />
+	{/snippet}
+</PageHeader>
 
 <div class="mt-6 flex flex-col gap-4">
 	<form
@@ -26,6 +59,7 @@
 		action="?/save"
 		use:enhance
 		class="rounded-3xl border border-border bg-surface p-5"
+		data-tour="header-menu"
 	>
 		<input type="hidden" name="key" value="header" />
 		<input type="hidden" name="tree" value={JSON.stringify(header)} />
@@ -50,7 +84,7 @@
 		</p>
 
 		<MenuEditor bind:nodes={header} targets={data.targets} childLabel="Sub-item" />
-		<Button size="sm" type="submit" class="mt-4">Save header menu</Button>
+		<Button size="sm" type="submit" class="mt-4" data-tour="save-header">Save header menu</Button>
 	</form>
 
 	<form
@@ -58,6 +92,7 @@
 		action="?/save"
 		use:enhance
 		class="rounded-3xl border border-border bg-surface p-5"
+		data-tour="footer-menu"
 	>
 		<input type="hidden" name="key" value="footer" />
 		<input type="hidden" name="tree" value={JSON.stringify(footer)} />

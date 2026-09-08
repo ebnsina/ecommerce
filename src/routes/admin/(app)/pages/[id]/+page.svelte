@@ -1,4 +1,6 @@
 <script lang="ts">
+	import TourButton from '$lib/admin/TourButton.svelte';
+	import type { Tour } from '$lib/admin/tour';
 	import { untrack } from 'svelte';
 	import { enhance } from '$app/forms';
 	import { slide, fly } from 'svelte/transition';
@@ -75,6 +77,54 @@
 		if (Array.isArray(p.items)) return `${p.items.length} item(s)`;
 		return blockDef(block.type)?.description ?? '';
 	}
+
+	/* Building a page from blocks is the least self-explanatory screen in here,
+	   so it explains itself the first time someone opens it. */
+	const tour: Tour = {
+		key: 'page-editor',
+		steps: [
+			{
+				element: '[data-tour="sections"]',
+				popover: {
+					title: 'A page is a stack of sections',
+					description:
+						'Each box here is one band of the page, in the order shoppers see it. Click one to open it and change its wording, pictures or products. The arrows on the right move a section up or down.'
+				}
+			},
+			{
+				element: '[data-tour="add-section"]',
+				popover: {
+					title: 'Add a section',
+					description:
+						'Pick from banners, product rows, category tiles and the rest. A new section lands at the bottom — move it where you want it.'
+				}
+			},
+			{
+				element: '[data-tour="page-settings"]',
+				popover: {
+					title: 'The page itself',
+					description:
+						'The title, the web address, and what Google shows for this page. The homepage keeps its address.'
+				}
+			},
+			{
+				element: '[data-tour="save-draft"]',
+				popover: {
+					title: 'Save without showing anyone',
+					description:
+						'A draft is yours alone. Use Preview to see it as a shopper would, before anybody else can.'
+				}
+			},
+			{
+				element: '[data-tour="publish"]',
+				popover: {
+					title: 'Publish when you are happy',
+					description:
+						'This is the moment the change goes live on the shop. Nothing before it does.'
+				}
+			}
+		]
+	};
 </script>
 
 <svelte:head><title>{title} · Pages · Admin</title></svelte:head>
@@ -111,8 +161,10 @@
 				<Eye size={16} />
 				Preview
 			</Button>
-			<Button variant="secondary" formaction="?/saveDraft">Save draft</Button>
-			<Button type="submit">Publish</Button>
+			<Button variant="secondary" formaction="?/saveDraft" data-tour="save-draft">Save draft</Button
+			>
+			<Button type="submit" data-tour="publish">Publish</Button>
+			<TourButton {tour} />
 		</div>
 	</div>
 
@@ -133,7 +185,7 @@
 
 	<div class="mt-6 grid gap-4 lg:grid-cols-[1fr_20rem]">
 		<!-- block list -->
-		<div class="flex flex-col gap-3">
+		<div class="flex flex-col gap-3" data-tour="sections">
 			{#each blocks as block, i (block.id)}
 				{@const def = blockDef(block.type)}
 				<section class="rounded-3xl border border-border bg-surface" transition:slide={slideOpen()}>
@@ -216,6 +268,7 @@
 				class="flex items-center justify-center gap-2 rounded-3xl border
 				       border-dashed border-border py-6 text-sm text-ink-muted transition-colors duration-[180ms] ease-brand hover:border-brand-300 hover:text-primary"
 				onclick={() => (addOpen = true)}
+				data-tour="add-section"
 			>
 				<Plus size={16} />
 				Add a section
@@ -223,7 +276,7 @@
 		</div>
 
 		<!-- page settings -->
-		<div class="flex flex-col gap-4">
+		<div class="flex flex-col gap-4" data-tour="page-settings">
 			<section class="rounded-3xl border border-border bg-surface p-5">
 				<h2 class="mb-4 text-sm font-medium text-ink">Page</h2>
 				<div class="flex flex-col gap-4">

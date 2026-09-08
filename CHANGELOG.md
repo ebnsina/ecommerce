@@ -17,6 +17,9 @@ User-facing changes, newest first.
   database, so a filtered view is a link you can send someone and a long list
   stays fast.
 - **Orders export to CSV**, respecting whatever the list is filtered to.
+- **Guided tours.** The page builder, the pages list and the menus screen walk
+  you through themselves the first time you open them, and a "Show me how"
+  button brings the walkthrough back whenever you want it.
 
 - **Compare works from every product grid.** The compare button now sits on all
   card sizes and lights up when a product is already on the shortlist, so the
