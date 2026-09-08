@@ -1,0 +1,144 @@
+/**
+ * The marketing surface.
+ *
+ * A sunset-marketplace language that is deliberately not the shop's: warm
+ * gradient over deep aubergine ink, one hot pink reserved for conversion, and a
+ * mono eyebrow introducing every section. Scoped to `.marketing` so none of it
+ * reaches the storefront or the admin, which keep their own tokens and their
+ * own themeable ramps.
+ *
+ * Every pairing below was measured, not eyeballed. One deliberate departure
+ * from the reference is noted at --m-cta.
+ */
+@import '@fontsource-variable/inter';
+@import '@fontsource/boldonse';
+@import '@fontsource-variable/jetbrains-mono';
+@import '@fontsource/permanent-marker';
+
+.marketing {
+	/* Structural ink. Every border and every piece of chrome carries this
+	   purple rather than a neutral grey. 18.97:1 on white. */
+	--m-ink: #240029;
+	--m-ink-2: #6d526d; /* secondary text — 6.82:1 on white */
+	--m-hairline: #d4ccd4; /* 1.57:1 on white: a visible hairline, not text */
+	--m-smoke: #bbadbb;
+
+	/* The one hot chromatic, kept for the conversion moment only. */
+	--m-pink: #df37a7;
+	/* White on #df37a7 measures 4.01:1, under the 4.5 this project treats as a
+	   hard gate for button text. The fill is darkened to the nearest shade of
+	   the same hue that clears it — 4.57:1 — while the original stays above for
+	   large text and decoration, where 3:1 is the bar. */
+	--m-cta: #cf339b;
+
+	--m-yellow: #ffcb0f;
+	--m-canvas: #ffffff;
+	--m-wash: #fff1bd;
+
+	--m-hero: linear-gradient(145deg, #ffbdd3, #fff1bd 40%, #fff1bd 60%, #ffcb0f);
+
+	/* Shadows carry the brand purple. A neutral black shadow reads as grey
+	   dirt against these warm surfaces. */
+	--m-shadow-card: 0 0 0 1px rgb(41 0 41 / 0.11), 0 2px 2px rgb(32 0 36 / 0.05);
+	--m-shadow-lift:
+		0 0 0 1px rgb(32 0 36 / 0.11), 0 1px 1.5px rgb(32 0 36 / 0.01), 0 2px 3px rgb(32 0 36 / 0.02),
+		0 4px 6px rgb(32 0 36 / 0.03), 0 8px 12px rgb(32 0 36 / 0.04), 0 16px 24px rgb(32 0 36 / 0.05);
+	--m-shadow-button: inset 0 0 0 1px rgb(255 255 255 / 0.2), 0 1px 2px rgb(0 0 0 / 0.05);
+
+	font-family: 'Inter Variable', system-ui, sans-serif;
+	font-feature-settings:
+		'calt' on,
+		'cv11' on,
+		'ss02' on,
+		'ss03' on;
+	color: var(--m-ink);
+	background: var(--m-canvas);
+}
+
+/* Display voice: one weight, one volume. Kaio is not distributable, so this is
+   Boldonse — the substitute the reference itself names, and the closest public
+   face to it: a single bold weight, tightly set. */
+.marketing .display {
+	font-family: 'Boldonse', 'Inter Variable', system-ui, sans-serif;
+	font-weight: 400;
+	line-height: 1;
+	letter-spacing: -0.02em;
+}
+
+/* The section-break signal: mono at wide tracking, which reads as a label
+   rather than as code. */
+.marketing .eyebrow {
+	font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+	font-size: 0.75rem;
+	font-weight: 400;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+}
+
+/* The personality layer. Used two or three times, over the gradient only,
+   where it has the contrast to be read. */
+.marketing .marker {
+	font-family: 'Permanent Marker', cursive;
+	font-weight: 400;
+	letter-spacing: -0.01em;
+}
+
+/* Material classes, kept to the reference's four radii: pill, card, button,
+   input. A fifth would blur the distinction between them. */
+.marketing .m-card {
+	border-radius: 14px;
+	background: var(--m-canvas);
+	box-shadow: var(--m-shadow-card);
+}
+
+.marketing .m-btn {
+	border-radius: 6px;
+	padding: 0.75rem 1.5rem;
+	font-size: 1rem;
+	font-weight: 600;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	transition:
+		background-color 180ms var(--ease-brand),
+		border-color 180ms var(--ease-brand);
+}
+
+.marketing .m-btn-primary {
+	background: var(--m-cta);
+	color: #fff;
+	box-shadow: var(--m-shadow-button);
+}
+
+.marketing .m-btn-primary:hover {
+	background: var(--m-ink);
+}
+
+.marketing .m-btn-ghost {
+	border: 1px solid var(--m-ink-2);
+	color: var(--m-ink);
+	font-weight: 500;
+}
+
+.marketing .m-btn-ghost:hover {
+	border-color: var(--m-ink);
+}
+
+.marketing .m-pill {
+	border-radius: 999px;
+	border: 1px solid var(--m-ink-2);
+	padding: 0.375rem 0.75rem;
+	font-size: 0.75rem;
+	font-weight: 500;
+}
+
+.marketing :focus-visible {
+	outline: 2px solid var(--m-ink);
+	outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.marketing .m-btn {
+		transition: none;
+	}
+}

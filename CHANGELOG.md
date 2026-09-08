@@ -69,6 +69,10 @@ User-facing changes, newest first.
 
 ### Changed
 
+- **The front page is CommerceBD**, in its own visual language: a sunset
+  gradient hero with the navigation blended into it, deep aubergine ink,
+  and one hot pink kept for the call to action. Scoped to the marketing pages —
+  the shop and the admin keep their own themeable palette.
 - **The front page now explains the product; the shop moved to `/demo`.**
 - **Images carry their own size and load lazily**, and fetch a phone-sized
   picture on a phone rather than a full-width one. Only the hero loads eagerly.

@@ -1,4 +1,4 @@
-# Store
+# CommerceBD
 
 An ecommerce platform for the Bangladeshi market, built so that the person who
 runs the shop — not a developer — can change everything about it.
