@@ -14,8 +14,10 @@ import { couriers, pipelineStatusFor, type CourierKey } from '$lib/server/courie
 import { sendSms } from '$lib/server/sms';
 import type { RequestHandler } from './$types';
 
-const byLabel = (label: string | null): CourierKey | null =>
-	label?.toLowerCase() === 'steadfast' ? 'steadfast' : null;
+const byLabel = (label: string | null): CourierKey | null => {
+	const key = label?.toLowerCase();
+	return key === 'steadfast' || key === 'pathao' ? key : null;
+};
 
 const run: RequestHandler = async ({ request }) => {
 	const secret = env.CRON_SECRET;

@@ -6,6 +6,11 @@ User-facing changes, newest first.
 
 ### Added
 
+- **Pathao as a courier**, alongside Steadfast. Pathao delivers by its own city
+  and area numbers rather than a written address, so each order's address is
+  matched against its lists by name — and an address it cannot place is
+  refused with a message saying which part, rather than sent as a guess.
+
 - **Online payment.** Cards, bKash, Nagad, Rocket and internet banking through
   SSLCommerz, switched on in Settings once the keys are in. Cash on delivery is
   untouched and stays the default. If the gateway cannot be reached the order

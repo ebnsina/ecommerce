@@ -87,8 +87,22 @@ export const load: PageServerLoad = async () => {
 				key: c.key,
 				name: c.label,
 				connected: c.configured,
-				purpose: 'Creates the consignment and keeps the order status in step with the courier.',
-				vars: ['STEADFAST_API_KEY', 'STEADFAST_SECRET_KEY', 'CRON_SECRET'],
+				purpose:
+					c.key === 'pathao'
+						? 'Creates the consignment and keeps the order status in step. Pathao needs its own city and area ids, which are matched from the address by name — an address it cannot place is refused rather than guessed at.'
+						: 'Creates the consignment and keeps the order status in step with the courier.',
+				vars:
+					c.key === 'pathao'
+						? [
+								'PATHAO_CLIENT_ID',
+								'PATHAO_CLIENT_SECRET',
+								'PATHAO_USERNAME',
+								'PATHAO_PASSWORD',
+								'PATHAO_STORE_ID',
+								'PATHAO_SANDBOX=1 (while testing)',
+								'CRON_SECRET'
+							]
+						: ['STEADFAST_API_KEY', 'STEADFAST_SECRET_KEY', 'CRON_SECRET'],
 				webhook: null
 			}))
 		},

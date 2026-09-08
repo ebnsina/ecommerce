@@ -107,6 +107,8 @@ export const actions: Actions = {
 				name: order.name,
 				phone: order.phone,
 				address: [address.line, address.area, address.city].filter(Boolean).join(', '),
+				// Pathao needs the parts separately, to resolve its own ids.
+				place: { city: address.city, area: address.area },
 				// Nothing to collect on an order already paid for.
 				codAmount: order.paymentStatus === 'paid' ? 0 : order.total,
 				note: order.note
