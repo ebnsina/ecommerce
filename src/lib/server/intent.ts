@@ -213,3 +213,41 @@ export async function boughtTogether(productId: string, limit = 4) {
 		.orderBy(desc(sql`count(distinct other.order_id)`))
 		.limit(limit);
 }
+
+/**
+ * The upsell: what buyers of the things already in this cart also took, minus
+ * whatever is in the cart. Same counted-from-orders basis as `boughtTogether`,
+ * so it is explainable and needs no model.
+ */
+export async function alsoBoughtWith(productIds: string[], limit = 3) {
+	if (!productIds.length) return [];
+
+	return db
+		.select({
+			id: products.id,
+			title: products.title,
+			slug: products.slug,
+			price: products.price,
+			compareAtPrice: products.compareAtPrice,
+			rating: products.rating,
+			reviewCount: products.reviewCount,
+			stock: products.stock,
+			hasVariants: products.hasVariants,
+			image: sql<string | null>`(select pi.url from product_images pi
+				where pi.product_id = products.id order by pi.sort limit 1)`.as('image'),
+			orders: sql<number>`count(distinct other.order_id)::int`.as('orders')
+		})
+		.from(sql`order_items other`)
+		.innerJoin(products, sql`products.id = other.product_id`)
+		.where(
+			sql`products.status = 'active'
+				and (products.has_variants or products.stock > 0)
+				and other.product_id not in ${productIds}
+				and other.order_id in (
+					select oi.order_id from order_items oi where oi.product_id in ${productIds}
+				)`
+		)
+		.groupBy(products.id)
+		.orderBy(desc(sql`count(distinct other.order_id)`))
+		.limit(limit);
+}

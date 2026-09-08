@@ -214,8 +214,13 @@
 				</div>
 
 				{#each options as opt, i (i)}
+					<!-- Aligned from the top: one field carries a hint and the other does
+					     not, so bottom alignment dropped the shorter one's label out of
+					     line with its neighbour. The button mirrors a field's own
+					     structure — a label row it leaves blank, then the control — so it
+					     stays put if the label style changes. -->
 					<div
-						class="mt-4 flex items-end gap-3 rounded-2xl border border-border p-3"
+						class="mt-4 flex items-start gap-3 rounded-2xl border border-border p-3"
 						transition:slide={slideOpen()}
 					>
 						<Input label="Option name" placeholder="Size" bind:value={opt.name} class="w-40" />
@@ -226,14 +231,17 @@
 							hint="Separate with commas"
 							class="flex-1"
 						/>
-						<button
-							type="button"
-							class="mb-6 grid size-9 place-items-center rounded-xl text-ink-faint transition-colors hover:bg-sale/8 hover:text-sale"
-							aria-label="Remove option"
-							onclick={() => (options = options.filter((_, j) => j !== i))}
-						>
-							<Trash2 size={16} />
-						</button>
+						<span class="flex shrink-0 flex-col gap-1.5">
+							<span class="text-sm font-medium" aria-hidden="true">&nbsp;</span>
+							<button
+								type="button"
+								class="grid h-11 w-9 place-items-center rounded-xl text-ink-faint transition-colors hover:bg-sale/8 hover:text-sale"
+								aria-label="Remove option"
+								onclick={() => (options = options.filter((_, j) => j !== i))}
+							>
+								<Trash2 size={16} />
+							</button>
+						</span>
 					</div>
 				{/each}
 

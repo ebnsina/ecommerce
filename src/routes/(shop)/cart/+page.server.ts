@@ -4,6 +4,7 @@ import { db } from '$lib/server/db';
 import { cartItems } from '$lib/server/db/schema';
 import { findCart, getLines, summarise } from '$lib/server/cart';
 import { addAction, wishlistAction } from '$lib/server/cart-actions';
+import { alsoBoughtWith } from '$lib/server/intent';
 import { addBundleToCart, removeBundleFromCart } from '$lib/server/bundles';
 import { getOrCreateCart } from '$lib/server/cart';
 import type { Actions, PageServerLoad } from './$types';
@@ -11,7 +12,12 @@ import type { Actions, PageServerLoad } from './$types';
 export const load: PageServerLoad = async (event) => {
 	const cart = await findCart(event);
 	const lines = cart ? await getLines(cart.id) : [];
-	return { lines, ...summarise(lines) };
+
+	// Suggestions come from what buyers of these items also took. An empty cart
+	// gets none: there is nothing to base them on.
+	const upsell = await alsoBoughtWith([...new Set(lines.map((l) => l.productId))]);
+
+	return { lines, upsell, ...summarise(lines) };
 };
 
 export const actions: Actions = {

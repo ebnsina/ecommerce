@@ -4,6 +4,12 @@ User-facing changes, newest first.
 
 ## Unreleased
 
+### Added
+
+- **"Often bought with this" in the cart.** One line per suggestion with a
+  single Add button, taken from what buyers of the things already in the cart
+  actually bought alongside them — never something already in the cart.
+
 ### Changed
 
 - **Coupons and bundles** join the shared list shape — search, filters, a row
@@ -17,6 +23,9 @@ User-facing changes, newest first.
 
 ### Fixed
 
+- **The options row on the product editor lines up.** One field carried a hint
+  and the other did not, so aligning the row by its bottom dropped one label
+  out of line.
 - **The heart on a product card now saves it.** It was a button with nothing
   behind it: the wishlist page and the save action both existed, only the card
   was never wired up. It also shows when something is already saved.

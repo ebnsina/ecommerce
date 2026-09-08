@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Upsell from '$lib/shop/Upsell.svelte';
 	import { enhance } from '$app/forms';
 	import { fade } from 'svelte/transition';
 	import {
@@ -175,6 +176,10 @@
 						</form>
 					</div>
 				{/each}
+
+				<!-- Under the cart lines, not beside them: it is an addition to what
+				     is already chosen, not a competing choice. -->
+				<Upsell items={data.upsell} />
 			</div>
 
 			<aside class="h-fit rounded-3xl border border-border bg-surface p-5 lg:sticky lg:top-28">
