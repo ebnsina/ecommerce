@@ -4,7 +4,17 @@ User-facing changes, newest first.
 
 ## Unreleased
 
+### Changed
+
+- **Status badges are readable.** Five of the seven order statuses failed
+  contrast as coloured text. Badges are now neutral tags — grey border, black
+  label — with the meaning carried by a coloured icon.
+
 ### Added
+
+- **Import formats are stated on the page.** The product importer already
+  accepted Shopify and WooCommerce exports; now it says so and names the format
+  it detected.
 
 - **Courier dispatch** — hand an order to Steadfast from the order page. The
   consignment and tracking code are stored, the order moves to shipped, and the

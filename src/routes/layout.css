@@ -38,6 +38,24 @@
 	--color-surface-alt: #f8fafc;
 	--color-border: #e2e8f0; /* slate-200 — light borders instead of shadows */
 
+	/* Status pairs. A badge is text, so each foreground is measured against its
+	   own tint, not against white: the previous single-colour badges ran as low
+	   as 2.15:1 and were unreadable. All pairs here are 5:1 or better. */
+	--color-warn-fg: #92400e;
+	--color-warn-bg: #fef3c7;
+	--color-info-fg: #1565c0;
+	--color-info-bg: #e3f2fd;
+	--color-active-fg: #0d47a1;
+	--color-active-bg: #dbeafe;
+	--color-transit-fg: #3730a3;
+	--color-transit-bg: #e0e7ff;
+	--color-ok-fg: #065f46;
+	--color-ok-bg: #d1fae5;
+	--color-warm-fg: #9a3412;
+	--color-warm-bg: #ffedd5;
+	--color-bad-fg: #9f1239;
+	--color-bad-bg: #ffe4e6;
+
 	--color-sale: #e11d48; /* 4.70:1 — deal price, discount badge */
 	--color-star: #f59e0b; /* icon graphic only, not text */
 	--color-success: #059669;

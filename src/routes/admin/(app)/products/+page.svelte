@@ -2,7 +2,17 @@
 	import { untrack } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import { Plus, Search, Package, Star, Upload, Download } from '@lucide/svelte';
+	import {
+		Plus,
+		Search,
+		Package,
+		Star,
+		Upload,
+		Download,
+		CircleCheck,
+		PencilLine,
+		Archive
+	} from '@lucide/svelte';
 	import { formatTk } from '$lib/money';
 	import Button from '$lib/ui/Button.svelte';
 	import Input from '$lib/ui/Input.svelte';
@@ -30,10 +40,11 @@
 		timer = setTimeout(() => apply({ q: value }), 250);
 	}
 
-	const statusTone: Record<string, string> = {
-		active: 'bg-success/10 text-success',
-		draft: 'bg-surface-alt text-ink-muted',
-		archived: 'bg-sale/10 text-sale'
+	/* Neutral tag, colour carried by the icon — same rule as the order status badge. */
+	const statusTone: Record<string, { Icon: typeof CircleCheck; color: string }> = {
+		active: { Icon: CircleCheck, color: 'var(--color-ok-fg)' },
+		draft: { Icon: PencilLine, color: 'var(--color-ink-faint)' },
+		archived: { Icon: Archive, color: 'var(--color-bad-fg)' }
 	};
 </script>
 
@@ -113,6 +124,7 @@
 			</thead>
 			<tbody>
 				{#each data.rows as p (p.id)}
+					{@const tone = statusTone[p.status] ?? statusTone.draft}
 					<tr class="border-b border-border transition-colors last:border-0 hover:bg-surface-alt">
 						<td class="px-4 py-3">
 							<a href="/admin/products/{p.id}" class="flex items-center gap-3">
@@ -139,7 +151,10 @@
 							</a>
 						</td>
 						<td class="px-4 py-3">
-							<span class="rounded-lg px-2 py-0.5 text-xs capitalize {statusTone[p.status]}">
+							<span
+								class="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface px-2 py-0.5 text-xs font-medium text-ink capitalize"
+							>
+								<tone.Icon size={13} class="shrink-0" style="color: {tone.color}" />
 								{p.status}
 							</span>
 						</td>

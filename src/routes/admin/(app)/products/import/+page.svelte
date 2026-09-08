@@ -1,7 +1,14 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { fade } from 'svelte/transition';
-	import { ArrowLeft, Download, Upload, Check, TriangleAlert } from '@lucide/svelte';
+	import {
+		ArrowLeft,
+		Download,
+		Upload,
+		Check,
+		TriangleAlert,
+		FileSpreadsheet
+	} from '@lucide/svelte';
 	import { fadeIn } from '$lib/motion';
 	import Button from '$lib/ui/Button.svelte';
 	import Checkbox from '$lib/ui/Checkbox.svelte';
@@ -36,6 +43,24 @@
 		Upload a CSV to create or update products in bulk. Rows are matched on
 		<span class="font-medium text-ink">slug</span> — an existing slug updates that product, a new one
 		creates it.
+	</p>
+
+	<!-- The importer detects these formats; say so, or nobody knows they can migrate. -->
+	<div class="mt-4 flex flex-wrap gap-2">
+		{#each [{ name: 'Shopify export', note: 'products_export.csv' }, { name: 'WooCommerce export', note: 'wc-product-export.csv' }, { name: 'This store’s CSV', note: 'from Export below' }] as f (f.name)}
+			<span
+				class="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface px-2.5 py-1 text-xs text-ink"
+			>
+				<FileSpreadsheet size={13} class="shrink-0 text-primary" />
+				{f.name}
+				<span class="text-ink-faint">· {f.note}</span>
+			</span>
+		{/each}
+	</div>
+	<p class="mt-2 text-xs text-ink-muted">
+		The format is detected from the header row — export from your old shop and upload it as it
+		comes. Shopify rows sharing a handle are folded into one product with its options and images;
+		WooCommerce variation rows are skipped and a sale price becomes the live price.
 	</p>
 
 	<div class="mt-4 rounded-2xl bg-surface-alt p-4">
@@ -100,6 +125,14 @@
 				<h2 class="text-sm font-medium text-ink">
 					{form.dryRun ? 'Preview' : 'Import complete'}
 				</h2>
+				{#if form.formatLabel}
+					<span
+						class="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface px-2 py-0.5 text-xs font-medium text-ink"
+					>
+						<FileSpreadsheet size={12} class="shrink-0 text-primary" />
+						{form.formatLabel}
+					</span>
+				{/if}
 				<span class="flex gap-2 text-xs">
 					<span class="rounded-lg bg-success/10 px-2 py-0.5 text-success">
 						<span class="num font-semibold">{form.created}</span> created

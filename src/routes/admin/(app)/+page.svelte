@@ -3,6 +3,7 @@
 	import { BanknoteIcon, ShoppingCart, Clock, Users, TriangleAlert } from '@lucide/svelte';
 	import { formatTk } from '$lib/money';
 	import StatCard from '$lib/ui/StatCard.svelte';
+	import OrderStatus from '$lib/shop/OrderStatus.svelte';
 	import LineChart from '$lib/charts/LineChart.svelte';
 	import BarChart from '$lib/charts/BarChart.svelte';
 
@@ -37,14 +38,16 @@
 		now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
 	);
 
+	/* Bars are large blocks of colour, so they use the stronger foreground of
+	   each status pair — the same hue family the badges use. */
 	const statusTone: Record<string, string> = {
-		pending: 'var(--color-brand-300)',
-		confirmed: 'var(--color-brand-500)',
-		packed: 'var(--color-brand-600)',
-		shipped: 'var(--color-brand-700)',
-		delivered: 'var(--color-success)',
-		returned: 'var(--color-star)',
-		cancelled: 'var(--color-sale)'
+		pending: 'var(--color-warn-fg)',
+		confirmed: 'var(--color-info-fg)',
+		packed: 'var(--color-active-fg)',
+		shipped: 'var(--color-transit-fg)',
+		delivered: 'var(--color-ok-fg)',
+		returned: 'var(--color-warm-fg)',
+		cancelled: 'var(--color-bad-fg)'
 	};
 
 	const statusBars = $derived(
@@ -157,13 +160,7 @@
 							</td>
 							<td class="px-5 py-3 text-ink">{o.name}</td>
 							<td class="px-5 py-3">
-								<span
-									class="inline-flex items-center gap-1.5 rounded-lg px-2 py-0.5 text-xs capitalize"
-									style="background:color-mix(in oklab, {statusTone[o.status]} 12%, transparent);
-									       color:{statusTone[o.status]}"
-								>
-									{o.status}
-								</span>
+								<OrderStatus status={o.status} />
 							</td>
 							<td class="num px-5 py-3 text-right font-medium text-ink">{formatTk(o.total)}</td>
 						</tr>
