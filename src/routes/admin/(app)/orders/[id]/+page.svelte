@@ -165,21 +165,82 @@
 				<Truck size={15} class="text-primary" />
 				Courier
 			</h2>
-			<form method="POST" action="?/courier" use:enhance class="mt-3 flex flex-col gap-3">
-				<Input
-					name="courier"
-					label="Courier"
-					value={data.order.courier ?? ''}
-					placeholder="Steadfast"
-				/>
-				<Input
-					name="consignmentId"
-					label="Consignment ID"
-					value={data.order.consignmentId ?? ''}
-					numeric
-				/>
-				<Button size="sm" variant="secondary" type="submit">Save</Button>
-			</form>
+
+			{#if data.order.consignmentId}
+				<dl class="mt-3 flex flex-col gap-1.5 text-sm">
+					<div class="flex justify-between gap-3">
+						<dt class="text-ink-muted">Courier</dt>
+						<dd class="text-ink">{data.order.courier}</dd>
+					</div>
+					<div class="flex justify-between gap-3">
+						<dt class="text-ink-muted">Consignment</dt>
+						<dd class="num text-ink">{data.order.consignmentId}</dd>
+					</div>
+					{#if data.order.trackingCode}
+						<div class="flex justify-between gap-3">
+							<dt class="text-ink-muted">Tracking</dt>
+							<dd class="num text-ink">{data.order.trackingCode}</dd>
+						</div>
+					{/if}
+					{#if data.order.courierStatus}
+						<div class="flex justify-between gap-3">
+							<dt class="text-ink-muted">Their status</dt>
+							<dd class="text-ink capitalize">{data.order.courierStatus.replace(/_/g, ' ')}</dd>
+						</div>
+					{/if}
+				</dl>
+
+				{#if data.order.courierSyncedAt}
+					<p class="mt-2 text-xs text-ink-faint">
+						Checked {new Date(data.order.courierSyncedAt).toLocaleString('en-GB', {
+							day: 'numeric',
+							month: 'short',
+							hour: '2-digit',
+							minute: '2-digit'
+						})}
+					</p>
+				{/if}
+			{:else}
+				<p class="mt-1 text-xs text-ink-muted">
+					Sending the parcel marks the order shipped and texts the customer.
+				</p>
+
+				<div class="mt-3 flex flex-col gap-2">
+					{#each data.couriers as c (c.key)}
+						<form method="POST" action="?/dispatch" use:enhance>
+							<input type="hidden" name="courier" value={c.key} />
+							<Button size="sm" block type="submit" disabled={!c.configured}>
+								<Truck size={15} />
+								Send with {c.label}
+							</Button>
+							{#if !c.configured}
+								<p class="mt-1 text-xs text-ink-faint">
+									{c.label} is not connected — add its API key and secret.
+								</p>
+							{/if}
+						</form>
+					{/each}
+				</div>
+
+				<details class="mt-4">
+					<summary class="cursor-pointer text-xs text-ink-muted">Enter details by hand</summary>
+					<form method="POST" action="?/courier" use:enhance class="mt-3 flex flex-col gap-3">
+						<Input
+							name="courier"
+							label="Courier"
+							value={data.order.courier ?? ''}
+							placeholder="Steadfast"
+						/>
+						<Input
+							name="consignmentId"
+							label="Consignment ID"
+							value={data.order.consignmentId ?? ''}
+							numeric
+						/>
+						<Button size="sm" variant="secondary" type="submit">Save</Button>
+					</form>
+				</details>
+			{/if}
 		</section>
 
 		<section class="rounded-3xl border border-border bg-surface p-5">

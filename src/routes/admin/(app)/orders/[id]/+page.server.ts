@@ -4,6 +4,7 @@ import { db } from '$lib/server/db';
 import { orders, orderItems, orderEvents, adminUsers } from '$lib/server/db/schema';
 import { confirmOrder } from '$lib/server/orders';
 import { sendSms } from '$lib/server/sms';
+import { couriers, courierStatusList, type CourierKey } from '$lib/server/couriers';
 import type { Actions, PageServerLoad } from './$types';
 
 /** Which transitions are legal from each state — the pipeline in one place. */
@@ -38,7 +39,7 @@ export const load: PageServerLoad = async ({ params }) => {
 			.orderBy(asc(orderEvents.createdAt))
 	]);
 
-	return { order, items, events, next: NEXT[order.status] ?? [] };
+	return { order, items, events, next: NEXT[order.status] ?? [], couriers: courierStatusList() };
 };
 
 const SMS: Record<string, (n: string) => string | null> = {
@@ -83,6 +84,62 @@ export const actions: Actions = {
 
 		const message = SMS[to]?.(order.number);
 		if (message) await sendSms(order.phone, message);
+
+		return { ok: true };
+	},
+
+	/** Hands the parcel to the courier and records what came back. */
+	dispatch: async ({ request, params, locals }) => {
+		const key = String((await request.formData()).get('courier') ?? '') as CourierKey;
+		const adapter = couriers[key];
+		if (!adapter) return fail(400, { error: 'Unknown courier.' });
+
+		const [order] = await db.select().from(orders).where(eq(orders.id, params.id)).limit(1);
+		if (!order) return fail(404, { error: 'Order not found.' });
+		if (order.consignmentId)
+			return fail(400, { error: `Already sent to ${order.courier ?? 'a courier'}.` });
+
+		const address = order.address as { line: string; area?: string; city: string };
+
+		try {
+			const result = await adapter.dispatch({
+				invoice: order.number,
+				name: order.name,
+				phone: order.phone,
+				address: [address.line, address.area, address.city].filter(Boolean).join(', '),
+				// Nothing to collect on an order already paid for.
+				codAmount: order.paymentStatus === 'paid' ? 0 : order.total,
+				note: order.note
+			});
+
+			await db
+				.update(orders)
+				.set({
+					courier: adapter.label,
+					consignmentId: result.consignmentId,
+					trackingCode: result.trackingCode,
+					courierSyncedAt: new Date()
+				})
+				.where(eq(orders.id, order.id));
+
+			// Dispatching is the shipping event, so record it as one.
+			if (order.status === 'packed' || order.status === 'confirmed') {
+				await db.update(orders).set({ status: 'shipped' }).where(eq(orders.id, order.id));
+				await db.insert(orderEvents).values({
+					orderId: order.id,
+					fromStatus: order.status,
+					toStatus: 'shipped',
+					note: `Handed to ${adapter.label} · ${result.consignmentId}`,
+					actorId: locals.user?.kind === 'admin' ? locals.user.id : null
+				});
+				await sendSms(
+					order.phone,
+					`Your order ${order.number} is on the way. Please keep your phone reachable.`
+				);
+			}
+		} catch (e) {
+			return fail(502, { error: (e as Error).message });
+		}
 
 		return { ok: true };
 	},

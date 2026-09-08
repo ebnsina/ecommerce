@@ -406,6 +406,10 @@ export const orders = pgTable(
 		status: orderStatus().notNull().default('pending'),
 		courier: text(),
 		consignmentId: text('consignment_id'),
+		trackingCode: text('tracking_code'),
+		/** The courier's own wording, kept verbatim beside our pipeline status. */
+		courierStatus: text('courier_status'),
+		courierSyncedAt: timestamp('courier_synced_at', { withTimezone: true }),
 		note: text(),
 		createdAt: now()
 	},

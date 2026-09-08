@@ -6,6 +6,12 @@ User-facing changes, newest first.
 
 ### Added
 
+- **Courier dispatch** — hand an order to Steadfast from the order page. The
+  consignment and tracking code are stored, the order moves to shipped, and the
+  customer is texted. A scheduled job refreshes courier status and advances the
+  order when the courier's wording is unambiguous, marking a delivered
+  cash-on-delivery parcel as paid.
+
 - **Product bundles** — sell a set of products together for one price. Bundles
   appear on the product page of everything they contain, showing the saving
   against buying separately, and add to the cart as a group that is removed as a
