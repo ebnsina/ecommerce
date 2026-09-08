@@ -1,9 +1,10 @@
 /** Inbox service: find-or-create threads, record messages, send replies. */
 import { and, desc, eq, sql, count, isNull } from 'drizzle-orm';
 import { db } from './db';
-import { conversations, messages, customers, orders } from './db/schema';
+import { conversations, messages, customers, orders, products } from './db/schema';
 import { adapters, type ChannelKey } from './channels';
 import { normalizePhone } from '$lib/phone';
+import { contextFor } from './messageContext';
 
 /**
  * Finds the thread for a platform sender, creating it on first contact.
@@ -99,8 +100,26 @@ export async function receiveMessage(input: {
 	phone?: string | null;
 	body: string;
 	messageId?: string | null;
+	/** Referral payload from the platform, e.g. m.me/<page>?ref=<slug> */
+	ref?: string | null;
+	/** Page the website widget was opened from. */
+	sourceUrl?: string | null;
 }) {
 	const conversation = await findOrCreateConversation(input);
+
+	// Attach what the message is about the first time we can work it out, so a
+	// thread that opens with "koto taka?" still says which product.
+	if (!conversation.productId) {
+		const product = await contextFor(input);
+		if (product || input.sourceUrl)
+			await db
+				.update(conversations)
+				.set({
+					productId: product?.id ?? conversation.productId,
+					sourceUrl: input.sourceUrl ?? conversation.sourceUrl
+				})
+				.where(eq(conversations.id, conversation.id));
+	}
 	await recordMessage({
 		conversationId: conversation.id,
 		inbound: true,
@@ -157,6 +176,23 @@ export async function getThread(conversationId: string) {
 		.where(eq(messages.conversationId, conversationId))
 		.orderBy(messages.createdAt);
 
+	const [product] = conversation.productId
+		? await db
+				.select({
+					id: products.id,
+					title: products.title,
+					slug: products.slug,
+					price: products.price,
+					stock: products.stock,
+					hasVariants: products.hasVariants,
+					image: sql<string | null>`(select pi.url from product_images pi
+						where pi.product_id = products.id order by pi.sort limit 1)`
+				})
+				.from(products)
+				.where(eq(products.id, conversation.productId))
+				.limit(1)
+		: [];
+
 	const recentOrders = conversation.phone
 		? await db
 				.select({
@@ -172,7 +208,7 @@ export async function getThread(conversationId: string) {
 				.limit(5)
 		: [];
 
-	return { conversation, messages: rows, orders: recentOrders };
+	return { conversation, messages: rows, orders: recentOrders, product: product ?? null };
 }
 
 export const unreadCount = async () =>

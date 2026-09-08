@@ -494,6 +494,10 @@ export const conversations = pgTable(
 		externalId: text('external_id'),
 		customerId: uuid('customer_id').references(() => customers.id, { onDelete: 'set null' }),
 		orderId: uuid('order_id').references(() => orders.id, { onDelete: 'set null' }),
+		/** What the customer was looking at when they wrote — the missing context
+		    that otherwise leaves staff answering "which one?" */
+		productId: uuid('product_id').references(() => products.id, { onDelete: 'set null' }),
+		sourceUrl: text('source_url'),
 		name: text().notNull(),
 		phone: text(),
 		status: conversationStatus().notNull().default('open'),

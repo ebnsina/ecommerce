@@ -215,7 +215,8 @@
 							</Button>
 							{#if !c.configured}
 								<p class="mt-1 text-xs text-ink-faint">
-									{c.label} is not connected — add its API key and secret.
+									{c.label} is not connected —
+									<a href="/admin/connections" class="underline">see what it needs</a>.
 								</p>
 							{/if}
 						</form>

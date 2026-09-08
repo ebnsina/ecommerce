@@ -13,6 +13,7 @@ import {
 	FileText,
 	Menu as MenuIcon,
 	Settings,
+	Plug,
 	type Icon
 } from '@lucide/svelte';
 
@@ -47,7 +48,13 @@ export const navGroups: NavGroup[] = [
 			{ href: '/admin/menus', icon: MenuIcon, label: 'Menus' }
 		]
 	},
-	{ title: 'System', items: [{ href: '/admin/settings', icon: Settings, label: 'Settings' }] }
+	{
+		title: 'System',
+		items: [
+			{ href: '/admin/settings', icon: Settings, label: 'Settings' },
+			{ href: '/admin/connections', icon: Plug, label: 'Connections' }
+		]
+	}
 ];
 
 const labels = new Map(navGroups.flatMap((g) => g.items.map((i) => [i.href, i.label] as const)));

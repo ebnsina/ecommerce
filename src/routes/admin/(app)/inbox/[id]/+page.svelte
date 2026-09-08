@@ -10,7 +10,8 @@
 		Archive,
 		Clock,
 		TriangleAlert,
-		Package
+		Package,
+		ShoppingBag
 	} from '@lucide/svelte';
 	import { formatTk } from '$lib/money';
 	import { formatPhone } from '$lib/phone';
@@ -252,9 +253,9 @@
 					</Button>
 
 					{#if !data.aiReady}
-						<span class="text-xs text-ink-faint">
-							Set the API key for AI_PROVIDER={data.aiProvider} to enable this.
-						</span>
+						<a href="/admin/connections" class="text-xs text-ink-muted underline">
+							Needs an API key — see Connections
+						</a>
 					{/if}
 
 					<Button type="submit" class="ml-auto" loading={sending} disabled={!body.trim()}>
@@ -268,6 +269,45 @@
 
 	<!-- context: who this is, and what they have bought -->
 	<aside class="h-fit rounded-3xl border border-border bg-surface p-5">
+		{#if data.product}
+			<!-- The missing context: what the customer was looking at when they wrote. -->
+			<h2 class="flex items-center gap-2 text-sm font-medium text-ink">
+				<ShoppingBag size={15} class="text-primary" />
+				Asking about
+			</h2>
+			<a
+				href="/p/{data.product.slug}"
+				target="_blank"
+				rel="noopener"
+				class="mt-2 mb-5 flex items-center gap-3 rounded-2xl border border-border p-2.5 transition-colors hover:border-brand-300"
+			>
+				<span class="size-11 shrink-0 overflow-hidden rounded-xl bg-surface-alt">
+					{#if data.product.image}
+						<img src={data.product.image} alt="" class="size-full object-cover" />
+					{/if}
+				</span>
+				<span class="min-w-0">
+					<span class="block truncate text-sm font-medium text-ink">{data.product.title}</span>
+					<span class="num block text-xs text-ink-muted">
+						{formatTk(data.product.price)}
+						· {data.product.hasVariants || data.product.stock > 0
+							? `${data.product.stock} in stock`
+							: 'out of stock'}
+					</span>
+				</span>
+			</a>
+		{:else if data.conversation.sourceUrl}
+			<h2 class="text-sm font-medium text-ink">Wrote from</h2>
+			<a
+				href={data.conversation.sourceUrl}
+				target="_blank"
+				rel="noopener"
+				class="mt-1 mb-5 block truncate text-xs text-primary"
+			>
+				{data.conversation.sourceUrl}
+			</a>
+		{/if}
+
 		<h2 class="text-sm font-medium text-ink">Customer</h2>
 		<p class="mt-2 text-sm text-ink">{data.conversation.name}</p>
 		{#if data.conversation.phone}

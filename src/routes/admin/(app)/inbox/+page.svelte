@@ -2,7 +2,7 @@
 	import { untrack } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import { Search, Inbox } from '@lucide/svelte';
+	import { Search, Inbox, ShoppingBag } from '@lucide/svelte';
 	import Input from '$lib/ui/Input.svelte';
 	import Tabs from '$lib/ui/Tabs.svelte';
 	import ChannelBadge from '$lib/admin/ChannelBadge.svelte';
@@ -58,7 +58,7 @@
 			{#if c.configured}
 				<span class="size-1.5 rounded-full bg-ok-fg" title="Connected"></span>
 			{:else}
-				<span class="text-xs text-ink-faint">not connected</span>
+				<a href="/admin/connections" class="text-xs text-ink-faint underline">not connected</a>
 			{/if}
 		</span>
 	{/each}

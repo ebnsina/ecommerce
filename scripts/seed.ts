@@ -3,6 +3,7 @@
  * Run: pnpm db:seed  (idempotent — safe to re-run)
  */
 import postgres from 'postgres';
+import { eq } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { hashPassword } from '../src/lib/server/password.ts';
 import * as s2 from '../src/lib/server/db/schema.ts';
@@ -973,6 +974,15 @@ if (process.env.SEED_DEMO) {
 			name: 'Tanvir Ahmed',
 			phone: '01912345678',
 			msgs: [['in', 'My order was supposed to arrive yesterday. Any update?']]
+		},
+		{
+			channel: 'telegram' as const,
+			externalId: 'tg_9931',
+			name: 'Shirin Akter',
+			phone: '01612345678',
+			// Arrived from a product page, so the thread knows what it is about.
+			fromProduct: true,
+			msgs: [['in', 'Eta ki original? Warranty ache?']]
 		}
 	];
 
@@ -989,6 +999,20 @@ if (process.env.SEED_DEMO) {
 			.onConflictDoNothing()
 			.returning({ id: s2.conversations.id });
 		if (!conv) continue;
+
+		// Attach the product the demo thread came from.
+		if ((t as { fromProduct?: boolean }).fromProduct) {
+			const [p] = await db
+				.select({ id: s2.products.id })
+				.from(s2.products)
+				.where(eq(s2.products.status, 'active'))
+				.limit(1);
+			if (p)
+				await db
+					.update(s2.conversations)
+					.set({ productId: p.id })
+					.where(eq(s2.conversations.id, conv.id));
+		}
 
 		for (const [dir, body] of t.msgs)
 			await db.insert(s2.messages).values({

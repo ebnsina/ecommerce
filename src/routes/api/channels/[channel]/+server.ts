@@ -60,6 +60,8 @@ type Normalised = {
 	phone?: string | null;
 	body: string;
 	messageId?: string | null;
+	/** Platform referral payload — how we learn which product prompted the message. */
+	ref?: string | null;
 };
 
 function fromTelegram(payload: any): Normalised[] {
@@ -89,6 +91,8 @@ function fromWhatsApp(payload: any): Normalised[] {
 				if (m.type !== 'text' || !m.text?.body) continue;
 				const contact = contacts.find((c) => c.wa_id === m.from);
 				out.push({
+					// A referred WhatsApp message carries the source page.
+					ref: value.messages?.[0]?.referral?.source_url ?? null,
 					externalId: String(m.from),
 					name: contact?.profile?.name || 'WhatsApp user',
 					// wa_id is an international number; store the local form.
@@ -114,7 +118,9 @@ function fromMeta(payload: any): Normalised[] {
 				externalId: String(evt.sender?.id ?? ''),
 				name: 'Customer',
 				body: String(evt.message.text),
-				messageId: evt.message.mid ?? null
+				messageId: evt.message.mid ?? null,
+				// m.me/<page>?ref=<slug> arrives here, on the first message only.
+				ref: evt.referral?.ref ?? evt.postback?.referral?.ref ?? null
 			});
 		}
 	}

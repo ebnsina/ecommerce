@@ -137,7 +137,13 @@
 					`?text=${encodeURIComponent(`Hi! I want to order:\n${data.product.title}\n${formatTk(price)}\n${shareUrl}`)}`
 			: ''
 	);
-	const fbLink = $derived(contact.messenger ? `https://m.me/${contact.messenger}` : '');
+	/* The ref rides along to the webhook, so the inbox knows which product the
+	   conversation started from. */
+	const fbLink = $derived(
+		contact.messenger
+			? `https://m.me/${contact.messenger}?ref=${encodeURIComponent(data.product.slug)}`
+			: ''
+	);
 
 	/* Delivery estimate straight from the settings table, so it can never
 	   contradict what checkout actually charges. */

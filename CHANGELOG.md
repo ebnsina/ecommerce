@@ -6,6 +6,14 @@ User-facing changes, newest first.
 
 ### Added
 
+- **Inbox threads say what they are about.** A message that opens with "koto
+  taka?" now carries the product the customer was looking at, shown on the thread
+  and in the list. It is picked up from a Messenger referral, from a product link
+  in the message, or from the page the website widget was opened on.
+- **Connections page.** One screen listing every integration, what each is for,
+  whether it is set up, and the exact variable names a developer needs — so a
+  "not connected" notice is no longer a dead end.
+
 - **Theme picker.** Seven colour presets and a choice of white or warm page
   background, set in Settings and applied across both the storefront and the
   admin without a rebuild. Every palette is checked for legibility before it

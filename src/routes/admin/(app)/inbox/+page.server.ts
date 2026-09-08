@@ -1,6 +1,6 @@
 import { and, desc, eq, ilike, or, sql } from 'drizzle-orm';
 import { db } from '$lib/server/db';
-import { conversations, messages } from '$lib/server/db/schema';
+import { conversations, messages, products } from '$lib/server/db/schema';
 import { channelStatus } from '$lib/server/channels';
 import type { PageServerLoad } from './$types';
 
@@ -26,6 +26,8 @@ export const load: PageServerLoad = async ({ url }) => {
 				unread: conversations.unread,
 				lastMessageAt: conversations.lastMessageAt,
 				// The preview line is the newest message, whoever sent it.
+				about: products.title,
+				aboutSlug: products.slug,
 				preview: sql<string>`coalesce((
 					select m.body from messages m
 					where m.conversation_id = conversations.id
@@ -33,6 +35,7 @@ export const load: PageServerLoad = async ({ url }) => {
 				), '')`
 			})
 			.from(conversations)
+			.leftJoin(products, eq(products.id, conversations.productId))
 			.where(where)
 			.orderBy(desc(conversations.lastMessageAt))
 			.limit(100),
