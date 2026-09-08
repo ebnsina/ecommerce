@@ -1,12 +1,40 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { fade } from 'svelte/transition';
-	import { Trash2, Minus, Plus, ShoppingBag, ArrowRight, TriangleAlert } from '@lucide/svelte';
+	import {
+		Trash2,
+		Minus,
+		Plus,
+		ShoppingBag,
+		ArrowRight,
+		TriangleAlert,
+		PackagePlus
+	} from '@lucide/svelte';
 	import { formatTk } from '$lib/money';
 	import { fadeIn } from '$lib/motion';
 	import Button from '$lib/ui/Button.svelte';
 
 	let { data, form } = $props();
+
+	/* Bundle lines are shown as one group: the price was for the set, so the
+	   cart must not invite editing a single member of it. */
+	const groups = $derived.by(() => {
+		const loose = data.lines.filter((l) => !l.bundleId);
+		const byBundle = new Map<string, typeof data.lines>();
+		for (const l of data.lines) {
+			if (!l.bundleId) continue;
+			byBundle.set(l.bundleId, [...(byBundle.get(l.bundleId) ?? []), l]);
+		}
+		return {
+			loose,
+			bundles: [...byBundle.entries()].map(([id, lines]) => ({
+				id,
+				title: lines[0].bundleTitle ?? 'Bundle',
+				lines,
+				total: lines.reduce((n, l) => n + l.lineTotal, 0)
+			}))
+		};
+	});
 </script>
 
 <svelte:head><title>Cart · {data.settings.store.name}</title></svelte:head>
@@ -32,7 +60,7 @@
 	{:else}
 		<div class="mt-6 grid gap-6 lg:grid-cols-[1fr_20rem]">
 			<div class="overflow-hidden rounded-3xl border border-border bg-surface">
-				{#each data.lines as line (line.id)}
+				{#each groups.loose as line (line.id)}
 					<div
 						class="flex gap-4 border-b border-border p-4 last:border-0"
 						transition:fade={fadeIn()}
@@ -101,6 +129,50 @@
 						</div>
 
 						<p class="num shrink-0 text-sm font-semibold text-ink">{formatTk(line.lineTotal)}</p>
+					</div>
+				{/each}
+				{#each groups.bundles as group (group.id)}
+					<div class="border-b border-border p-4 last:border-0" transition:fade={fadeIn()}>
+						<div class="flex items-center gap-2">
+							<PackagePlus size={15} class="shrink-0 text-primary" />
+							<span class="text-sm font-medium text-ink">{group.title}</span>
+							<span class="num ml-auto text-sm font-semibold text-ink">{formatTk(group.total)}</span
+							>
+						</div>
+
+						<ul class="mt-3 flex flex-col gap-2 pl-6">
+							{#each group.lines as line (line.id)}
+								<li class="flex items-center gap-3">
+									<a
+										href="/p/{line.slug}"
+										class="size-12 shrink-0 overflow-hidden rounded-xl bg-surface-alt"
+									>
+										{#if line.image}<img
+												src={line.image}
+												alt=""
+												class="size-full object-cover"
+											/>{/if}
+									</a>
+									<span class="min-w-0 flex-1">
+										<a href="/p/{line.slug}" class="block truncate text-sm text-ink">{line.title}</a
+										>
+										<span class="num block text-xs text-ink-muted">
+											{line.qty} × {formatTk(line.unitPrice)}
+										</span>
+									</span>
+								</li>
+							{/each}
+						</ul>
+
+						<form method="POST" action="?/removeBundle" use:enhance class="mt-3 pl-6">
+							<input type="hidden" name="bundleId" value={group.id} />
+							<button
+								class="flex items-center gap-1.5 text-xs text-ink-faint transition-colors hover:text-sale"
+							>
+								<Trash2 size={13} />
+								Remove bundle
+							</button>
+						</form>
 					</div>
 				{/each}
 			</div>

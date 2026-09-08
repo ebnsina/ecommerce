@@ -6,6 +6,12 @@ User-facing changes, newest first.
 
 ### Added
 
+- **Product bundles** — sell a set of products together for one price. Bundles
+  appear on the product page of everything they contain, showing the saving
+  against buying separately, and add to the cart as a group that is removed as a
+  group. The bundle price is split across its members so order totals need no
+  special case.
+
 - **Storefront** — homepage built from CMS blocks, category pages, product pages
   with variants, search, cart, wishlist, product comparison, and a three-step
   animated checkout.

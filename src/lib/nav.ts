@@ -2,6 +2,7 @@
 import {
 	LayoutDashboard,
 	Package,
+	PackagePlus,
 	FolderTree,
 	Images,
 	ShoppingCart,
@@ -24,6 +25,7 @@ export const navGroups: NavGroup[] = [
 		title: 'Catalog',
 		items: [
 			{ href: '/admin/products', icon: Package, label: 'Products' },
+			{ href: '/admin/bundles', icon: PackagePlus, label: 'Bundles' },
 			{ href: '/admin/categories', icon: FolderTree, label: 'Categories' },
 			{ href: '/admin/media', icon: Images, label: 'Media' }
 		]

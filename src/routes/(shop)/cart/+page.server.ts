@@ -4,6 +4,8 @@ import { db } from '$lib/server/db';
 import { cartItems } from '$lib/server/db/schema';
 import { findCart, getLines, summarise } from '$lib/server/cart';
 import { addAction, wishlistAction } from '$lib/server/cart-actions';
+import { addBundleToCart, removeBundleFromCart } from '$lib/server/bundles';
+import { getOrCreateCart } from '$lib/server/cart';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
@@ -14,6 +16,27 @@ export const load: PageServerLoad = async (event) => {
 
 export const actions: Actions = {
 	add: addAction,
+
+	addBundle: async (event) => {
+		const form = await event.request.formData();
+		const cart = await getOrCreateCart(event);
+		const result = await addBundleToCart(cart.id, String(form.get('bundleId') ?? ''));
+		if (!result.ok) return fail(400, { error: result.error });
+
+		const to = String(form.get('redirectTo') ?? '');
+		if (to) redirect(303, to);
+		return { ok: true };
+	},
+
+	removeBundle: async (event) => {
+		const cart = await findCart(event);
+		if (cart)
+			await removeBundleFromCart(
+				cart.id,
+				String((await event.request.formData()).get('bundleId') ?? '')
+			);
+		return { ok: true };
+	},
 
 	setQty: async (event) => {
 		const form = await event.request.formData();

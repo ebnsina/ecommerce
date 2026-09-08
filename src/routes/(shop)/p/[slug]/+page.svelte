@@ -24,6 +24,7 @@
 	import { SiWhatsapp, SiFacebook } from '$lib/shop/brandIcons';
 	import ProductSection from '$lib/shop/ProductSection.svelte';
 	import ProductTabs from '$lib/shop/ProductTabs.svelte';
+	import BundleOffer from '$lib/shop/BundleOffer.svelte';
 	import Button from '$lib/ui/Button.svelte';
 
 	let { data, form } = $props();
@@ -408,6 +409,10 @@
 					Currently unavailable
 				{/if}
 			</p>
+
+			{#each data.bundles as bundle (bundle.id)}
+				<BundleOffer {bundle} redirectTo={page.url.pathname} />
+			{/each}
 
 			{#if assurances.length}
 				<ul class="mt-6 flex flex-col gap-3 rounded-3xl bg-surface-alt p-5">

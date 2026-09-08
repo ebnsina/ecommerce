@@ -255,6 +255,45 @@ export const productQuestions = pgTable(
 	(t) => [index('questions_product_idx').on(t.productId, t.createdAt)]
 );
 
+/* ── bundles ─────────────────────────────────────────────────────────── */
+
+/**
+ * A bundle is a fixed set of products sold together for one price.
+ *
+ * Adding one to the cart adds its items with their unit prices scaled so the
+ * line total equals the bundle price. Orders therefore need no bundle concept
+ * at all — every order line still carries its own snapshot price.
+ */
+export const bundles = pgTable('bundles', {
+	id: id(),
+	title: text().notNull(),
+	titleBn: text('title_bn'),
+	slug: text().notNull().unique(),
+	description: text(),
+	image: text(),
+	/** What the set costs. The saving is this against the sum of its parts. */
+	price: poisha('price').notNull(),
+	active: boolean().notNull().default(true),
+	sort: integer().notNull().default(0),
+	createdAt: now()
+});
+
+export const bundleItems = pgTable(
+	'bundle_items',
+	{
+		id: id(),
+		bundleId: uuid('bundle_id')
+			.notNull()
+			.references(() => bundles.id, { onDelete: 'cascade' }),
+		productId: uuid('product_id')
+			.notNull()
+			.references(() => products.id, { onDelete: 'cascade' }),
+		variantId: uuid('variant_id').references(() => variants.id, { onDelete: 'set null' }),
+		qty: integer().notNull().default(1)
+	},
+	(t) => [index('bundle_items_bundle_idx').on(t.bundleId)]
+);
+
 /* ── cart & wishlist ─────────────────────────────────────────────────── */
 export const carts = pgTable(
 	'carts',
@@ -278,6 +317,9 @@ export const cartItems = pgTable(
 			.notNull()
 			.references(() => products.id, { onDelete: 'cascade' }),
 		variantId: uuid('variant_id').references(() => variants.id, { onDelete: 'cascade' }),
+		bundleId: uuid('bundle_id').references(() => bundles.id, { onDelete: 'set null' }),
+		/** Set for bundle lines: the share of the bundle price this line carries. */
+		unitPrice: poisha('unit_price'),
 		qty: integer().notNull().default(1)
 	},
 	(t) => [uniqueIndex('cart_items_unique').on(t.cartId, t.productId, t.variantId)]

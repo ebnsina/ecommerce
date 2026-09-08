@@ -6,7 +6,7 @@ import { randomBytes } from 'node:crypto';
 import { and, eq, sql } from 'drizzle-orm';
 import type { RequestEvent } from '@sveltejs/kit';
 import { db } from './db';
-import { carts, cartItems, products, variants, productImages } from './db/schema';
+import { carts, cartItems, products, variants, productImages, bundles } from './db/schema';
 
 const COOKIE = 'cart';
 const DAYS = 60;
@@ -15,6 +15,9 @@ export type CartLine = {
 	id: string;
 	productId: string;
 	variantId: string | null;
+	/** Set when the line came from a bundle; grouped and priced as a set. */
+	bundleId: string | null;
+	bundleTitle: string | null;
 	slug: string;
 	title: string;
 	optionLabel: string | null;
@@ -100,6 +103,9 @@ export async function getLines(cartId: string): Promise<CartLine[]> {
 			id: cartItems.id,
 			productId: cartItems.productId,
 			variantId: cartItems.variantId,
+			bundleId: cartItems.bundleId,
+			bundleTitle: bundles.title,
+			lineUnitPrice: cartItems.unitPrice,
 			qty: cartItems.qty,
 			slug: products.slug,
 			title: products.title,
@@ -118,17 +124,22 @@ export async function getLines(cartId: string): Promise<CartLine[]> {
 		.from(cartItems)
 		.innerJoin(products, eq(products.id, cartItems.productId))
 		.leftJoin(variants, eq(variants.id, cartItems.variantId))
+		.leftJoin(bundles, eq(bundles.id, cartItems.bundleId))
 		.where(eq(cartItems.cartId, cartId));
 
 	return rows
 		.filter((r) => r.status === 'active')
 		.map((r) => {
-			const unitPrice = r.variantPrice ?? r.productPrice;
+			// A bundle line carries its allocated share of the bundle price; a
+			// normal line uses the variant or product price.
+			const unitPrice = r.lineUnitPrice ?? r.variantPrice ?? r.productPrice;
 			const stock = r.variantId ? (r.variantStock ?? 0) : r.productStock;
 			return {
 				id: r.id,
 				productId: r.productId,
 				variantId: r.variantId,
+				bundleId: r.bundleId,
+				bundleTitle: r.bundleTitle,
 				slug: r.slug,
 				title: r.title,
 				optionLabel: r.variantOptions ? Object.values(r.variantOptions).join(' / ') : null,

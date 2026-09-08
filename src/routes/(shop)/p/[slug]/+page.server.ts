@@ -10,6 +10,7 @@ import {
 	variants
 } from '$lib/server/db/schema';
 import { cardColumns } from '$lib/server/catalog';
+import { bundlesForProduct } from '$lib/server/bundles';
 import {
 	getReviews,
 	getQuestions,
@@ -53,6 +54,8 @@ export const load: PageServerLoad = async ({ params }) => {
 		getQuestions(product.id)
 	]);
 
+	const offers = await bundlesForProduct(product.id);
+
 	const related = cats.length
 		? await db
 				.select(cardColumns)
@@ -84,6 +87,7 @@ export const load: PageServerLoad = async ({ params }) => {
 		})),
 		categories: cats,
 		reviews,
+		bundles: offers,
 		questions: publicQuestions(questions),
 		related
 	};
