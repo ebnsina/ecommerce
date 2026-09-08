@@ -32,6 +32,7 @@
 		nav={data.nav}
 		menu={data.menus.footer ?? []}
 		paymentMethods={data.settings.footer?.paymentMethods ?? []}
+		assurances={data.settings.assurances ?? []}
 		note={data.settings.footer?.note ?? ''}
 	/>
 </div>

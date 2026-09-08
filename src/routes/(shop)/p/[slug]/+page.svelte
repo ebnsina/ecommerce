@@ -20,6 +20,7 @@
 		Minus,
 		Plus
 	} from '@lucide/svelte';
+	import { assuranceIcon } from '$lib/assuranceIcons';
 	import { formatTk, discountPercent } from '$lib/money';
 	import Rating from '$lib/shop/Rating.svelte';
 	import { SiWhatsapp, SiFacebook } from '$lib/shop/brandIcons';
@@ -136,14 +137,6 @@
 	/* Order channels. In BD a large share of orders start in chat or on a call,
 	   so a product page that only offers a cart loses those buyers outright. */
 	/* Reassurance list is store-wide content, edited in Settings. */
-	const assuranceIcons: Record<string, any> = {
-		Truck,
-		RotateCcw,
-		ShieldCheck,
-		Banknote,
-		Phone,
-		Check
-	};
 	const assurances = $derived(data.settings.assurances ?? []);
 
 	const contact = $derived(
@@ -470,7 +463,7 @@
 			{#if assurances.length}
 				<ul class="mt-6 flex flex-col gap-3 rounded-3xl bg-surface-alt p-5">
 					{#each assurances as f (f.title)}
-						{@const Icon = assuranceIcons[f.icon] ?? Truck}
+						{@const Icon = assuranceIcon(f.icon)}
 						<li class="flex items-start gap-3">
 							<span
 								class="mt-0.5 grid size-6 shrink-0 place-items-center rounded-lg bg-primary-soft text-primary"

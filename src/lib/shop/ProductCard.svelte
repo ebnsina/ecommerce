@@ -21,13 +21,16 @@
 
 	let {
 		product,
-		size = 'standard',
-		compared = false
+		size = 'standard'
 	}: {
 		product: CardProduct;
 		size?: 'compact' | 'standard' | 'feature';
-		compared?: boolean;
 	} = $props();
+
+	/* Read from the layout's data rather than passed down: every grid on the
+	   site renders this card, and threading the shortlist through all of them
+	   is how half of them end up not showing it. */
+	const compared = $derived(((page.data.compareIds as string[]) ?? []).includes(product.id));
 
 	const off = $derived(discountPercent(product.price, product.compareAtPrice));
 	const soldOut = $derived(!product.hasVariants && product.stock <= 0);
@@ -58,6 +61,21 @@
 			</span>
 		{/if}
 	</span>
+{/snippet}
+
+{#snippet compareButton(cls: string)}
+	<form method="POST" action="/compare?/toggle" use:enhance>
+		<input type="hidden" name="productId" value={product.id} />
+		<input type="hidden" name="redirectTo" value={page.url.pathname + page.url.search} />
+		<button
+			class="grid place-items-center transition-colors {cls}
+			       {compared ? 'text-primary' : 'text-ink-faint hover:text-primary'}"
+			aria-label={compared ? `Remove ${product.title} from comparison` : `Compare ${product.title}`}
+			aria-pressed={compared}
+		>
+			<Scale size={16} />
+		</button>
+	</form>
 {/snippet}
 
 {#snippet price()}
@@ -95,56 +113,55 @@
 				>
 					<Heart size={16} />
 				</button>
-				<form method="POST" action="/compare?/toggle" use:enhance>
-					<input type="hidden" name="productId" value={product.id} />
-					<input type="hidden" name="redirectTo" value={page.url.pathname + page.url.search} />
-					<button
-						class="grid size-9 place-items-center rounded-xl border border-border transition-colors
-						       hover:border-brand-300 {compared ? 'text-primary' : 'text-ink-faint hover:text-primary'}"
-						aria-label={compared
-							? `Remove ${product.title} from comparison`
-							: `Compare ${product.title}`}
-					>
-						<Scale size={16} />
-					</button>
-				</form>
+				{@render compareButton('size-9 rounded-xl border border-border hover:border-brand-300')}
 			</div>
 		</div>
 	</article>
 {:else}
-	<article
-		class="group relative flex flex-col gap-2 rounded-3xl border border-border bg-surface transition-[border-color,transform]
-		       duration-[180ms] ease-brand hover:-translate-y-0.5 hover:border-brand-200
-		       {size === 'compact' ? 'flex-row items-center gap-3 p-3' : 'p-3'}"
-	>
-		<a href="/p/{product.slug}" class="contents">
-			{@render media(
-				size === 'compact' ? 'size-16 rounded-xl' : 'aspect-square w-full rounded-none'
-			)}
-		</a>
-
-		<div class="flex min-w-0 flex-1 flex-col gap-1.5 {size === 'compact' ? '' : 'px-3 pb-3'}">
-			<a
-				href="/p/{product.slug}"
-				class="line-clamp-2 text-sm text-ink transition-colors hover:text-primary"
-			>
-				{product.title}
+	<!-- The hover target keeps still; only the inner card moves. Lifting the
+	     element that carries :hover makes it slip out from under the pointer at
+	     its own edge, which reads as flicker. -->
+	<article class="group relative">
+		<div
+			class="flex h-full flex-col gap-2 rounded-3xl border border-border bg-surface
+			       transition-[border-color,transform] duration-[180ms] ease-brand
+			       group-hover:-translate-y-0.5 group-hover:border-brand-200
+			       motion-reduce:transform-none motion-reduce:transition-none
+			       {size === 'compact' ? 'flex-row items-center gap-3 p-3' : 'p-3'}"
+		>
+			<a href="/p/{product.slug}" class="contents">
+				{@render media(
+					size === 'compact' ? 'size-16 rounded-xl' : 'aspect-square w-full rounded-none'
+				)}
 			</a>
-			<Rating rating={product.rating} count={product.reviewCount} size={12} />
-			{@render price()}
-			{#if !product.hasVariants && product.stock > 0 && product.stock <= 5}
-				<span class="num text-xs font-medium text-sale">Only {product.stock} left</span>
-			{/if}
+
+			<div class="flex min-w-0 flex-1 flex-col gap-1.5 {size === 'compact' ? '' : 'px-3 pb-3'}">
+				<a
+					href="/p/{product.slug}"
+					class="line-clamp-2 text-sm text-ink transition-colors hover:text-primary"
+				>
+					{product.title}
+				</a>
+				<Rating rating={product.rating} count={product.reviewCount} size={12} />
+				{@render price()}
+				{#if !product.hasVariants && product.stock > 0 && product.stock <= 5}
+					<span class="num text-xs font-medium text-sale">Only {product.stock} left</span>
+				{/if}
+			</div>
 		</div>
 
 		{#if size !== 'compact'}
-			<button
-				class="absolute top-4 right-4 grid size-8 place-items-center rounded-lg bg-surface/80
-				       text-ink-faint backdrop-blur-sm transition-colors hover:text-sale"
-				aria-label="Add {product.title} to wishlist"
-			>
-				<Heart size={16} />
-			</button>
+			<!-- Outside the lifting wrapper, so the buttons stay under the pointer. -->
+			<div class="absolute top-4 right-4 flex flex-col gap-1.5">
+				<button
+					class="grid size-8 place-items-center rounded-lg bg-surface/80 text-ink-faint
+					       backdrop-blur-sm transition-colors hover:text-sale"
+					aria-label="Add {product.title} to wishlist"
+				>
+					<Heart size={16} />
+				</button>
+				{@render compareButton('size-8 rounded-lg bg-surface/80 backdrop-blur-sm')}
+			</div>
 		{/if}
 	</article>
 {/if}

@@ -247,7 +247,7 @@ export const blockDefs: BlockDef[] = [
 		type: 'bannerGrid',
 		name: 'Banner grid',
 		description: 'Two to five banners in a row or two.',
-		defaults: { banners: [], layout: '2+3', background: 'none' },
+		defaults: { banners: [], layout: '2+3' },
 		fields: [
 			{
 				key: 'banners',
@@ -269,21 +269,6 @@ export const blockDefs: BlockDef[] = [
 					{ value: '2-up', label: 'Two across' },
 					{ value: '3-up', label: 'Three across' },
 					{ value: '2+3', label: 'Two on top, three below' }
-				]
-			},
-			{
-				key: 'background',
-				type: 'select',
-				label: 'Background',
-				hint: 'Gives the band its own colour so it stands apart from the rows around it.',
-				options: [
-					{ value: 'none', label: 'None' },
-					{ value: 'soft', label: 'Soft blue' },
-					{ value: 'tint', label: 'Blue tint' },
-					{ value: 'accent', label: 'Bright blue' },
-					{ value: 'brand', label: 'Primary blue' },
-					{ value: 'ink', label: 'Dark' },
-					{ value: 'sale', label: 'Red' }
 				]
 			}
 		]
@@ -411,18 +396,34 @@ export const blockDefs: BlockDef[] = [
 		]
 	},
 	{
-		type: 'newsletter',
-		name: 'Newsletter',
-		description: 'Subscribe strip above the footer.',
+		type: 'contactBand',
+		name: 'Talk to us band',
+		description: 'Call and chat buttons above the footer.',
 		defaults: {
-			heading: 'Subscribe to our newsletter',
-			subtitle: 'Latest offers and new arrivals, once a week.',
-			cta: 'Subscribe'
+			heading: 'Questions? Talk to a real person.',
+			subtitle: 'Call or message us and we will help you order — no account needed.',
+			chatLabel: 'Order on WhatsApp',
+			cta: '',
+			ctaHref: ''
 		},
 		fields: [
 			{ key: 'heading', type: 'text', label: 'Heading' },
 			{ key: 'subtitle', type: 'text', label: 'Subtitle' },
-			{ key: 'cta', type: 'text', label: 'Button label' }
+			{
+				key: 'phone',
+				type: 'text',
+				label: 'Phone number',
+				hint: 'Leave blank to use the shop number from Settings.'
+			},
+			{
+				key: 'whatsapp',
+				type: 'text',
+				label: 'WhatsApp number',
+				hint: 'Leave blank to use the phone number above.'
+			},
+			{ key: 'chatLabel', type: 'text', label: 'Chat button label' },
+			{ key: 'cta', type: 'text', label: 'Extra button label' },
+			{ key: 'ctaHref', type: 'text', label: 'Extra button link' }
 		]
 	}
 ];

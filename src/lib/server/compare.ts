@@ -7,11 +7,13 @@ import type { RequestEvent } from '@sveltejs/kit';
 const COOKIE = 'compare';
 export const MAX_COMPARE = 4;
 
+const isId = (s: string) => /^[0-9a-f-]{36}$/i.test(s);
+
 const read = (raw: string | undefined) =>
 	(raw ?? '')
 		.split(',')
 		.map((s) => s.trim())
-		.filter((s) => /^[0-9a-f-]{36}$/i.test(s));
+		.filter(isId);
 
 export const getCompareIds = (event: RequestEvent): string[] =>
 	read(event.cookies.get(COOKIE)).slice(0, MAX_COMPARE);
@@ -31,6 +33,8 @@ export function toggleCompare(
 	event: RequestEvent,
 	productId: string
 ): { ok: true; ids: string[]; added: boolean } | { ok: false; error: string } {
+	if (!isId(productId)) return { ok: false, error: 'That product could not be found.' };
+
 	const ids = getCompareIds(event);
 
 	if (ids.includes(productId)) {

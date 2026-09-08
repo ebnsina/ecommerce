@@ -41,7 +41,16 @@ const defaults: Record<string, unknown> = {
 	social: { facebook: '', instagram: '', youtube: '' },
 	contact: { whatsapp: '01712345678', messenger: '', callEnabled: true },
 	footer: {
-		paymentMethods: ['bKash', 'Nagad', 'Rocket', 'Visa', 'Mastercard'],
+		// Logos are left blank: the owner uploads each one in Settings, so nothing
+		// here ships a mark we do not have the right to distribute.
+		paymentMethods: [
+			{ name: 'bKash', logo: '' },
+			{ name: 'Nagad', logo: '' },
+			{ name: 'Rocket', logo: '' },
+			{ name: 'Visa', logo: '' },
+			{ name: 'Mastercard', logo: '' },
+			{ name: 'Cash on delivery', logo: '' }
+		],
 		note: 'Prices include VAT where applicable.'
 	},
 	assurances: [
@@ -665,10 +674,10 @@ await db
 				columns: '5'
 			}),
 			b('brands', { heading: 'Top Weekly Brands', limit: 8 }),
-			b('newsletter', {
-				heading: 'Subscribe to our newsletter',
-				subtitle: 'Get all the latest information on events, sales and offers.',
-				cta: 'Subscribe'
+			b('contactBand', {
+				heading: 'Questions? Talk to a real person.',
+				subtitle: 'Call or message us and we will help you place the order — no account needed.',
+				chatLabel: 'Order on WhatsApp'
 			})
 		]
 	})

@@ -31,3 +31,17 @@ describe('normalizePhone', () => {
 		expect(toInternational('01712345678')).toBe('8801712345678');
 	});
 });
+
+describe('formatPhone', () => {
+	it('groups a plain local number', () => {
+		expect(formatPhone('01712345678')).toBe('01712-345678');
+	});
+
+	it('leaves an already-formatted number alone rather than dashing it twice', () => {
+		expect(formatPhone('09613-800800')).toBe('09613-800800');
+	});
+
+	it('leaves a short hotline alone', () => {
+		expect(formatPhone('16263')).toBe('16263');
+	});
+});

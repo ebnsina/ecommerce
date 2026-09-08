@@ -16,7 +16,7 @@ export type StoreSettings = {
 	payment: { cod: boolean; sslcommerz: boolean; codMaxOrder: number };
 	social: { facebook: string; instagram: string; youtube: string };
 	contact: { whatsapp: string; messenger: string; callEnabled: boolean };
-	footer: { paymentMethods: string[]; note: string };
+	footer: { paymentMethods: { name: string; logo: string }[]; note: string };
 	/** Reassurance list on every product page. */
 	assurances: { icon: string; title: string; note: string }[];
 	/** Rotating hints typed out in the header search box. */

@@ -6,6 +6,28 @@ User-facing changes, newest first.
 
 ### Added
 
+- **Compare works from every product grid.** The compare button now sits on all
+  card sizes and lights up when a product is already on the shortlist, so the
+  compare page in the header can actually be filled.
+
+### Changed
+
+- **Menus and dropdowns no longer get clipped.** Every dropdown is positioned
+  against the viewport, opens upward when it is near the bottom of the screen,
+  and stays inside the left and right edges.
+- **A denser footer.** Contact details, the shop's categories, the menu columns
+  you set, and payment badges that can now carry a real logo — bKash, Nagad and
+  the rest — uploaded in Settings. The delivery and returns promises come from
+  the same reassurances the product page shows, so they are written once.
+- **The newsletter strip is now a "talk to us" band** with call and WhatsApp
+  buttons. Most shoppers here message rather than subscribe.
+- **Homepage categories fit on one row** with clearer labels.
+- **Product cards no longer flicker on hover.**
+- **Banner grids sit on the page** rather than inside a coloured pad, with each
+  row on one aspect ratio so the images line up.
+
+### Added
+
 - **Abandoned cart reminders.** Once a shopper types their phone number at
   checkout, a cart they never finish shows up under Sales → Abandoned carts with
   its value, and can be followed up by one text — by hand, or automatically after

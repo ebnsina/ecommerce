@@ -166,7 +166,14 @@ export const actions: Actions = {
 		const f = await request.formData();
 		const methods = JSON.parse(String(f.get('paymentMethods') ?? '[]'));
 		await put('footer', {
-			paymentMethods: (Array.isArray(methods) ? methods : []).map(String).filter(Boolean),
+			paymentMethods: (Array.isArray(methods) ? methods : [])
+				// Tolerates the old shape, which was a bare label with no logo.
+				.map((m) =>
+					typeof m === 'string'
+						? { name: m, logo: '' }
+						: { name: String(m?.name ?? '').trim(), logo: String(m?.logo ?? '').trim() }
+				)
+				.filter((m) => m.name),
 			note: str(f, 'note')
 		});
 		return { saved: 'footer' };

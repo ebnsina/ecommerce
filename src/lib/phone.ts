@@ -19,7 +19,16 @@ export function normalizePhone(input: string): string | null {
 }
 
 /** 01712345678 -> 01712-345678 */
-export const formatPhone = (phone: string) => `${phone.slice(0, 5)}-${phone.slice(5)}`;
+/**
+ * Groups a number for reading. Anything that is not a plain 11-digit local
+ * number — a hotline, an already-formatted string, an international form — is
+ * handed back untouched, because grouping it again produced things like
+ * `09613--800800`.
+ */
+export const formatPhone = (phone: string) => {
+	const digits = phone.replace(/\D/g, '');
+	return digits.length === 11 ? `${digits.slice(0, 5)}-${digits.slice(5)}` : phone;
+};
 
 /** 01712345678 -> 8801712345678, the form most gateways want. */
 export const toInternational = (phone: string) => `88${phone}`;

@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { ChevronDown } from '@lucide/svelte';
 	import { fly } from 'svelte/transition';
-	import { flyUp } from '$lib/motion';
+	import { flyUp, flyDown } from '$lib/motion';
+	import { anchored } from './anchored';
 
 	type Option = { value: string; label: string; hint?: string };
 
@@ -46,6 +47,8 @@
 	   opening an empty list. */
 	const isDisabled = $derived(disabled || options.length === 0);
 	let root: HTMLDivElement;
+	let button = $state<HTMLButtonElement | null>(null);
+	let side = $state<'top' | 'bottom'>('bottom');
 	let listEl = $state<HTMLElement | null>(null);
 
 	const selected = $derived(options.find((o) => o.value === value) ?? null);

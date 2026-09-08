@@ -1,8 +1,16 @@
 <script lang="ts">
-	import { Mail } from '@lucide/svelte';
+	import { Phone, MessageCircle, ArrowRight } from '@lucide/svelte';
+	import { page } from '$app/state';
 	import Button from '$lib/ui/Button.svelte';
+	import { formatPhone } from '$lib/phone';
 
 	let { props }: { props: Record<string, any> } = $props();
+
+	/* The shop phone lives in Settings; repeating it in a block would be a
+	   second place to forget to update. */
+	const store = $derived((page.data.settings as any)?.store ?? {});
+	const phone = $derived(String(props.phone || store.phone || '').trim());
+	const whatsapp = $derived(String(props.whatsapp || phone).replace(/\D/g, ''));
 </script>
 
 <!-- Aurora background: blurred radial blobs drifting over a dark base. Pure CSS,
@@ -16,32 +24,40 @@
 	</div>
 
 	<div class="mx-auto flex max-w-7xl flex-wrap items-center gap-6 px-4 py-14">
-		<div class="flex min-w-64 flex-1 items-center gap-4">
-			<span
-				class="grid size-11 shrink-0 place-items-center rounded-2xl bg-white/10 text-white backdrop-blur-sm"
-			>
-				<Mail size={20} />
-			</span>
-			<div>
-				<p class="text-lg font-semibold tracking-tight text-white">{props.heading}</p>
-				<p class="mt-0.5 text-sm text-white/70">{props.subtitle}</p>
-			</div>
+		<div class="min-w-64 flex-1">
+			<p class="text-xl font-semibold tracking-tight text-white">{props.heading}</p>
+			<p class="mt-1 text-sm text-white/70">{props.subtitle}</p>
 		</div>
 
-		<form class="flex min-w-72 flex-1 gap-2">
-			<input
-				type="email"
-				required
-				placeholder="you@example.com"
-				aria-label="Email address"
-				class="h-11 min-w-0 flex-1 rounded-xl border border-white/15 bg-white/10 px-3.5 text-sm
-				       text-white backdrop-blur-sm transition-colors duration-[180ms] ease-brand
-				       placeholder:text-white/50 hover:border-white/30 focus:border-white/40"
-			/>
-			<Button type="submit" variant="secondary" class="border-transparent">
-				{props.cta || 'Subscribe'}
-			</Button>
-		</form>
+		<div class="flex flex-wrap items-center gap-2">
+			{#if phone}
+				<a
+					href="tel:{phone}"
+					class="flex h-11 items-center gap-2 rounded-xl bg-white px-4 text-sm font-medium text-ink
+					       transition-colors duration-[180ms] ease-brand hover:bg-white/90"
+				>
+					<Phone size={16} />
+					<span class="num">{formatPhone(phone)}</span>
+				</a>
+			{/if}
+			{#if whatsapp}
+				<a
+					href="https://wa.me/{whatsapp.startsWith('88') ? whatsapp : '88' + whatsapp}"
+					class="flex h-11 items-center gap-2 rounded-xl border border-white/25 px-4 text-sm
+					       font-medium text-white backdrop-blur-sm transition-colors duration-[180ms]
+					       ease-brand hover:border-white/50"
+				>
+					<MessageCircle size={16} />
+					{props.chatLabel || 'Order on WhatsApp'}
+				</a>
+			{/if}
+			{#if props.ctaHref}
+				<Button href={props.ctaHref} variant="secondary" class="border-transparent">
+					{props.cta || 'See offers'}
+					<ArrowRight size={16} />
+				</Button>
+			{/if}
+		</div>
 	</div>
 </section>
 

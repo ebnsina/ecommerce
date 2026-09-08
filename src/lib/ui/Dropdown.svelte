@@ -2,6 +2,7 @@
 	import type { Snippet } from 'svelte';
 	import { fly } from 'svelte/transition';
 	import { flyUp, flyDown } from '$lib/motion';
+	import { anchored } from './anchored';
 
 	let {
 		trigger,
@@ -19,6 +20,9 @@
 
 	let open = $state(false);
 	let root: HTMLDivElement;
+	let triggerEl = $state<HTMLButtonElement | null>(null);
+	/* The side asked for is a preference; `anchored` reports what actually fit. */
+	let placed = $state<'top' | 'bottom'>('bottom');
 
 	const close = () => (open = false);
 
@@ -45,6 +49,7 @@
 
 <div bind:this={root} class="relative {klass}">
 	<button
+		bind:this={triggerEl}
 		type="button"
 		data-dropdown-trigger
 		aria-expanded={open}
@@ -56,13 +61,14 @@
 	</button>
 
 	{#if open}
+		<!-- Pinned to the viewport, so a scrolling sidebar or a card with
+		     overflow-hidden cannot clip the menu. -->
 		<div
 			role="menu"
 			tabindex="-1"
-			class="absolute z-50 min-w-52 rounded-2xl border border-border bg-surface p-1.5
-			       {side === 'top' ? 'bottom-full mb-2' : 'top-full mt-2'}
-			       {align === 'end' ? 'right-0' : 'left-0'}"
-			transition:fly={side === 'top' ? flyDown() : flyUp()}
+			use:anchored={{ to: triggerEl!, align, prefer: side, onSide: (s) => (placed = s) }}
+			class="z-50 min-w-52 overflow-auto rounded-2xl border border-border bg-surface p-1.5"
+			transition:fly={placed === 'top' ? flyDown() : flyUp()}
 		>
 			{@render children({ close })}
 		</div>

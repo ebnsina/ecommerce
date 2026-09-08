@@ -38,7 +38,12 @@
 	/* List-shaped settings reuse the block editor's repeater rather than a second
 	   list UI, and post as JSON. */
 	let assurances = $state(structuredClone(s.assurances ?? []));
-	let paymentMethods = $state((s.footer?.paymentMethods ?? []).map((m) => ({ name: m })));
+	/* Older stores saved a plain label; both shapes load. */
+	let paymentMethods = $state(
+		(s.footer?.paymentMethods ?? []).map((m: any) =>
+			typeof m === 'string' ? { name: m, logo: '' } : { name: m.name, logo: m.logo ?? '' }
+		)
+	);
 	let searchHints = $state((s.search?.hints ?? []).map((h) => ({ text: h })));
 
 	const assuranceField: Field = {
@@ -72,7 +77,15 @@
 		label: 'Payment badges',
 		max: 10,
 		itemKey: 'name',
-		fields: [{ key: 'name', type: 'text', label: 'Label' }]
+		fields: [
+			{ key: 'name', type: 'text', label: 'Label' },
+			{
+				key: 'logo',
+				type: 'image',
+				label: 'Logo',
+				hint: 'bKash, Nagad and the card networks all publish one. Leave blank to show the label as text.'
+			}
+		]
 	};
 
 	const hintField: Field = {
@@ -472,7 +485,7 @@
 				<input
 					type="hidden"
 					name="paymentMethods"
-					value={JSON.stringify(paymentMethods.map((p) => p.name).filter(Boolean))}
+					value={JSON.stringify(paymentMethods.filter((p) => p.name))}
 				/>
 				<FieldInput field={paymentField} bind:value={paymentMethods} />
 				<Input

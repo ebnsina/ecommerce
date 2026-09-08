@@ -10,7 +10,7 @@
 	import Brands from './Brands.svelte';
 	import CategoryTiles from './CategoryTiles.svelte';
 	import RichText from './RichText.svelte';
-	import Newsletter from './Newsletter.svelte';
+	import ContactBand from './ContactBand.svelte';
 
 	/** type -> component. Adding a block means one entry here and one in schema.ts. */
 	const registry: Record<string, any> = {
@@ -25,7 +25,7 @@
 		brands: Brands,
 		categoryTiles: CategoryTiles,
 		richText: RichText,
-		newsletter: Newsletter
+		contactBand: ContactBand
 	};
 
 	type Rendered = {
