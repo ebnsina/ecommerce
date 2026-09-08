@@ -122,7 +122,7 @@
 				<li
 					class="flex items-center justify-between gap-3 border-b border-border py-2 last:border-0"
 				>
-					<a href="/p/{p.slug}" class="min-w-0 flex-1 truncate text-sm text-ink">{p.title}</a>
+					<a href="/demo/p/{p.slug}" class="min-w-0 flex-1 truncate text-sm text-ink">{p.title}</a>
 					<span class="flex shrink-0 items-center gap-3 text-xs text-ink-muted">
 						<span class="num">{p.views} views</span>
 						<span class="num">{p.carts} carts</span>
@@ -152,7 +152,7 @@
 				<li
 					class="flex items-center justify-between gap-3 border-b border-border py-2 last:border-0"
 				>
-					<a href="/p/{p.slug}" class="min-w-0 flex-1 truncate text-sm text-ink">{p.title}</a>
+					<a href="/demo/p/{p.slug}" class="min-w-0 flex-1 truncate text-sm text-ink">{p.title}</a>
 					<span class="flex shrink-0 items-center gap-3 text-xs">
 						<span class="num text-ink-muted">{p.units} sold</span>
 						<span class="num font-medium text-ink">{formatTk(p.revenue)}</span>

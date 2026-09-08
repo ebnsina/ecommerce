@@ -51,7 +51,7 @@
 			</p>
 		</div>
 		<div class="flex flex-wrap gap-2">
-			<Button variant="ghost" href="/blog/{data.post.slug}" target="_blank">
+			<Button variant="ghost" href="/demo/blog/{data.post.slug}" target="_blank">
 				<Eye size={16} />
 				{published ? 'View' : 'Preview'}
 			</Button>

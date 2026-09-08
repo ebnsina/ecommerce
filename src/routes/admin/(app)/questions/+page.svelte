@@ -60,7 +60,7 @@
 {/snippet}
 
 {#snippet productCell(qn: Question)}
-	<a href="/p/{qn.productSlug}" class="text-sm text-primary hover:underline">{qn.productTitle}</a>
+	<a href="/demo/p/{qn.productSlug}" class="text-sm text-primary hover:underline">{qn.productTitle}</a>
 {/snippet}
 
 {#snippet stateCell(qn: Question)}
@@ -88,7 +88,7 @@
 					<Send size={15} />
 					{qn.answer ? 'Edit the answer' : 'Answer'}
 				</MenuItem>
-				<MenuItem href="/p/{qn.productSlug}">
+				<MenuItem href="/demo/p/{qn.productSlug}">
 					<ExternalLink size={15} />
 					See the product
 				</MenuItem>

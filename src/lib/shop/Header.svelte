@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { SHOP } from '$lib/paths';
 	import {
 		Search,
 		Heart,
@@ -77,8 +78,8 @@
 			: nav.map((c) => ({
 					key: c.id,
 					label: c.name,
-					href: `/c/${c.slug}`,
-					children: c.children.map((s) => ({ key: s.id, label: s.name, href: `/c/${s.slug}` }))
+					href: `/demo/c/${c.slug}`,
+					children: c.children.map((s) => ({ key: s.id, label: s.name, href: `/demo/c/${s.slug}` }))
 				}))
 	);
 
@@ -128,7 +129,7 @@
 
 	function submit(e: SubmitEvent) {
 		e.preventDefault();
-		goto(q.trim() ? `/search?q=${encodeURIComponent(q.trim())}` : '/search');
+		goto(q.trim() ? `/demo/search?q=${encodeURIComponent(q.trim())}` : '/demo/search');
 	}
 </script>
 
@@ -148,7 +149,7 @@
 				{#if mobileOpen}<X size={20} />{:else}<Menu size={20} />{/if}
 			</button>
 
-			<a href="/" class="flex shrink-0 items-center" aria-label={store.name}>
+			<a href={SHOP} class="flex shrink-0 items-center" aria-label={store.name}>
 				{#if store.logo?.mode === 'image' && store.logo.image}
 					<img src={store.logo.image} alt={store.name} class="h-8 w-auto object-contain" />
 				{:else}
@@ -188,7 +189,7 @@
 
 			<nav class="ml-auto flex items-center gap-1">
 				<a
-					href="/compare"
+					href="/demo/compare"
 					class="relative grid size-10 place-items-center rounded-xl text-white/85 transition-colors hover:bg-white/10 hover:text-white"
 					aria-label={compareCount ? `Compare, ${compareCount} products` : 'Compare'}
 				>
@@ -203,21 +204,21 @@
 					{/if}
 				</a>
 				<a
-					href="/account/wishlist"
+					href="/demo/account/wishlist"
 					class="grid size-10 place-items-center rounded-xl text-white/85 transition-colors hover:bg-white/10 hover:text-white"
 					aria-label="Wishlist"
 				>
 					<Heart size={19} />
 				</a>
 				<a
-					href="/cart"
+					href="/demo/cart"
 					class="relative grid size-10 place-items-center rounded-xl text-white/85 transition-colors hover:bg-white/10 hover:text-white"
 					aria-label={cartLabel}
 				>
 					<ShoppingBag size={19} />
 				</a>
 				<a
-					href={customer ? '/account' : '/login'}
+					href={customer ? '/demo/account' : '/demo/login'}
 					class="flex h-10 items-center gap-2 rounded-xl px-2.5 text-white/85 transition-colors hover:bg-white/10 hover:text-white"
 				>
 					<User size={19} />
@@ -284,13 +285,16 @@
 				{#each nav as cat (cat.id)}
 					<li>
 						<a
-							href="/c/{cat.slug}"
+							href="/demo/c/{cat.slug}"
 							class="block rounded-xl px-4 py-2.5 text-sm font-medium text-ink"
 						>
 							{cat.name}
 						</a>
 						{#each cat.children as sub (sub.id)}
-							<a href="/c/{sub.slug}" class="block rounded-xl px-8 py-2 text-sm text-ink-muted">
+							<a
+								href="/demo/c/{sub.slug}"
+								class="block rounded-xl px-8 py-2 text-sm text-ink-muted"
+							>
 								{sub.name}
 							</a>
 						{/each}

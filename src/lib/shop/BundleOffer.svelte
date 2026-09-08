@@ -41,7 +41,7 @@
 			{#if i > 0}
 				<Plus size={14} class="shrink-0 text-ink-faint" />
 			{/if}
-			<a href="/p/{item.slug}" class="flex items-center gap-2" title={item.title}>
+			<a href="/demo/p/{item.slug}" class="flex items-center gap-2" title={item.title}>
 				<span class="size-14 shrink-0 overflow-hidden rounded-xl bg-surface-alt">
 					{#if item.image}
 						<img src={item.image} alt={item.title} class="size-full object-cover" loading="lazy" />
@@ -75,7 +75,7 @@
 
 		<form
 			method="POST"
-			action="/cart?/addBundle"
+			action="/demo/cart?/addBundle"
 			use:enhance={() =>
 				async ({ result, update }) => {
 					// The action redirects back, so anything but a failure means the

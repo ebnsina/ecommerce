@@ -69,6 +69,13 @@ User-facing changes, newest first.
 
 ### Changed
 
+- **The front page now explains the product; the shop moved to `/demo`.**
+- **Images carry their own size and load lazily**, and fetch a phone-sized
+  picture on a phone rather than a full-width one. Only the hero loads eagerly.
+- **Pages arrive compressed** — the shop's home page went from 580KB to 30KB on
+  the wire.
+- **Security headers on every response**, and a content policy that stops an
+  injected script running at all.
 - **Connections is now Integrations**, laid out as a catalogue you can browse:
   filter by category, search it, or show only what is not set up yet.
 - **Runs under Docker**, with its own Postgres and its own Typesense — one

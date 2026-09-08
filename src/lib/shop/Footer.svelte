@@ -146,7 +146,7 @@
 					{#each shopLinks as c (c.id)}
 						<li>
 							<a
-								href="/c/{c.slug}"
+								href="/demo/c/{c.slug}"
 								class="text-sm text-ink-muted transition-colors hover:text-primary"
 							>
 								{c.name}

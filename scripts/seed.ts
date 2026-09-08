@@ -253,31 +253,31 @@ await db
 					label: 'Company',
 					href: '',
 					children: [
-						{ label: 'About us', href: '/pages/about' },
-						{ label: 'Contact', href: '/pages/contact' },
-						{ label: 'Privacy policy', href: '/pages/privacy' },
-						{ label: 'Terms & conditions', href: '/pages/terms' }
+						{ label: 'About us', href: '/demo/pages/about' },
+						{ label: 'Contact', href: '/demo/pages/contact' },
+						{ label: 'Privacy policy', href: '/demo/pages/privacy' },
+						{ label: 'Terms & conditions', href: '/demo/pages/terms' }
 					]
 				},
 				{
 					label: 'My account',
 					href: '',
 					children: [
-						{ label: 'Sign in', href: '/login' },
-						{ label: 'My orders', href: '/account/orders' },
-						{ label: 'Addresses', href: '/account/addresses' },
-						{ label: 'Wishlist', href: '/account/wishlist' }
+						{ label: 'Sign in', href: '/demo/login' },
+						{ label: 'My orders', href: '/demo/account/orders' },
+						{ label: 'Addresses', href: '/demo/account/addresses' },
+						{ label: 'Wishlist', href: '/demo/account/wishlist' }
 					]
 				},
 				{
 					label: 'Customer service',
 					href: '',
 					children: [
-						{ label: 'Track my order', href: '/account/orders' },
-						{ label: 'Blog', href: '/blog' },
-						{ label: 'Delivery charges', href: '/pages/delivery' },
-						{ label: 'Cancellation & returns', href: '/pages/returns' },
-						{ label: 'Payment methods', href: '/pages/payment' }
+						{ label: 'Track my order', href: '/demo/account/orders' },
+						{ label: 'Blog', href: '/demo/blog' },
+						{ label: 'Delivery charges', href: '/demo/pages/delivery' },
+						{ label: 'Cancellation & returns', href: '/demo/pages/returns' },
+						{ label: 'Payment methods', href: '/demo/pages/payment' }
 					]
 				}
 			]
@@ -316,7 +316,7 @@ const infoPages: [string, string, string][] = [
 		</ul>
 		<h2>Before you write</h2>
 		<p>If your question is about an existing order, please have the order number ready.
-		It is on your confirmation SMS and in <a href="/account/orders">My orders</a>.</p>`
+		It is on your confirmation SMS and in <a href="/demo/account/orders">My orders</a>.</p>`
 	],
 	[
 		'delivery',
@@ -372,7 +372,7 @@ const infoPages: [string, string, string][] = [
 		Payment is processed by our payment partner; we never see or store your card details.</p>
 		<h2>Receipts</h2>
 		<p>Every order comes with an invoice in the parcel, and you can view your order history
-		any time in <a href="/account/orders">My orders</a>.</p>`
+		any time in <a href="/demo/account/orders">My orders</a>.</p>`
 	],
 	[
 		'emi',
@@ -425,16 +425,16 @@ const infoPages: [string, string, string][] = [
 		stock accurate, but if an item sells out after you order, we will call you and refund or
 		substitute it with your agreement.</p>
 		<h2>Delivery</h2>
-		<p>Delivery times are estimates, not guarantees. See our <a href="/pages/delivery">delivery
+		<p>Delivery times are estimates, not guarantees. See our <a href="/demo/pages/delivery">delivery
 		information</a> for details.</p>
 		<h2>Returns</h2>
-		<p>Returns are governed by our <a href="/pages/returns">cancellation, returns and refunds
+		<p>Returns are governed by our <a href="/demo/pages/returns">cancellation, returns and refunds
 		policy</a>.</p>
 		<h2>Warranty</h2>
 		<p>Warranty is provided by the brand or its authorised service centre. We help you make the
 		claim, but the terms are the manufacturer's.</p>
 		<h2>Contact</h2>
-		<p>Questions about these terms? <a href="/pages/contact">Get in touch</a>.</p>`
+		<p>Questions about these terms? <a href="/demo/pages/contact">Get in touch</a>.</p>`
 	]
 ];
 
@@ -480,39 +480,39 @@ await db
 				slides: [
 					{
 						image: 'https://picsum.photos/seed/hero-1/1400/600',
-						href: '/search',
+						href: '/demo/search',
 						alt: 'Season sale'
 					},
 					{
 						image: 'https://picsum.photos/seed/hero-2/1400/600',
-						href: '/search?sort=popular',
+						href: '/demo/search?sort=popular',
 						alt: 'Top picks this week'
 					},
 					{
 						image: 'https://picsum.photos/seed/hero-3/1400/600',
-						href: '/c/electronics',
+						href: '/demo/c/electronics',
 						alt: 'Electronics offers'
 					}
 				],
 				tiles: [
 					{
 						image: 'https://picsum.photos/seed/tile-1/600/300',
-						href: '/c/electronics',
+						href: '/demo/c/electronics',
 						alt: 'Flash sale'
 					},
 					{
 						image: 'https://picsum.photos/seed/tile-2/600/300',
-						href: '/c/sports-outdoor',
+						href: '/demo/c/sports-outdoor',
 						alt: 'Ride more, save more'
 					},
 					{
 						image: 'https://picsum.photos/seed/tile-3/300/300',
-						href: '/c/home-living',
+						href: '/demo/c/home-living',
 						alt: 'Furniture deals'
 					},
 					{
 						image: 'https://picsum.photos/seed/tile-4/300/300',
-						href: '/c/fashion',
+						href: '/demo/c/fashion',
 						alt: 'Handicraft picks'
 					}
 				],
@@ -526,25 +526,25 @@ await db
 						icon: 'RotateCcw',
 						title: 'Cancellation & Returns',
 						subtitle: 'Free returns within 7 days',
-						href: '/pages/returns'
+						href: '/demo/pages/returns'
 					},
 					{
 						icon: 'ShieldCheck',
 						title: 'Genuine Products',
 						subtitle: 'Brand warranty on everything',
-						href: '/pages/privacy'
+						href: '/demo/pages/privacy'
 					},
 					{
 						icon: 'Truck',
 						title: 'Fast Delivery',
 						subtitle: 'Nationwide in 2-5 days',
-						href: '/pages/delivery'
+						href: '/demo/pages/delivery'
 					},
 					{
 						icon: 'Headphones',
 						title: 'Customer Support',
 						subtitle: 'Call us 9 AM - 10 PM',
-						href: '/pages/contact'
+						href: '/demo/pages/contact'
 					}
 				]
 			}),
@@ -552,7 +552,7 @@ await db
 				slides: [
 					{
 						image: 'https://picsum.photos/seed/banner-flash/1400/260',
-						href: '/search',
+						href: '/demo/search',
 						alt: 'Flash sale'
 					}
 				],
@@ -566,7 +566,7 @@ await db
 			}),
 			b('hotDeals', {
 				heading: 'Hot Deals of the Day',
-				href: '/search',
+				href: '/demo/search',
 				source: { mode: 'rule', rule: 'hot-deal', categoryId: '', ids: [], limit: 10 },
 				countdownTo: ''
 			}),
@@ -574,27 +574,27 @@ await db
 				banners: [
 					{
 						image: 'https://picsum.photos/seed/bg-1/700/300',
-						href: '/search?sort=newest',
+						href: '/demo/search?sort=newest',
 						alt: 'New arrivals'
 					},
 					{
 						image: 'https://picsum.photos/seed/bg-2/700/300',
-						href: '/c/sports-outdoor',
+						href: '/demo/c/sports-outdoor',
 						alt: 'Save on rides'
 					},
 					{
 						image: 'https://picsum.photos/seed/bg-3/460/300',
-						href: '/c/beauty-health',
+						href: '/demo/c/beauty-health',
 						alt: 'Fresh picks'
 					},
 					{
 						image: 'https://picsum.photos/seed/bg-4/460/300',
-						href: '/c/electronics',
+						href: '/demo/c/electronics',
 						alt: 'Best price challenge'
 					},
 					{
 						image: 'https://picsum.photos/seed/bg-5/460/300',
-						href: '/c/home-living',
+						href: '/demo/c/home-living',
 						alt: 'Home picks'
 					}
 				],
@@ -603,7 +603,7 @@ await db
 			}),
 			b('productSection', {
 				heading: 'Trending Products',
-				href: '/search?sort=popular',
+				href: '/demo/search?sort=popular',
 				source: { mode: 'rule', rule: 'best-seller', categoryId: '', ids: [], limit: 5 },
 				columns: '5',
 				cardSize: 'standard'
@@ -612,7 +612,7 @@ await db
 				slides: [
 					{
 						image: 'https://picsum.photos/seed/band-grocery/700/320',
-						href: '/c/grocery-foods',
+						href: '/demo/c/grocery-foods',
 						alt: 'Grocery and foods'
 					}
 				],
@@ -626,28 +626,28 @@ await db
 			}),
 			b('productSection', {
 				heading: 'Featured',
-				href: '/search',
+				href: '/demo/search',
 				source: { mode: 'rule', rule: 'featured', categoryId: '', ids: [], limit: 5 },
 				columns: '5',
 				cardSize: 'standard'
 			}),
 			b('productSection', {
 				heading: 'New Arrivals',
-				href: '/search?sort=newest',
+				href: '/demo/search?sort=newest',
 				source: { mode: 'rule', rule: 'new-arrival', categoryId: '', ids: [], limit: 5 },
 				columns: '5',
 				cardSize: 'standard'
 			}),
 			b('productSection', {
 				heading: 'Top Rated',
-				href: '/search?sort=rating',
+				href: '/demo/search?sort=rating',
 				source: { mode: 'rule', rule: 'top-rated', categoryId: '', ids: [], limit: 5 },
 				columns: '5',
 				cardSize: 'standard'
 			}),
 			b('productSection', {
 				heading: 'Best Sellers',
-				href: '/search?sort=popular',
+				href: '/demo/search?sort=popular',
 				source: { mode: 'rule', rule: 'best-seller', categoryId: '', ids: [], limit: 5 },
 				columns: '5',
 				cardSize: 'standard'
@@ -656,7 +656,7 @@ await db
 				slides: [
 					{
 						image: 'https://picsum.photos/seed/band-app/700/320',
-						href: '/search',
+						href: '/demo/search',
 						alt: 'Shop smarter'
 					}
 				],
@@ -670,7 +670,7 @@ await db
 			}),
 			b('productGrid', {
 				heading: 'Recommended for you',
-				href: '/search',
+				href: '/demo/search',
 				source: { mode: 'rule', rule: 'best-seller', categoryId: '', ids: [], limit: 20 },
 				columns: '5'
 			}),
@@ -686,7 +686,29 @@ await db
 
 /* Demo data — SEED_DEMO=1 pnpm db:seed. Gives the dashboard something to draw. */
 if (process.env.SEED_DEMO) {
-	const names = ['Rahim Uddin', 'Nusrat Jahan', 'Tanvir Ahmed', 'Sadia Islam', 'Imran Hossain'];
+	const names = [
+		'Rahim Uddin',
+		'Nusrat Jahan',
+		'Tanvir Ahmed',
+		'Sadia Islam',
+		'Imran Hossain',
+		'Farhana Akter',
+		'Jamil Rahman',
+		'Sumaiya Haque',
+		'Arif Chowdhury',
+		'Mitu Barua',
+		'Shahriar Kabir',
+		'Ruma Begum'
+	];
+	const cities = [
+		['Dhaka', 'inside_dhaka'],
+		['Chattogram', 'outside_dhaka'],
+		['Sylhet', 'outside_dhaka'],
+		['Khulna', 'outside_dhaka'],
+		['Gazipur', 'suburban_dhaka'],
+		['Narayanganj', 'suburban_dhaka']
+	] as const;
+	const streets = ['Road 12, Banani', 'Zindabazar', 'GEC Circle', 'Sonadanga', 'Tongi Bazar'];
 	const statuses = [
 		'pending',
 		'confirmed',
@@ -696,25 +718,47 @@ if (process.env.SEED_DEMO) {
 		'returned',
 		'cancelled'
 	] as const;
-	const zones = ['inside_dhaka', 'suburban_dhaka', 'outside_dhaka'] as const;
 
+	/* Four months of trading, busier at weekends and heavier lately, so the
+	   dashboard and the Insights window have a shape rather than a flat line.
+	   Old orders are settled; recent ones are still moving. */
 	const rows = [];
-	for (let day = 13; day >= 0; day--) {
-		for (let n = 0; n < Math.floor(Math.random() * 6); n++) {
+	for (let day = 119; day >= 0; day--) {
+		const created0 = new Date(Date.now() - day * 864e5);
+		const weekend = [5, 6].includes(created0.getDay());
+		const growth = 1 + (119 - day) / 160;
+		const count = Math.round((weekend ? 5 : 3) * growth * (0.5 + Math.random()));
+
+		for (let n = 0; n < count; n++) {
 			const created = new Date(Date.now() - day * 864e5 - n * 36e5);
+			const [city, zone] = cities[Math.floor(Math.random() * cities.length)];
 			const subtotal = (Math.floor(Math.random() * 90) + 5) * 10000;
-			const shipping = 6000;
+			const shipping = zone === 'inside_dhaka' ? 6000 : 12000;
+			// A parcel sent yesterday cannot already be delivered and returned.
+			const settled = ['delivered', 'delivered', 'delivered', 'returned', 'cancelled'] as const;
+			const moving = ['pending', 'confirmed', 'packed', 'shipped'] as const;
+			const status =
+				day > 10
+					? settled[Math.floor(Math.random() * settled.length)]
+					: moving[Math.floor(Math.random() * moving.length)];
+
 			rows.push({
 				number: `${created.toISOString().slice(2, 10).replace(/-/g, '')}-${String(rows.length + 1).padStart(4, '0')}`,
 				name: names[Math.floor(Math.random() * names.length)],
 				phone: `018${Math.floor(10000000 + Math.random() * 89999999)}`,
-				address: { zone: 'inside_dhaka', city: 'Dhaka', line: 'Road 12, Banani' },
-				zone: zones[Math.floor(Math.random() * zones.length)],
+				address: {
+					zone,
+					city,
+					line: streets[Math.floor(Math.random() * streets.length)]
+				},
+				zone,
 				subtotal,
 				shipping,
 				total: subtotal + shipping,
-				paymentMethod: 'cod' as const,
-				status: statuses[Math.floor(Math.random() * statuses.length)],
+				// A tenth pay online, which is about right for this market.
+				paymentMethod: (Math.random() > 0.9 ? 'sslcommerz' : 'cod') as 'cod' | 'sslcommerz',
+				paymentStatus: (status === 'delivered' ? 'paid' : 'unpaid') as 'paid' | 'unpaid',
+				status,
 				createdAt: created
 			});
 		}
@@ -910,10 +954,26 @@ if (process.env.SEED_DEMO) {
 
 	const catBySlug = new Map(catRows.map((c) => [c.slug, c.id]));
 
+	/* A shop with a hundred products looks like a demo. Every brand carries a
+	   slice of the category's items, and some lines come in more than one size,
+	   which is how a real catalogue reaches several hundred SKUs without
+	   inventing several hundred names. */
+	const VARIANTS: Record<string, string[]> = {
+		'Grocery & Foods': ['', ' — Family pack', ' — Economy pack'],
+		'Home & Living': ['', ' — Large', ' — Small'],
+		Electronics: ['', ' — 2024 model'],
+		'Mobile & Gadgets': ['', ' — Black', ' — White'],
+		Fashion: ['', ' — M', ' — L', ' — XL'],
+		'Beauty & Health': ['', ' — Twin pack'],
+		'Baby & Toys': ['', ' — Gift box'],
+		'Sports & Outdoor': ['', ' — Pro']
+	};
+
 	const productValues = catalog.flatMap((cat) =>
-		cat.items.map((item) => {
-			const brand = pick(cat.brands);
-			const title = `${brand} ${item}`;
+		cat.brands.flatMap((brand) =>
+			cat.items.flatMap((item) =>
+				(VARIANTS[cat.name] ?? ['']).map((suffix) => {
+			const title = `${brand} ${item}${suffix}`;
 			// Price band per category — groceries are not Tk 15,000.
 			const [lo, hi] = PRICE_BANDS[cat.name] ?? [200, 3000];
 			const price = between(lo, hi) * 100;
@@ -933,7 +993,9 @@ if (process.env.SEED_DEMO) {
 				soldCount: between(0, 900),
 				description: `${title}. Genuine product with brand warranty, delivered anywhere in Bangladesh. Cash on delivery available.`
 			};
-		})
+				})
+			)
+		)
 	);
 
 	const inserted = await db
@@ -1037,7 +1099,9 @@ if (process.env.SEED_DEMO) {
 
 	/* Reviews and questions. Ratings alone left the product tabs empty, which
 	   made the demo store look broken rather than new. */
-	const productRows = await db.select({ id: s2.products.id }).from(s2.products).limit(120);
+	// A wide sample, so reviews and interest spread across the catalogue rather
+	// than pooling on the first hundred products.
+	const productRows = await db.select({ id: s2.products.id }).from(s2.products).limit(400);
 
 	const reviewTitles = [
 		'Exactly as described',
@@ -1214,6 +1278,50 @@ if (process.env.SEED_DEMO) {
 	}));
 	await db.insert(s2.posts).values(postValues).onConflictDoNothing({ target: s2.posts.slug });
 	console.log(`demo: ${postValues.length} blog posts`);
+
+	/* What shoppers looked for and looked at. Without this the Insights screen
+	   is three empty panels, which tells an owner nothing about what it is for.
+	   Some terms deliberately match nothing — that is the panel worth reading. */
+	const searched = [
+		['rice cooker', 40],
+		['kettle', 32],
+		['air fryer', 28],
+		['baby diaper', 24],
+		['mustard oil', 22],
+		['school bag', 12],
+		['iphone 15 pro', 0],
+		['washing machine', 0],
+		['ac 1.5 ton', 0],
+		['sewing machine', 0]
+	] as const;
+
+	const searchRows = searched.flatMap(([term, results]) =>
+		Array.from({ length: between(4, 30) }, () => ({
+			term,
+			results: results === 0 ? 0 : between(1, results),
+			createdAt: new Date(Date.now() - between(0, 29) * 864e5)
+		}))
+	);
+	await db.insert(s2.searchQueries).values(searchRows);
+
+	const eventRows = productRows.flatMap((p) => [
+		...Array.from({ length: between(0, 40) }, () => ({
+			productId: p.id,
+			kind: 'view' as const,
+			createdAt: new Date(Date.now() - between(0, 29) * 864e5)
+		})),
+		...Array.from({ length: between(0, 6) }, () => ({
+			productId: p.id,
+			kind: 'cart' as const,
+			createdAt: new Date(Date.now() - between(0, 29) * 864e5)
+		}))
+	]);
+	// Written in batches: a single insert of tens of thousands of rows is a
+	// parameter limit waiting to happen.
+	for (let i = 0; i < eventRows.length; i += 2000)
+		await db.insert(s2.productEvents).values(eventRows.slice(i, i + 2000));
+
+	console.log(`demo: ${searchRows.length} searches, ${eventRows.length} product events`);
 
 	console.log(`demo: ${lineCount} order lines`);
 

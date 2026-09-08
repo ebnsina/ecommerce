@@ -3,6 +3,7 @@
  * 2.0 + g: namespace format both accept, so one endpoint serves both.
  */
 import { eq, sql } from 'drizzle-orm';
+import { SHOP } from '$lib/paths';
 import { db } from '$lib/server/db';
 import { products } from '$lib/server/db/schema';
 import type { RequestHandler } from './$types';
@@ -51,7 +52,7 @@ export const GET: RequestHandler = async ({ url, setHeaders }) => {
     <g:id>${esc(p.id)}</g:id>
     <g:title>${esc(p.title)}</g:title>
     <g:description>${esc(p.description || p.title)}</g:description>
-    <g:link>${origin}/p/${esc(p.slug)}</g:link>
+    <g:link>${origin}${SHOP}/p/${esc(p.slug)}</g:link>
     <g:image_link>${esc(p.image!)}</g:image_link>
     <g:availability>${p.hasVariants || p.stock > 0 ? 'in stock' : 'out of stock'}</g:availability>
     <g:condition>new</g:condition>

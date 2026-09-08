@@ -32,14 +32,14 @@
 			{#each items as item (item.id)}
 				<li class="flex items-center gap-3 border-b border-border py-3 last:border-0 last:pb-0">
 					<a
-						href="/p/{item.slug}"
+						href="/demo/p/{item.slug}"
 						class="grid size-14 shrink-0 place-items-center overflow-hidden rounded-xl bg-surface-alt"
 					>
 						{#if item.image}
 							<img src={item.image} alt="" class="size-full object-cover" loading="lazy" />
 						{/if}
 					</a>
-					<a href="/p/{item.slug}" class="min-w-0 flex-1">
+					<a href="/demo/p/{item.slug}" class="min-w-0 flex-1">
 						<span class="line-clamp-2 text-sm text-ink">{item.title}</span>
 						<span class="mt-0.5 flex items-baseline gap-1.5">
 							<span class="num text-sm font-semibold text-ink">{formatTk(item.price)}</span>
@@ -52,7 +52,7 @@
 					</a>
 					<form
 						method="POST"
-						action="/cart?/add"
+						action="/demo/cart?/add"
 						use:enhance={() =>
 							async ({ result, update }) => {
 								if (result.type !== 'failure' && result.type !== 'error')

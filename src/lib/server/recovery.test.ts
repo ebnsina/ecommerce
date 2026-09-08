@@ -2,11 +2,16 @@ import { describe, it, expect } from 'vitest';
 import { renderMessage } from './recovery';
 
 describe('renderMessage', () => {
-	const vars = { name: 'Rahim', items: 3, store: 'Nokshi', link: 'https://s.test/cart/resume/abc' };
+	const vars = {
+		name: 'Rahim',
+		items: 3,
+		store: 'Nokshi',
+		link: 'https://s.test/demo/cart/resume/abc'
+	};
 
 	it('fills every placeholder', () => {
 		expect(renderMessage('{name}, {items} at {store}: {link}', vars)).toBe(
-			'Rahim, 3 items at Nokshi: https://s.test/cart/resume/abc'
+			'Rahim, 3 items at Nokshi: https://s.test/demo/cart/resume/abc'
 		);
 	});
 

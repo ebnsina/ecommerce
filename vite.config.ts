@@ -12,7 +12,23 @@ export default defineConfig({
 				runes: ({ filename }) =>
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
-			adapter: adapter(),
+			adapter: adapter({
+				// Gzip and brotli the static assets at build time, so a Node server
+				// with no reverse proxy in front of it still serves them compressed.
+				precompress: true
+			}),
+			csp: {
+				// Hashes the inline scripts SvelteKit emits, so hydration keeps
+				// working while an injected <script> does not run.
+				directives: {
+					'script-src': ['self', 'strict-dynamic', 'https:'],
+					'object-src': ['none'],
+					'base-uri': ['self'],
+					// Product photography is whatever the shop uploaded or imported.
+					'img-src': ['self', 'data:', 'https:'],
+					'frame-ancestors': ['none']
+				}
+			},
 			typescript: {
 				config: (config) => {
 					config.include.push('../drizzle.config.ts');

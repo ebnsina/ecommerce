@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Img from '$lib/shop/Img.svelte';
 	let { props }: { props: Record<string, any> } = $props();
 
 	const banners = $derived((props.banners ?? []).filter((b: any) => b.image));
@@ -22,7 +23,14 @@
 								href={b.href || '#'}
 								class="{ratio(row.length)} block overflow-hidden rounded-3xl bg-surface-alt"
 							>
-								<img src={b.image} alt={b.alt ?? ''} class="size-full object-cover" />
+								<Img
+									src={b.image}
+									alt={b.alt ?? ''}
+									width={960}
+									height={640}
+									sizes="(max-width: 640px) 100vw, 480px"
+									class="size-full object-cover"
+								/>
 							</a>
 						{/each}
 					</div>

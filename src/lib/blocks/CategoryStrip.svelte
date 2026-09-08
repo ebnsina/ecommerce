@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Img from '$lib/shop/Img.svelte';
 	/** Horizontal category row under the header — the first thing shoppers scan. */
 	let { props, categories }: { props: Record<string, any>; categories: any[] } = $props();
 
@@ -13,13 +14,19 @@
 			{#each items as cat (cat.id)}
 				<li>
 					<a
-						href="/c/{cat.slug}"
+						href="/demo/c/{cat.slug}"
 						class="flex h-full flex-col items-center gap-2 rounded-2xl border border-border
 						       bg-surface px-2 py-3 text-center transition-colors duration-[180ms] ease-brand hover:border-brand-300"
 					>
 						<span class="size-12 shrink-0 overflow-hidden rounded-full bg-surface-alt">
 							{#if cat.image}
-								<img src={cat.image} alt="" class="size-full object-cover" loading="lazy" />
+								<Img
+									src={cat.image}
+									width={96}
+									height={96}
+									sizes="48px"
+									class="size-full object-cover"
+								/>
 							{/if}
 						</span>
 						<span

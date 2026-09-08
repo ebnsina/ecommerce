@@ -29,7 +29,8 @@ docker compose run --rm tools pnpm db:push                 # create the tables, 
 docker compose run --rm -e SEED_DEMO=1 tools pnpm db:seed  # optional demo catalogue
 ```
 
-The shop is on `http://localhost:3000` (set `APP_PORT` to move it). Postgres and
+The shop is at `http://localhost:3000/demo`; `/` is the page that explains the
+product. Set `APP_PORT` to move it. Postgres and
 Typesense are on the internal network only — nothing is published that does not
 need to be.
 
@@ -42,8 +43,12 @@ is the point.
 
 ```sh
 pnpm build                 # → build/
-node build/index.js        # listens on PORT, default 3000
+pnpm start                 # listens on PORT, default 3000
 ```
+
+`pnpm start` runs `server.js`, which is the adapter's handler with compression
+in front of it — the shop's home page is about 640KB of markup and 30KB once
+compressed, and adapter-node does not compress rendered HTML by itself.
 
 Anything that can run a Node process will do. Set the environment variables from
 `.env.example` and put a reverse proxy in front of it for TLS. One thing Docker

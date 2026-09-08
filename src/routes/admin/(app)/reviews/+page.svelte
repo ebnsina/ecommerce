@@ -39,7 +39,7 @@
 {/snippet}
 
 {#snippet productCell(r: Review)}
-	<a href="/p/{r.productSlug}" class="text-sm text-primary hover:underline">{r.productTitle}</a>
+	<a href="/demo/p/{r.productSlug}" class="text-sm text-primary hover:underline">{r.productTitle}</a>
 {/snippet}
 
 {#snippet ratingCell(r: Review)}
@@ -74,7 +74,7 @@
 							/>Publish{/if}
 					</MenuItem>
 				</form>
-				<MenuItem href="/p/{r.productSlug}">
+				<MenuItem href="/demo/p/{r.productSlug}">
 					<ExternalLink size={15} />
 					See the product
 				</MenuItem>

@@ -99,7 +99,7 @@
 					<Pencil size={15} />
 					Edit
 				</MenuItem>
-				<MenuItem href="/p/{p.slug}">
+				<MenuItem href="/demo/p/{p.slug}">
 					<ExternalLink size={15} />
 					See it in the shop
 				</MenuItem>

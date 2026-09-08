@@ -8,6 +8,7 @@
 		"dev": "vite dev --port 5199 --strictPort",
 		"build": "vite build",
 		"preview": "vite preview --port 5199 --strictPort",
+		"start": "node server.js",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
@@ -27,6 +28,7 @@
 		"@sveltejs/kit": "^2.63.0",
 		"@sveltejs/vite-plugin-svelte": "^7.1.2",
 		"@tailwindcss/vite": "^4.3.0",
+		"@types/compression": "^1.8.1",
 		"@types/node": "^24",
 		"drizzle-kit": "^0.31.10",
 		"drizzle-orm": "^0.45.2",
@@ -62,6 +64,7 @@
 		"@tiptap/extension-link": "^3.31.3",
 		"@tiptap/starter-kit": "^3.31.3",
 		"aws4fetch": "^1.0.20",
+		"compression": "^1.8.1",
 		"driver.js": "^1.8.0",
 		"postgres": "^3.4.9",
 		"typesense": "^3.0.6"

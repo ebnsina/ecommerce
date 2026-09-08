@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Carousel from './Carousel.svelte';
+	import Img from '$lib/shop/Img.svelte';
 	import { bg, isDark } from './backgrounds';
 
 	let { props }: { props: Record<string, any> } = $props();
@@ -41,9 +42,12 @@
 					</div>
 
 					{#if slides.length}
-						<img
+						<Img
 							src={slides[0].image}
 							alt={slides[0].alt ?? ''}
+							width={960}
+							height={480}
+							sizes="(max-width: 640px) 100vw, 448px"
 							class="max-h-48 w-full max-w-md flex-1 rounded-2xl object-cover"
 						/>
 					{/if}
@@ -52,7 +56,16 @@
 				<Carousel count={slides.length} interval={props.interval} ratio={props.aspect || '3 / 1'}>
 					{#snippet slide(i)}
 						<a href={slides[i].href || '#'} class="block size-full">
-							<img src={slides[i].image} alt={slides[i].alt ?? ''} class="size-full object-cover" />
+							<!-- The first slide is the page's largest paint, so it does not wait. -->
+							<Img
+								src={slides[i].image}
+								alt={slides[i].alt ?? ''}
+								width={1280}
+								height={427}
+								priority={i === 0}
+								sizes="(max-width: 1024px) 100vw, 1280px"
+								class="size-full object-cover"
+							/>
 						</a>
 					{/snippet}
 				</Carousel>

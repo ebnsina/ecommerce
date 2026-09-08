@@ -12,7 +12,7 @@
 		<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
 			{#each brands as b (b.brand)}
 				<a
-					href="/search?q={encodeURIComponent(b.brand)}"
+					href="/demo/search?q={encodeURIComponent(b.brand)}"
 					class="flex flex-col gap-3 rounded-3xl border border-border bg-surface p-4 transition-colors duration-[180ms] ease-brand hover:border-brand-300"
 				>
 					<div>

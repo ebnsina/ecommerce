@@ -16,14 +16,14 @@
 	<header class="sticky top-0 z-20 border-b border-border bg-surface/90 backdrop-blur">
 		<div class="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
 			<a
-				href="/platform"
+				href="/"
 				class="rounded-lg text-base font-semibold tracking-tight text-ink"
 				aria-label="Store platform, home"
 			>
 				Store
 			</a>
 			<a
-				href="/"
+				href="/demo"
 				class="rounded-lg text-sm font-medium text-primary transition-colors duration-[180ms] ease-brand hover:text-primary-hover"
 			>
 				See the demo
@@ -40,9 +40,9 @@
 			<p>Store — an ecommerce platform for Bangladeshi shops.</p>
 			<nav aria-label="Footer">
 				<ul class="flex gap-5">
-					<li><a href="/platform#pricing" class="rounded-lg hover:text-ink">Pricing</a></li>
-					<li><a href="/platform#faq" class="rounded-lg hover:text-ink">FAQ</a></li>
-					<li><a href="/" class="rounded-lg hover:text-ink">Demo shop</a></li>
+					<li><a href="/#pricing" class="rounded-lg hover:text-ink">Pricing</a></li>
+					<li><a href="/#faq" class="rounded-lg hover:text-ink">FAQ</a></li>
+					<li><a href="/demo" class="rounded-lg hover:text-ink">Demo shop</a></li>
 				</ul>
 			</nav>
 		</div>

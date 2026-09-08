@@ -276,7 +276,7 @@
 				Asking about
 			</h2>
 			<a
-				href="/p/{data.product.slug}"
+				href="/demo/p/{data.product.slug}"
 				target="_blank"
 				rel="noopener"
 				class="mt-2 mb-5 flex items-center gap-3 rounded-2xl border border-border p-2.5 transition-colors hover:border-brand-300"

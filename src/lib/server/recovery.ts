@@ -7,6 +7,7 @@
  * so a bought cart can never look abandoned.
  */
 import { and, eq, isNotNull, isNull, lt, sql } from 'drizzle-orm';
+import { SHOP } from '$lib/paths';
 import { db } from './db';
 import { carts, cartItems, products, variants } from './db/schema';
 import { getSettings } from './settings';
@@ -88,7 +89,7 @@ export async function sendReminder(cart: AbandonedCart, origin: string) {
 		name: cart.name?.split(' ')[0] ?? 'Hi',
 		items: Number(cart.items),
 		store: settings.store.name,
-		link: `${origin}/cart/resume/${cart.token}`
+		link: `${origin}${SHOP}/cart/resume/${cart.token}`
 	});
 	const ok = await sendSms(cart.phone, text);
 	// Stamped whatever happens — on the claim above for an automatic send, here

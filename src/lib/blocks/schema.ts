@@ -62,7 +62,7 @@ const link = (key = 'href', label = 'Link') => ({
 	key,
 	type: 'link' as const,
 	label,
-	placeholder: '/c/electronics'
+	placeholder: '/demo/c/electronics'
 });
 
 export const blockDefs: BlockDef[] = [
@@ -144,7 +144,7 @@ export const blockDefs: BlockDef[] = [
 					icon: 'RotateCcw',
 					title: 'বাতিলকরণ ও রিটার্ন',
 					subtitle: 'Cancellation & Returns',
-					href: '/pages/returns'
+					href: '/demo/pages/returns'
 				}
 			]
 		},
@@ -279,7 +279,7 @@ export const blockDefs: BlockDef[] = [
 		description: 'Two large deal cards plus a compact grid.',
 		defaults: {
 			heading: 'Hot Deals of the Day',
-			href: '/search',
+			href: '/demo/search',
 			source: { ...defaultSource, rule: 'hot-deal', limit: 10 },
 			countdownTo: ''
 		},
@@ -302,7 +302,7 @@ export const blockDefs: BlockDef[] = [
 		description: 'Trending, new arrivals, featured, best sellers — one block, different source.',
 		defaults: {
 			heading: 'Trending Products',
-			href: '/search',
+			href: '/demo/search',
 			source: { ...defaultSource },
 			columns: 5,
 			cardSize: 'standard'
@@ -337,7 +337,7 @@ export const blockDefs: BlockDef[] = [
 		description: 'A large multi-row grid — “Recommended for you”.',
 		defaults: {
 			heading: 'Recommended for you',
-			href: '/search',
+			href: '/demo/search',
 			source: { ...defaultSource, rule: 'best-seller', limit: 20 },
 			columns: 5
 		},

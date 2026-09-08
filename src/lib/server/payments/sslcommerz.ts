@@ -12,6 +12,7 @@
  *   SSLCOMMERZ_SANDBOX=1 while testing
  */
 import { env } from '$env/dynamic/private';
+import { SHOP } from '$lib/paths';
 
 const HOSTS = {
 	sandbox: 'https://sandbox.sslcommerz.com',
@@ -49,7 +50,8 @@ export async function createSession(
 ): Promise<{ url: string } | { error: string }> {
 	if (!paymentConfigured()) return { error: 'Online payment is not set up yet.' };
 
-	const back = (path: string) => `${input.origin}/checkout/payment/${path}/${input.orderNumber}`;
+	const back = (path: string) =>
+		`${input.origin}${SHOP}/checkout/payment/${path}/${input.orderNumber}`;
 
 	const body = new URLSearchParams({
 		store_id: env.SSLCOMMERZ_STORE_ID!,

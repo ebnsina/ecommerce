@@ -74,7 +74,7 @@
 					<Pencil size={15} />
 					Edit
 				</MenuItem>
-				<MenuItem href="/blog/{p.slug}">
+				<MenuItem href="/demo/blog/{p.slug}">
 					<ExternalLink size={15} />
 					{p.published ? 'See it on the site' : 'Preview'}
 				</MenuItem>
