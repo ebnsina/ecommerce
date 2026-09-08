@@ -1,13 +1,35 @@
 import { fail } from '@sveltejs/kit';
-import { desc, eq, ne, and } from 'drizzle-orm';
+import { and, count, desc, eq, ilike, ne } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { coupons } from '$lib/server/db/schema';
 import { parseTk } from '$lib/money';
+import { listParams } from '$lib/admin/listQuery';
 import type { Actions, PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async () => ({
-	list: await db.select().from(coupons).orderBy(desc(coupons.active), coupons.code)
-});
+export const load: PageServerLoad = async ({ url }) => {
+	const { q, page, perPage } = listParams(url);
+	const status = url.searchParams.get('status') ?? '';
+
+	const where = and(
+		q ? ilike(coupons.code, `%${q}%`) : undefined,
+		status === 'active' ? eq(coupons.active, true) : undefined,
+		status === 'off' ? eq(coupons.active, false) : undefined
+	);
+
+	const [rows, [{ n: total }]] = await Promise.all([
+		db
+			.select()
+			.from(coupons)
+			// Live codes first: they are the ones that can be costing money.
+			.where(where)
+			.orderBy(desc(coupons.active), coupons.code)
+			.limit(perPage)
+			.offset((page - 1) * perPage),
+		db.select({ n: count() }).from(coupons).where(where)
+	]);
+
+	return { rows, total, page, perPage, filters: { q, status } };
+};
 
 const dt = (v: FormDataEntryValue | null) => {
 	const s = String(v ?? '').trim();

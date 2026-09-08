@@ -4,9 +4,33 @@ import { db } from '$lib/server/db';
 import { bundles } from '$lib/server/db/schema';
 import { listBundles } from '$lib/server/bundles';
 import { slugify, uniqueSlug } from '$lib/slug';
+import { listParams } from '$lib/admin/listQuery';
 import type { Actions, PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async () => ({ list: await listBundles() });
+export const load: PageServerLoad = async ({ url }) => {
+	const { q, page, perPage } = listParams(url);
+	const status = url.searchParams.get('status') ?? '';
+
+	// Bundles are few by nature — a shop has a handful, not thousands — so the
+	// set is read whole and narrowed here rather than in three SQL variants.
+	const all = await listBundles();
+	const needle = q.toLowerCase();
+	const list = all.filter(
+		(b) =>
+			(!needle || b.title.toLowerCase().includes(needle)) &&
+			(status !== 'active' || b.active) &&
+			(status !== 'off' || !b.active) &&
+			(status !== 'incomplete' || b.items.length < 2)
+	);
+
+	return {
+		rows: list.slice((page - 1) * perPage, page * perPage),
+		total: list.length,
+		page,
+		perPage,
+		filters: { q, status }
+	};
+};
 
 export const actions: Actions = {
 	create: async ({ request }) => {

@@ -4,6 +4,17 @@ User-facing changes, newest first.
 
 ## Unreleased
 
+### Changed
+
+- **Coupons and bundles** join the shared list shape — search, filters, a row
+  action menu and paging. Bundles now say whether each one is actually live,
+  which the screen could not show before.
+- **Media** gained search and paging. It was capped at the newest 200 images
+  with no way to reach anything older.
+- **Categories and the Inbox** keep their own shapes — a tree with an order you
+  set, and a thread list beside a conversation — but now carry the same page
+  heading as everything else.
+
 ### Fixed
 
 - **The heart on a product card now saves it.** It was a button with nothing

@@ -1,14 +1,21 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { Plus, Pencil, Trash2, TicketPercent, Power } from '@lucide/svelte';
+	import { renderSnippet } from '@tanstack/svelte-table';
+	import type { ColumnDef } from '@tanstack/svelte-table';
+	import { Plus, Pencil, Trash2, Power, TicketPercent } from '@lucide/svelte';
 	import { formatTk } from '$lib/money';
 	import Button from '$lib/ui/Button.svelte';
 	import Input from '$lib/ui/Input.svelte';
 	import Select from '$lib/ui/Select.svelte';
 	import Checkbox from '$lib/ui/Checkbox.svelte';
 	import Dialog from '$lib/ui/Dialog.svelte';
+	import DataTable from '$lib/admin/DataTable.svelte';
+	import PageHeader from '$lib/admin/PageHeader.svelte';
+	import RowActions from '$lib/admin/RowActions.svelte';
+	import MenuItem from '$lib/admin/MenuItem.svelte';
+	import { setParams } from '$lib/admin/listQuery';
 
-	type Row = (typeof data)['list'][number];
+	type Row = (typeof data)['rows'][number];
 
 	let { data, form } = $props();
 
@@ -57,20 +64,98 @@
 		if (a) return `from ${a}`;
 		return 'always';
 	};
+
+	const columns: ColumnDef<any, Row>[] = [
+		{ id: 'code', header: 'Code', cell: (c) => renderSnippet(codeCell, c.row.original) },
+		{ id: 'window', header: 'Runs', cell: (c) => renderSnippet(windowCell, c.row.original) },
+		{ id: 'minimum', header: 'Minimum', cell: (c) => renderSnippet(minCell, c.row.original) },
+		{ id: 'used', header: 'Used', cell: (c) => renderSnippet(usedCell, c.row.original) },
+		{ id: 'state', header: 'Live', cell: (c) => renderSnippet(stateCell, c.row.original) },
+		{ id: 'actions', header: '', cell: (c) => renderSnippet(actionsCell, c.row.original) }
+	];
 </script>
+
+{#snippet codeCell(c: Row)}
+	<span class="flex items-center gap-2.5">
+		<span class="grid size-9 shrink-0 place-items-center rounded-xl bg-primary-soft text-primary">
+			<TicketPercent size={16} />
+		</span>
+		<span>
+			<span class="num block text-sm font-semibold text-ink">{c.code}</span>
+			<span class="block text-xs text-ink-muted">{describe(c)}</span>
+		</span>
+	</span>
+{/snippet}
+
+{#snippet windowCell(c: Row)}
+	<span class="text-xs text-ink-muted">{window(c)}</span>
+{/snippet}
+
+{#snippet minCell(c: Row)}
+	<span class="text-xs text-ink-muted">
+		{c.minOrder > 0 ? formatTk(c.minOrder) : 'none'}
+	</span>
+{/snippet}
+
+{#snippet usedCell(c: Row)}
+	<span class="num text-xs text-ink-muted">
+		{c.usedCount}{c.usageLimit ? ` / ${c.usageLimit}` : ''}
+	</span>
+{/snippet}
+
+{#snippet stateCell(c: Row)}
+	<span class="flex items-center gap-1.5 text-xs">
+		<Power size={13} class={c.active ? 'text-ok-fg' : 'text-ink-faint'} />
+		<span class="text-ink">{c.active ? 'Live' : 'Off'}</span>
+	</span>
+{/snippet}
+
+{#snippet actionsCell(c: Row)}
+	<div class="flex justify-end">
+		<RowActions label="Actions for {c.code}">
+			{#snippet menu({ close })}
+				<MenuItem
+					onclick={() => {
+						start(c);
+						close();
+					}}
+				>
+					<Pencil size={15} />
+					Edit
+				</MenuItem>
+				<form method="POST" action="?/toggle" use:enhance>
+					<input type="hidden" name="id" value={c.id} />
+					<MenuItem>
+						<Power size={15} />
+						{c.active ? 'Switch off' : 'Switch on'}
+					</MenuItem>
+				</form>
+				<form method="POST" action="?/remove" use:enhance>
+					<input type="hidden" name="id" value={c.id} />
+					<MenuItem danger>
+						<Trash2 size={15} />
+						Delete
+					</MenuItem>
+				</form>
+			{/snippet}
+		</RowActions>
+	</div>
+{/snippet}
 
 <svelte:head><title>Coupons · Admin</title></svelte:head>
 
-<div class="flex flex-wrap items-start justify-between gap-4">
-	<div>
-		<h1 class="text-2xl font-semibold tracking-tight text-ink">Coupons</h1>
-		<p class="mt-1 text-sm text-ink-muted">Discount codes customers type at checkout.</p>
-	</div>
-	<Button onclick={() => start(null)}>
-		<Plus size={16} />
-		New coupon
-	</Button>
-</div>
+<PageHeader
+	title="Coupons"
+	count={data.total}
+	description="Discount codes customers type at checkout."
+>
+	{#snippet actions()}
+		<Button size="sm" onclick={() => start(null)}>
+			<Plus size={15} />
+			New coupon
+		</Button>
+	{/snippet}
+</PageHeader>
 
 {#if form?.error}
 	<p
@@ -81,58 +166,31 @@
 	</p>
 {/if}
 
-<div class="mt-6 overflow-hidden rounded-3xl border border-border bg-surface">
-	{#each data.list as c (c.id)}
-		<div
-			class="flex flex-wrap items-center gap-4 border-b border-border px-4 py-3 last:border-0"
-			class:opacity-55={!c.active}
-		>
-			<span class="grid size-9 shrink-0 place-items-center rounded-xl bg-primary-soft text-primary">
-				<TicketPercent size={16} />
-			</span>
-			<span class="min-w-32">
-				<span class="num block text-sm font-semibold text-ink">{c.code}</span>
-				<span class="block text-xs text-ink-muted">{describe(c)}</span>
-			</span>
-			<span class="min-w-28 text-xs text-ink-muted">
-				{c.minOrder > 0 ? `min ${formatTk(c.minOrder)}` : 'no minimum'}
-			</span>
-			<span class="min-w-24 text-xs text-ink-muted">{window(c)}</span>
-			<span class="num min-w-20 text-xs text-ink-muted">
-				used {c.usedCount}{c.usageLimit ? ` / ${c.usageLimit}` : ''}
-			</span>
-
-			<span class="ml-auto flex items-center gap-1">
-				<form method="POST" action="?/toggle" use:enhance>
-					<input type="hidden" name="id" value={c.id} />
-					<button
-						class="grid size-8 place-items-center rounded-lg text-ink-faint transition-colors hover:bg-surface-alt hover:text-ink"
-						aria-label={c.active ? `Disable ${c.code}` : `Enable ${c.code}`}
-					>
-						<Power size={15} />
-					</button>
-				</form>
-				<button
-					class="grid size-8 place-items-center rounded-lg text-ink-faint transition-colors hover:bg-surface-alt hover:text-ink"
-					aria-label="Edit {c.code}"
-					onclick={() => start(c)}
-				>
-					<Pencil size={15} />
-				</button>
-				<form method="POST" action="?/remove" use:enhance>
-					<input type="hidden" name="id" value={c.id} />
-					<button
-						class="grid size-8 place-items-center rounded-lg text-ink-faint transition-colors hover:bg-sale/8 hover:text-sale"
-						aria-label="Delete {c.code}"
-					>
-						<Trash2 size={15} />
-					</button>
-				</form>
-			</span>
-		</div>
-	{:else}
-		<p class="px-4 py-16 text-center text-sm text-ink-faint">No coupons yet.</p>
-	{/each}
+<div class="mt-6">
+	<DataTable
+		{columns}
+		rows={data.rows}
+		total={data.total}
+		page={data.page}
+		perPage={data.perPage}
+		q={data.filters.q}
+		rowId={(c) => c.id}
+		searchPlaceholder="Coupon code"
+		empty="No coupons match this view."
+	>
+		{#snippet filters()}
+			<Select
+				value={data.filters.status}
+				class="w-40"
+				options={[
+					{ value: '', label: 'All coupons' },
+					{ value: 'active', label: 'Live' },
+					{ value: 'off', label: 'Switched off' }
+				]}
+				onchange={(v) => setParams({ status: v })}
+			/>
+		{/snippet}
+	</DataTable>
 </div>
 
 <Dialog bind:open title={editing ? `Edit ${editing.code}` : 'New coupon'}>

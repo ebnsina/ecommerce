@@ -5,6 +5,7 @@
 	import { Search, Inbox, ShoppingBag } from '@lucide/svelte';
 	import Input from '$lib/ui/Input.svelte';
 	import Tabs from '$lib/ui/Tabs.svelte';
+	import PageHeader from '$lib/admin/PageHeader.svelte';
 	import ChannelBadge from '$lib/admin/ChannelBadge.svelte';
 
 	let { data } = $props();
@@ -35,14 +36,11 @@
 
 <svelte:head><title>Inbox · Admin</title></svelte:head>
 
-<div class="flex flex-wrap items-start justify-between gap-4">
-	<div>
-		<h1 class="text-2xl font-semibold tracking-tight text-ink">Inbox</h1>
-		<p class="mt-1 text-sm text-ink-muted">
-			Every channel in one thread list. Replies go back out the way they came in.
-		</p>
-	</div>
-</div>
+<PageHeader
+	title="Inbox"
+	count={data.threads.length}
+	description="Every channel in one thread list. Replies go back out the way they came in."
+/>
 
 <!-- Each channel wears its own mark, so the row reads at a glance rather than
      as six identical grey pills. Connected ones are full strength; the rest are

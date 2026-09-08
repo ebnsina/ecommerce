@@ -5,6 +5,9 @@
 	import { fadeIn } from '$lib/motion';
 	import Button from '$lib/ui/Button.svelte';
 	import UploadDropzone from '$lib/ui/UploadDropzone.svelte';
+	import PageHeader from '$lib/admin/PageHeader.svelte';
+	import { Search, ChevronLeft, ChevronRight } from '@lucide/svelte';
+	import { debouncedSetParams, setParams } from '$lib/admin/listQuery';
 
 	let { data, form } = $props();
 
@@ -19,12 +22,19 @@
 	}
 
 	const kb = (n: number | null) => (n ? `${Math.round(n / 1024)} KB` : '');
+
+	const from = $derived(data.total === 0 ? 0 : (data.page - 1) * data.perPage + 1);
+	const to = $derived(Math.min(data.page * data.perPage, data.total));
+	const lastPage = $derived(Math.max(1, Math.ceil(data.total / data.perPage)));
 </script>
 
 <svelte:head><title>Media · Admin</title></svelte:head>
 
-<h1 class="text-2xl font-semibold tracking-tight text-ink">Media</h1>
-<p class="mt-1 text-sm text-ink-muted">Every image used by products, categories and page blocks.</p>
+<PageHeader
+	title="Media"
+	count={data.total}
+	description="Every image used by products, categories and page blocks."
+/>
 
 <form
 	method="POST"
@@ -61,7 +71,24 @@
 	</p>
 {/if}
 
-<div class="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+<!-- Search sits above the gallery, the same place it does above a table. -->
+<div class="relative mt-6 max-w-80">
+	<Search
+		size={16}
+		class="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-ink-faint"
+	/>
+	<input
+		type="search"
+		value={data.filters.q}
+		placeholder="Image name or description"
+		aria-label="Search images"
+		class="h-11 w-full rounded-xl border border-border bg-surface pr-3.5 pl-10 text-sm text-ink
+		       transition-colors duration-[180ms] ease-brand placeholder:text-ink-faint"
+		oninput={(e) => debouncedSetParams({ q: e.currentTarget.value })}
+	/>
+</div>
+
+<div class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
 	{#each data.items as m (m.id)}
 		<figure
 			class="overflow-hidden rounded-3xl border border-border bg-surface"
@@ -99,3 +126,29 @@
 		<p class="col-span-full py-16 text-center text-sm text-ink-faint">Nothing uploaded yet.</p>
 	{/each}
 </div>
+
+{#if data.total > data.perPage}
+	<div class="mt-6 flex items-center justify-center gap-2">
+		<button
+			class="grid size-9 place-items-center rounded-xl border border-border text-ink-muted
+			       transition-colors duration-[180ms] ease-brand hover:text-ink
+			       disabled:cursor-not-allowed disabled:text-ink-faint"
+			aria-label="Previous page"
+			disabled={data.page <= 1}
+			onclick={() => setParams({ page: data.page - 1 })}
+		>
+			<ChevronLeft size={16} />
+		</button>
+		<p class="num text-sm text-ink-muted">{from}–{to} of {data.total}</p>
+		<button
+			class="grid size-9 place-items-center rounded-xl border border-border text-ink-muted
+			       transition-colors duration-[180ms] ease-brand hover:text-ink
+			       disabled:cursor-not-allowed disabled:text-ink-faint"
+			aria-label="Next page"
+			disabled={data.page >= lastPage}
+			onclick={() => setParams({ page: data.page + 1 })}
+		>
+			<ChevronRight size={16} />
+		</button>
+	</div>
+{/if}

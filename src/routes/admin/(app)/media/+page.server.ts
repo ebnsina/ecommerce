@@ -1,13 +1,31 @@
 import { fail } from '@sveltejs/kit';
-import { desc, eq } from 'drizzle-orm';
+import { count, desc, eq, ilike, or } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { media } from '$lib/server/db/schema';
 import { saveUpload, deleteUpload } from '$lib/server/storage';
+import { listParams } from '$lib/admin/listQuery';
 import type { Actions, PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async () => ({
-	items: await db.select().from(media).orderBy(desc(media.createdAt)).limit(200)
-});
+export const load: PageServerLoad = async ({ url }) => {
+	const { q, page, perPage } = listParams(url);
+	// A gallery wants more per screen than a table row does.
+	const size = perPage === 10 ? 24 : perPage;
+
+	const where = q ? or(ilike(media.url, `%${q}%`), ilike(media.alt, `%${q}%`)) : undefined;
+
+	const [items, [{ n: total }]] = await Promise.all([
+		db
+			.select()
+			.from(media)
+			.where(where)
+			.orderBy(desc(media.createdAt))
+			.limit(size)
+			.offset((page - 1) * size),
+		db.select({ n: count() }).from(media).where(where)
+	]);
+
+	return { items, total, page, perPage: size, filters: { q } };
+};
 
 export const actions: Actions = {
 	upload: async ({ request }) => {

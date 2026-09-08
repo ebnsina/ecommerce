@@ -19,6 +19,7 @@
 	import Checkbox from '$lib/ui/Checkbox.svelte';
 	import Dialog from '$lib/ui/Dialog.svelte';
 	import MediaPicker from '$lib/ui/MediaPicker.svelte';
+	import PageHeader from '$lib/admin/PageHeader.svelte';
 
 	type Row = (typeof data)['flat'][number];
 
@@ -67,18 +68,18 @@
 
 <svelte:head><title>Categories · Admin</title></svelte:head>
 
-<div class="flex flex-wrap items-start justify-between gap-4">
-	<div>
-		<h1 class="text-2xl font-semibold tracking-tight text-ink">Categories</h1>
-		<p class="mt-1 text-sm text-ink-muted">
-			Two levels: a category and its subcategories. Order here is the order shoppers see.
-		</p>
-	</div>
-	<Button onclick={() => startCreate()}>
-		<Plus size={16} />
-		New category
-	</Button>
-</div>
+<PageHeader
+	title="Categories"
+	count={data.flat.length}
+	description="Two levels: a category and its subcategories. The order here is the order shoppers see."
+>
+	{#snippet actions()}
+		<Button size="sm" onclick={() => startCreate()}>
+			<Plus size={15} />
+			New category
+		</Button>
+	{/snippet}
+</PageHeader>
 
 {#if form?.error}
 	<p

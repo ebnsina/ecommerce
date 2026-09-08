@@ -32,6 +32,8 @@ export type BundleView = {
 	saving: number;
 	items: BundleMember[];
 	inStock: boolean;
+	/** Whether the shop is showing it. The admin needs this to say so. */
+	active: boolean;
 };
 
 async function membersFor(bundleIds: string[]): Promise<Map<string, BundleMember[]>> {
@@ -91,7 +93,8 @@ function toView(row: typeof bundles.$inferSelect, items: BundleMember[]): Bundle
 		saving: Math.max(0, worth - row.price),
 		items,
 		// A bundle is only buyable while every member is in stock.
-		inStock: items.length > 0 && items.every((i) => i.stock >= i.qty)
+		inStock: items.length > 0 && items.every((i) => i.stock >= i.qty),
+		active: row.active
 	};
 }
 
