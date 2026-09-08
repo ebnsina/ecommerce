@@ -18,16 +18,37 @@ pnpm dev
 
 The seed prints the admin sign-in it created.
 
-## Deploying
+## Running it with Docker
+
+The whole shop — app, database, search engine — in three containers:
+
+```sh
+cp .env.example .env                                       # fill in what you have
+docker compose up -d
+docker compose run --rm tools pnpm db:push                 # create the tables, once
+docker compose run --rm -e SEED_DEMO=1 tools pnpm db:seed  # optional demo catalogue
+```
+
+The shop is on `http://localhost:3000` (set `APP_PORT` to move it). Postgres and
+Typesense are on the internal network only — nothing is published that does not
+need to be.
+
+Behind a domain, set `ORIGIN=https://your-shop` in `.env`: SvelteKit refuses a
+form post whose origin does not match it. **Serve it over TLS.** Session cookies
+are `Secure`, so signing in to the admin over plain HTTP will not work — which
+is the point.
+
+## Deploying without Docker
 
 ```sh
 pnpm build                 # → build/
 node build/index.js        # listens on PORT, default 3000
 ```
 
-Anything that can run a Node process will do: a VPS, a container, a
-platform-as-a-service. Set the environment variables from `.env.example` and
-put a reverse proxy in front of it for TLS.
+Anything that can run a Node process will do. Set the environment variables from
+`.env.example` and put a reverse proxy in front of it for TLS. One thing Docker
+does for you that you must do by hand here: the database needs the `pg_trgm`
+extension before `db:push` will run — `CREATE EXTENSION IF NOT EXISTS pg_trgm;`
 
 ### Scheduled work
 

@@ -1,0 +1,11 @@
+# Everything the image builds for itself, or must never be baked into it.
+node_modules
+build
+.svelte-kit
+.git
+.env
+.env.*
+!.env.example
+static/uploads
+*.log
+.DS_Store

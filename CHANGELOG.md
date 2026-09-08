@@ -49,6 +49,10 @@ User-facing changes, newest first.
 
 ### Fixed
 
+- **The admin was open to anyone who could post to it.** Pages redirected to
+  sign-in, but form actions did not: an unauthenticated request could save
+  settings, change products or delete records. Access is now decided for every
+  request, whatever its method.
 - **The options row on the product editor lines up.** One field carried a hint
   and the other did not, so aligning the row by its bottom dropped one label
   out of line.
@@ -62,6 +66,9 @@ User-facing changes, newest first.
 
 ### Changed
 
+- **Runs under Docker**, with its own Postgres and its own Typesense — one
+  command brings up the whole shop, and nothing is published beyond the shop
+  itself.
 - **No hosting provider is baked in any more.** `pnpm build` produces a plain
   Node server that runs anywhere Node runs, and the two scheduled jobs are
   ordinary HTTP endpoints any scheduler can call — a crontab line, a CI

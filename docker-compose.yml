@@ -1,0 +1,101 @@
+# The whole shop, self-hosted: the app, its database, and its search engine.
+#
+#   cp .env.example .env      # fill in the secrets you have
+#   docker compose up -d
+#   docker compose run --rm tools pnpm db:push    # create the tables, once
+#   docker compose run --rm tools pnpm db:seed    # settings, pages, districts
+#   docker compose run --rm -e SEED_DEMO=1 tools pnpm db:seed   # + a demo catalogue
+#
+# Behind a domain, set ORIGIN=https://your-shop in .env — SvelteKit refuses a
+# form POST whose origin does not match it.
+#
+# Nothing here is specific to a hosting provider. The same three containers run
+# on a laptop, a VPS or anything that speaks Docker.
+
+services:
+  app:
+    build:
+      context: .
+      target: runtime
+    restart: unless-stopped
+    ports:
+      - '${APP_PORT:-3000}:3000'
+    environment:
+      # Inside the network the database and search engine answer to their
+      # service names, so these override whatever is in .env.
+      DATABASE_URL: postgres://${POSTGRES_USER:-shop}:${POSTGRES_PASSWORD:-shop}@db:5432/${POSTGRES_DB:-shop}
+      TYPESENSE_HOST: typesense
+      TYPESENSE_PORT: '8108'
+      TYPESENSE_PROTOCOL: http
+      TYPESENSE_API_KEY: ${TYPESENSE_API_KEY:-devkey}
+      # SvelteKit refuses a form POST whose origin does not match this, so it
+      # has to be the address people actually reach — the published port here,
+      # or your domain behind a proxy.
+      ORIGIN: ${ORIGIN:-http://localhost:${APP_PORT:-3000}}
+    env_file:
+      - .env
+    volumes:
+      # Uploads with STORAGE_DRIVER=local. Point STORAGE_DRIVER at a bucket
+      # instead if you run more than one copy of the app.
+      - uploads:/app/static/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+      # Started, not waited for: the shop falls back to database search when
+      # Typesense is unavailable, so a slow search engine must not hold up the
+      # shop opening.
+      typesense:
+        condition: service_started
+
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-shop}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-shop}
+      POSTGRES_DB: ${POSTGRES_DB:-shop}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # Runs once, when the data directory is first created.
+      - ./docker/initdb:/docker-entrypoint-initdb.d:ro
+    # Deliberately not published. Nothing outside this network needs it, and
+    # binding 5432 collides with a Postgres already on the machine. To poke at
+    # it: docker compose exec db psql -U shop shop
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-shop} -d ${POSTGRES_DB:-shop}']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  typesense:
+    image: typesense/typesense:27.1
+    restart: unless-stopped
+    command: '--data-dir /data --api-key=${TYPESENSE_API_KEY:-devkey} --enable-cors'
+    volumes:
+      - typesense:/data
+    healthcheck:
+      # The image carries neither curl nor wget, so this asks bash to open the
+      # port itself.
+      test: ['CMD', 'bash', '-c', 'exec 3<>/dev/tcp/127.0.0.1/8108']
+      interval: 10s
+      timeout: 5s
+      retries: 6
+
+  # Schema pushes and seeding. Not a running service — `docker compose run` it.
+  tools:
+    build:
+      context: .
+      target: tools
+    profiles: ['tools']
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-shop}:${POSTGRES_PASSWORD:-shop}@db:5432/${POSTGRES_DB:-shop}
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  typesense:
+  uploads:

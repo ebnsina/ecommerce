@@ -1,13 +1,14 @@
 import { redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 
-/** Everything under /admin needs a staff session, except the login page. */
+/**
+ * The signed-in staff member, for the pages to render.
+ *
+ * Access itself is decided in hooks.server.ts, which sees form actions too — a
+ * layout load does not run before one.
+ */
 export const load: LayoutServerLoad = async ({ locals, url }) => {
-	const isLogin = url.pathname === '/admin/login';
 	const admin = locals.user?.kind === 'admin' ? locals.user : null;
-
-	if (!admin && !isLogin) redirect(303, `/admin/login?next=${encodeURIComponent(url.pathname)}`);
-	if (admin && isLogin) redirect(303, '/admin');
-
+	if (admin && url.pathname === '/admin/login') redirect(303, '/admin');
 	return { admin };
 };
