@@ -39,7 +39,143 @@ User-facing changes, newest first.
   single Add button, taken from what buyers of the things already in the cart
   actually bought alongside them — never something already in the cart.
 
+### Fixed
+
+- **Buy now, and adding to a wishlist as a guest, both led to a 404.** When the
+  shop moved to `/demo`, two redirects in `cart-actions.ts` kept pointing at the
+  root — so "Buy now" on every product page went to `/checkout`, and a guest
+  tapping the heart went to `/login`. Both go through `shop()` now, which is
+  what that helper exists for.
+- **Every URL in `sitemap.xml` was a 404 for a crawler** — around 1,300 of them,
+  all missing the `/demo` prefix. `robots.txt` was guarding paths that no longer
+  exist, leaving the real checkout and cart crawlable.
+- **The menu link picker in the admin was writing broken links into live
+  menus** — pages, categories, search, account, orders and wishlist all seeded
+  root paths. This was the worst of them, because it saved bad data rather than
+  just rendering a bad link.
+- **A cart-recovery link with an emptied cart** dropped the shopper on the
+  marketing page instead of the shop.
+- Page preview, the "Visit site" button, the search links in Insights, and the
+  URL placeholders that teach admins the wrong shape — all corrected.
+
+### Added
+
+- **404 and 500 pages that give you somewhere to go.** One page for the whole
+  app, which changes what it offers by where you were: a shopper who mistyped a
+  product URL gets search, their basket and order tracking; someone lost in the
+  admin gets orders and products; a 500 gets a reload that bypasses the client.
+  There is a matching plain-HTML fallback in `src/error.html` for the case where
+  the app cannot render its own error page — no framework, no fonts, no assets,
+  because the reason may be that assets are not being served.
+
+### Added
+
+- **The assistant has a screen of its own**, on the only gradient the page
+  allows, and it leads with what it refuses to do: the three gates a message
+  passes before a word goes out, and the promise that it never touches a thread
+  a colleague has picked up.
+
 ### Changed
+
+- **The product is called Dukkan.** The landing page carries the new name
+  throughout, with headlines set in Syne and body text in Poppins — both loaded
+  on the marketing pages alone, so the admin and the storefront never pay for
+  them. The
+  brand blue is unchanged, because the page and the thing it sells should look
+  like one company. Headlines are set in Syne and everything else in Poppins,
+  both loaded on the marketing pages alone; numbers stay Geist Mono, per the
+  house rule.
+- **The bar is a centred wordmark and nothing else.** The dock carries the
+  menu and the demo, so a second button up there was saying the same thing
+  twice, and the badge above the headline was saying it a third time.
+- **The menu is a dock at the bottom of the screen**, six places and one
+  action, in the order the page tells its story — so it doubles as a table of
+  contents. Seven squircle tiles at one size, ink glyphs on the glass with no
+  colour of their own, and the name appearing above on hover the way a Mac dock
+  does it — the text is in the DOM at all times, so it is still the
+  link's accessible name while it is invisible. The plate is glass: a blur that lifts saturation so colour bleeds
+  through, a white gradient over it, and layered shadows. A hovered tile gets
+  its own backdrop filter, a rim built from four inset hairlines, a specular
+  sheen and a spring on the lift. The white floor is held high on purpose —
+  the dock passes over two ink sections, and a thinner plate would drop its
+  labels to about 2.4:1 there.
+- **In-page links scroll rather than jump, and leave no hash behind.** The dock
+  is a table of contents, not six separate URLs. Focus follows the scroll, so a
+  keyboard reader is not left at the top of the page, and the links still work
+  with JavaScript off.
+- **One word for the thing.** It was "Connects to" in the footer, "Connects" in
+  the dock and "Integrations" in the links. It is Integrations everywhere now.
+- **No tech stack on a page a shop owner reads.** The search engine, the
+  database, the container setup and the AI vendors are gone from the copy;
+  every one of them is now the problem it solves — a shopper who cannot spell
+  your product still finds it, an ad blocker cannot hide the sale your
+  advertising paid for, a price rise at an AI company is a setting rather than
+  a shop that stops answering.
+- **Eight capabilities, a screen each**, alternating side and ground, instead of
+  six lines inside a fake Finder window. "Catalogue" as a one-word summary told
+  a reader nothing, which is a poor trade when they are deciding whether to move
+  their business onto it.
+- **The figures strip is gone.** Four numbers restating what the sections
+  underneath already say, in a band of their own.
+- **No black sections.** The two places the page changes subject are a shaded
+  band with white cards on it instead. #f1f5f9 is as deep as that can go and
+  still carry the muted text token at 4.5:1, so the band brings a darker muted
+  and its own border with it — the utilities read the variables, so nothing in
+  the markup had to change.
+- **Nilgiri, in Bandarban, fills the bottom half of the hero** — full width,
+  both ends masked away, so the hero has no edges and the section beneath it
+  begins without a seam. It is positioned across the bottom rather than stacked
+  under the copy, so the sentence has the whole screen to centre in and the
+  space above and below it stays even at any window height. The buttons and the trial line sit over its top, which
+  is why the crop is taken from the hazy upper third rather than the hills:
+  measured against the actual rendered pixels, the worst of them is 10.3:1.
+  It replaces a browser frame around a product grid, which was a drawing of a
+  shop where a photograph of the country the shop is in does more.
+- **The footer photograph drifts as it scrolls** — a scroll-driven animation
+  moving the crop inside the frame, no listener and no library. Browsers
+  without `animation-timeline` get the still photograph, which is also what
+  anyone who has asked for less motion gets.
+- **Nothing on the page is black any more.** The recommended pricing plan was
+  the last dark surface; it is a white card with a primary border now.
+- **The three panels show the interface doing the thing**, rather than
+  describing it: the inbox is a conversation with bubbles and a composer, the
+  order is a timeline on a rail with times against it, and Insights is a search
+  box mid-query, finding nothing. The rest of the platform is filed in a Finder
+  window with a sidebar and a status line.
+- **A landscape under the footer.** A wide brand block with two columns of
+  quick links beside it, a rule, the small print, and then a photograph of boats
+  on the haor running full width as the last thing on the page — the country
+  the shop is actually in. Nothing is set on top of it, so it
+  needs no overlay: a mask fades its top edge into the white above, the crop is
+  taken from the peaks rather than the middle, and saturation is pulled back so
+  it sits beside the page's neutrals instead of shouting over them.
+- **The bar blends into the hero** rather than sitting above it, so the wash
+  behind the headline runs unbroken to the top of the window.
+- **The "getting started" steps are gone.** Three paragraphs restating the
+  pricing table earned their space back by leaving.
+- **Integrations are a shelf, not a sentence.** One tile per service with its
+  own mark, and what the thing is actually for underneath — "Steadfast" means
+  nothing to a reader who has not run a shop here, "Courier" does. Six marks
+  ship as real files under `static/logos`; the five Bangladeshi brands show a
+  monogram until their own logo file is dropped in beside them.
+- **The whole page is one story now**, written top to bottom: the order arrives
+  as a message, gets confirmed on the phone and handed to a courier, and then
+  tells you what to stock next. Every heading is the next beat rather than a
+  fresh pitch.
+- **A mesh gradient behind the hero and the dark sections** — four soft lobes
+  of the brand ramp, mixed down, blurred into each other and drifting over
+  half a minute, which stops for anyone who asked motion to stop.
+- **The landing page reads as one argument rather than eight sections.** A
+  composed hero with the inbox message and the delivered parcel floating over
+  the storefront; a new section on ink that says plainly why a platform built
+  for card-at-checkout does not fit this market; figures set large; cards sized
+  by what they carry; a moving belt of integrations; and a menu on small
+  screens, which the bar simply did not have before.
+- **Pricing pays for the product.** The free self-hosted tier is gone — the
+  support load arrives whether or not it was billed. Three paid plans instead,
+  from ৳1,900 a month, all of them the whole platform: what changes is how much
+  of the hosting, connecting and answering we do. Self-hosting moves to the
+  Custom plan, and there is a fourteen-day trial with no card.
 
 - **Coupons and bundles** join the shared list shape — search, filters, a row
   action menu and paging. Bundles now say whether each one is actually live,

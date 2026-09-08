@@ -4,76 +4,517 @@
  * Built on what the shops it competes with actually do. Dukaan and Linear
  * arrive at the same answer from opposite ends of the market: a near-white
  * ground, one accent used sparingly, and the product's own interface shown
- * large as the hero — not an illustration, not a gradient, not a mockup.
- * Confidence here comes from restraint and from showing the thing working.
+ * large — not an illustration, not a gradient, not a stock photo.
  *
- * It reuses the product's own tokens rather than inventing a second palette,
- * so the page and the thing it is selling look like one company. The few
- * additions below are the depth treatment those references rely on: soft,
- * layered shadows behind product panels. The storefront still forbids shadows;
- * this surface is the deliberate exception, and only under a panel.
+ * What the first pass got wrong was rhythm. Every section was a heading, a
+ * paragraph and a grid, at the same size, on the same ground, for two thousand
+ * pixels. A page reads as cheap long before any individual element is wrong:
+ * it reads as cheap when nothing on it changes. So this pass spends its
+ * variation deliberately —
+ *
+ *   - one composed hero, with the interface layered rather than flat
+ *   - grounds that alternate: off-white, white, and once, ink
+ *   - one figure per section set far larger than the copy around it
+ *   - cards that differ in size because the things in them differ in weight
+ *
+ * The surface keeps the product's own tokens rather than inventing a second
+ * palette, so the page and the thing it sells look like one company. Nothing
+ * here hardcodes a colour: `text-primary` resolves to the same blue the admin
+ * uses, from the same class.
+ *
+ * The storefront forbids shadows; this surface is the deliberate exception,
+ * and only under something that is pretending to be a window.
  */
 
+/* Two faces, landing only. Syne carries the headlines — it has real character
+   at 700 and gets stranger the larger it is set, which is what a headline
+   wants and a paragraph does not. Poppins carries everything else.
+
+   Poppins has no variable build on Fontsource, so it comes as three static
+   weights rather than an axis: 400 for prose, 500 for labels and buttons, 600
+   for the few places a heading is set in it. Anything asking for a weight not
+   in that list gets synthesised, so nothing here does.
+
+   Both are imported here rather than in layout.css, so the admin and the
+   storefront never pay for a font they do not set. Numbers stay Geist Mono
+   everywhere, per the house rule. */
+@import '@fontsource-variable/syne/wght.css';
+@import '@fontsource/poppins/400.css';
+@import '@fontsource/poppins/500.css';
+@import '@fontsource/poppins/600.css';
+
 .marketing {
-	/* Depth, tinted with the brand rather than neutral black — a grey shadow on
+	/* The brand ramp is the product's own blue, unchanged — the landing page and
+	   the admin are one company, and a second palette here would say otherwise.
+	   Named here only so the rest of this file can refer to the ramp knowing
+	   exactly which stops it is getting:
+
+	     brand-300 #64b5f6  8.0:1 on the ink ground — labels on dark
+	     primary   #1565c0  5.68:1 on white — buttons, links, markers
+	     accent    #1e88e5  3.68:1 — large text, icons and borders only */
+
+	/* The page itself stays neutral. Pink is what you press, not what you read
+	   on: a page tinted the same hue as its buttons has nowhere left to put
+	   emphasis. Every surface below is the product's own neutral, unchanged. */
+	--color-ink: #0f172a; /* 17.9:1 */
+	--color-ink-muted: #64748b; /* 4.75:1 */
+	--color-ink-faint: #94a3b8; /* 2.72:1 — decoration and placeholders only */
+
+	--color-surface: #ffffff;
+	--color-surface-alt: #f8fafc;
+	--color-track: #f0f2f5;
+
+	/* The shop's border token measures 1.20:1 against this slightly darker
+	   ground — under the ~1.3 this project asks of a border. One step down, so
+	   a hairline is still a hairline and still visible. */
+	--color-border: #d8dfe8;
+
+	/* Depth, tinted toward the ink rather than neutral black — a grey shadow on
 	   a warm white ground reads as dirt. */
 	--m-panel:
 		0 1px 2px rgb(15 23 42 / 0.04), 0 4px 8px rgb(15 23 42 / 0.04),
 		0 12px 24px rgb(15 23 42 / 0.05), 0 32px 64px rgb(15 23 42 / 0.07);
 	--m-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 4px 12px rgb(15 23 42 / 0.05);
+	--m-float:
+		0 2px 4px rgb(15 23 42 / 0.05), 0 8px 20px rgb(15 23 42 / 0.07),
+		0 24px 48px rgb(15 23 42 / 0.08);
 
 	/* A ground a shade off white, so a white panel on top of it reads as raised
 	   without needing a border. */
 	background: #fcfcfd;
 	color: var(--color-ink);
 
-	/* The shop's border token measures 1.20:1 against this slightly darker
-	   ground — under the ~1.3 this project asks of a border. One step down, so
-	   a hairline is still a hairline and still visible. */
-	--color-border: #d8dfe8;
+	/* The body face for this surface only. Set as the token and applied here,
+	   so every child inherits Poppins while the rest of the app keeps Mona
+	   Sans — and the Bengali fallback is kept, because a shop name in Bangla
+	   can appear anywhere. */
+	--font-sans: 'Poppins', 'Noto Sans Bengali Variable', system-ui, sans-serif;
+	font-family: var(--font-sans);
 }
 
-/* Display voice: the product's own typeface, set tight and large. One family
-   across the page — the references both do this, and a second display face is
-   how a page starts to look like a template. */
+/* ── Type ─────────────────────────────────────────────────────────────────
+   One family across the page. A second display face is how a page starts to
+   look like a template. The variation comes from size and measure instead. */
+
 .marketing .display {
-	font-weight: 600;
+	font-family: 'Syne Variable', var(--font-sans);
+	font-weight: 700;
 	line-height: 1.04;
 	letter-spacing: -0.03em;
 	text-wrap: balance;
 }
 
+/* The wordmark is a headline the size of a label — same face, so the bar and
+   the hero read as one voice. */
+.marketing .wordmark {
+	font-family: 'Syne Variable', var(--font-sans);
+	font-weight: 700;
+	letter-spacing: -0.02em;
+}
+
+/* Section headings sit at one size the whole way down; only the hero is
+   allowed to be bigger. Consistency here is what makes the hero read as the
+   hero. */
+.marketing .h2 {
+	font-size: clamp(1.75rem, 3.4vw, 2.5rem);
+}
+
 .marketing .eyebrow {
-	font-size: 0.8125rem;
-	font-weight: 500;
-	letter-spacing: 0.01em;
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
 	color: var(--color-primary);
 }
 
-/* The hero panel: the interface, raised off the page. */
-.marketing .panel {
-	border-radius: 1rem;
-	border: 1px solid var(--color-border);
-	background: var(--color-surface);
-	box-shadow: var(--m-panel);
-	overflow: hidden;
+/* The eyebrow on the shaded band. Primary measures 5.25:1 there, so the same
+   token carries it on both grounds. */
+.marketing .shade .eyebrow {
+	color: var(--color-primary);
 }
 
+/* ── Surfaces ─────────────────────────────────────────────────────────── */
+
+/* The panels beside the three beats: a bordered card lifted just off the page.
+   Removing the old browser-frame panel took this with it by accident, and the
+   panels went edgeless — restored here, and it is the only card on the page
+   that carries a shadow. */
 .marketing .soft-card {
-	border-radius: 1rem;
+	border-radius: 1.25rem;
 	border: 1px solid var(--color-border);
 	background: var(--color-surface);
 	box-shadow: var(--m-card);
 }
 
-/* A single wash behind the hero, wide and faint. Not a gradient band — a hint
-   of brand warmth under an otherwise white page. */
-.marketing .wash::before {
+/* The hero photograph. Full width, cropped rather than scaled, and masked
+   away at both ends so the hero has no edges — it surfaces out of the ground
+   under the buttons and thins back into it, and the next section begins
+   without a seam anywhere. */
+.marketing .hero-shot {
+	display: block;
+	width: 100%;
+	/* The bottom half of the hero, painted behind it rather than stacked under
+	   it: positioned in the markup, so the copy can use the whole screen and
+	   settle just above the dock instead of centring itself in whatever was
+	   left over. */
+	height: 50vh;
+	min-height: 14rem;
+	object-fit: cover;
+	/* Cropped from the upper third, where the haze is: the buttons overlap the
+	   top of this picture, and they can only do that over a pale sky. */
+	object-position: center 28%;
+	mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 54%, transparent 97%);
+}
+
+/* A plain bordered card on the off-white ground. No shadow: these are content,
+   not windows. */
+.marketing .flat-card {
+	border-radius: 1.5rem;
+	border: 1px solid var(--color-border);
+	background: var(--color-surface);
+}
+
+/* A shaded band, for the two places the page changes subject. Two greys is all
+   the separation a page needs; a black section on a white page is a different
+   website for six hundred pixels.
+
+   #f1f5f9 is as deep as this can go and still carry the muted text token at
+   4.5:1, so the band brings its own darker muted and its own border with it —
+   the utilities read the variables, so `text-ink-muted` inside a .shade simply
+   becomes the darker one, and nothing in the markup has to know.
+
+     ink      16.30:1     muted #576375  5.56:1
+     border   1.36:1      a white card on it  1.10:1 */
+.marketing .shade {
+	background: #f1f5f9;
+	--color-ink-muted: #576375;
+	--color-border: #cbd5e1;
+}
+
+/* ── Backdrops ────────────────────────────────────────────────────────────
+   A mesh gradient — four soft lobes of the brand ramp, blurred into each
+   other and drifting slowly, the way a shader would do it with far more
+   machinery. It is decoration and carries no meaning, so it has no ratio to
+   clear; what it must not do is compete with the copy sitting on it, which is
+   why the lobes are mixed down to a fraction of the ramp and masked out
+   before they reach the fold. The page underneath is still white — this is a
+   tint on the paper, not a coloured ground.
+
+   Colours come from the ramp through color-mix rather than as new hexes, so
+   changing the brand changes the backdrop. */
+
+.marketing .mesh::before {
 	content: '';
 	position: absolute;
-	inset: -20% 0 auto 0;
-	height: 40rem;
-	background: radial-gradient(60% 60% at 50% 0%, var(--color-brand-50) 0%, transparent 70%);
+	inset: -28% -12% auto -12%;
+	height: 56rem;
+	background:
+		radial-gradient(
+			30% 36% at 20% 18%,
+			color-mix(in oklab, var(--color-brand-300) 17%, transparent),
+			transparent 70%
+		),
+		radial-gradient(
+			28% 32% at 80% 10%,
+			color-mix(in oklab, var(--color-brand-200) 24%, transparent),
+			transparent 70%
+		),
+		radial-gradient(
+			42% 44% at 54% 44%,
+			color-mix(in oklab, var(--color-brand-100) 34%, transparent),
+			transparent 72%
+		),
+		radial-gradient(
+			24% 28% at 90% 48%,
+			color-mix(in oklab, var(--color-brand-400) 9%, transparent),
+			transparent 70%
+		);
+	filter: blur(32px);
+	mask-image: linear-gradient(to bottom, #000 40%, transparent 92%);
+	animation: mesh-drift 30s ease-in-out infinite alternate;
 	pointer-events: none;
 	z-index: -1;
+}
+
+@keyframes mesh-drift {
+	from {
+		transform: translate3d(-2%, -1%, 0) scale(1.02);
+	}
+	to {
+		transform: translate3d(2%, 2%, 0) scale(1.09);
+	}
+}
+
+/* The drift is atmosphere, not information — it simply stops. */
+@media (prefers-reduced-motion: reduce) {
+	.marketing .mesh::before {
+		animation: none;
+	}
+}
+
+/* ── The dock ─────────────────────────────────────────────────────────────
+   The menu sits at the bottom, the way a Mac dock does. It is a real <nav> of
+   real links — only the styling is borrowed.
+
+   The glass is four things stacked: a blur that also lifts saturation, so
+   colour bleeds through the plate rather than turning to grey mush; a white
+   gradient over it, brighter at the top where light would land; a hairline of
+   near-white at the edge; and two inset highlights that give the rim its
+   thickness. The outer shadows are layered rather than single, which is what
+   stops a floating plate from looking stuck on.
+
+   The white floor is what sets how transparent the plate can be, and it is
+   measured rather than guessed. There are no dark sections left on this page,
+   so the darkest thing the dock ever floats over is foliage in the hero and
+   footer photographs. Against that, ink glyphs measure:
+
+     floor 0.42   6.0:1        floor 0.52   6.8:1
+     over the hazy sky, the shade band and white, everything is 14:1 or better
+
+   All of it clears 4.5, which is why the plate can be this thin — and why the
+   glyphs are ink rather than ink-muted, which would not. */
+
+.marketing .dock {
+	position: fixed;
+	bottom: max(1rem, env(safe-area-inset-bottom));
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 40;
+	display: flex;
+	align-items: flex-end;
+	gap: 0.375rem;
+	padding: 0.5rem;
+	border-radius: 1.5rem;
+	background: linear-gradient(to bottom, rgb(255 255 255 / 0.52), rgb(255 255 255 / 0.42));
+	backdrop-filter: blur(28px) saturate(180%);
+	-webkit-backdrop-filter: blur(28px) saturate(180%);
+	/* No border. A hairline around a translucent plate reads as a cut-out
+	   sitting on the page; the shadows alone are what make it float. */
+	box-shadow:
+		0 1px 2px rgb(15 23 42 / 0.06),
+		0 10px 28px rgb(15 23 42 / 0.13),
+		0 28px 56px rgb(15 23 42 / 0.11);
+	max-width: calc(100vw - 1.5rem);
+}
+
+/* ── The tiles ────────────────────────────────────────────────────────────
+   One squircle size for every tile, and no colour on any of them: the glyph is
+   ink on the glass, and the plate stays the only thing carrying tone. Ink
+   measures 9.1:1 against the darkest ground the dock ever floats over, which
+   is the whole reason the plate's white floor is set as high as it is. */
+
+.marketing .dock-item {
+	position: relative;
+	display: grid;
+	place-items: center;
+	/* iOS corners are continuous rather than circular; a radius this generous
+	   on a tile this small is as close as CSS gets to the squircle. */
+	width: 2.75rem;
+	height: 2.75rem;
+	border-radius: 0.9375rem;
+	color: var(--color-ink);
+	transition:
+		transform 320ms cubic-bezier(0.34, 1.4, 0.64, 1),
+		background-color 220ms var(--ease-brand),
+		box-shadow 220ms var(--ease-brand);
+	transform-origin: bottom center;
+}
+
+/* The name, above the icon, the way a Mac dock does it: nothing until the
+   pointer arrives, then a small pill floating over the dock. The text is in
+   the DOM at all times, so it is still the link's accessible name while it is
+   invisible — this is a tooltip in appearance only.
+
+   The counter-scale cancels the tile's magnify, so the label stays one size
+   however far the icon under it grows. */
+
+.marketing .dock-label {
+	position: absolute;
+	bottom: calc(100% + 0.625rem);
+	left: 50%;
+	padding: 0.25rem 0.625rem;
+	border-radius: 0.75rem;
+	background: rgb(255 255 255 / 0.92);
+	backdrop-filter: blur(12px) saturate(180%);
+	-webkit-backdrop-filter: blur(12px) saturate(180%);
+	box-shadow:
+		inset 0 1px 0 rgb(255 255 255 / 0.95),
+		0 2px 6px rgb(15 23 42 / 0.1),
+		0 8px 20px rgb(15 23 42 / 0.14);
+	color: var(--color-ink);
+	font-size: 0.75rem;
+	font-weight: 500;
+	line-height: 1.4;
+	white-space: nowrap;
+	opacity: 0;
+	pointer-events: none;
+	transform: translate(-50%, 0.25rem) scale(0.862);
+	transition:
+		opacity 160ms var(--ease-brand),
+		transform 260ms cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+.marketing .dock-item:hover .dock-label,
+.marketing .dock-item:focus-visible .dock-label {
+	opacity: 1;
+	transform: translate(-50%, 0) scale(0.862);
+}
+
+/* ── The hovered tile ──────────────────────────────────────────────────────
+   A second, smaller piece of glass sitting on the plate: its own backdrop
+   filter so it refracts again, a rim of inset hairlines bright along the top
+   where light lands, and a spring on the lift. The overshoot in that curve is
+   the whole difference between "it moved" and "it is a physical thing".
+
+   What CSS cannot do is the real article: iOS displaces the pixels behind the
+   glass through a lens, and the web has no backdrop-displacement primitive. */
+
+.marketing .dock-item:hover,
+.marketing .dock-item:focus-visible {
+	background: rgb(255 255 255 / 0.6);
+	backdrop-filter: blur(12px) saturate(220%) brightness(1.06);
+	-webkit-backdrop-filter: blur(12px) saturate(220%) brightness(1.06);
+	box-shadow:
+		inset 0 1px 0 rgb(255 255 255 / 0.8),
+		0 1px 2px rgb(15 23 42 / 0.1),
+		0 6px 16px rgb(15 23 42 / 0.14);
+	transform: scale(1.16) translateY(-0.375rem);
+}
+
+.marketing .dock-sep {
+	align-self: stretch;
+	width: 1px;
+	margin: 0.25rem 0.375rem;
+	background: rgb(15 23 42 / 0.12);
+}
+
+/* The spring and the lift are motion; the glass is not. Anyone who asked for
+   less still gets the tile lighting up, just without anything moving. */
+@media (prefers-reduced-motion: reduce) {
+	.marketing .dock-item,
+	.marketing .dock-label {
+		transition: none;
+	}
+	.marketing .dock-label,
+	.marketing .dock-item:hover .dock-label,
+	.marketing .dock-item:focus-visible .dock-label {
+		transform: translate(-50%, 0);
+	}
+	.marketing .dock-item:hover,
+	.marketing .dock-item:focus-visible {
+		transform: none;
+	}
+}
+
+/* ── The assistant's ground ───────────────────────────────────────────────
+   The one section that is allowed a gradient. It marks the part of the product
+   that is genuinely different in kind from the rest — software that writes
+   something a customer will read — so it gets a ground nothing else on the
+   page has.
+
+   Two soft washes of the ramp over a near-white base. The deepest stop is
+   #e3f2fd, and the muted text token measures 4.17:1 there, so this band brings
+   the darker muted with it the same way .shade does; ink is 15.6:1 and primary
+   5.03:1, both fine as they are.
+
+   Not `.aurora`: layout.css already owns that name for the blurred blobs in
+   the ContactBand block, and the collision quietly made this whole section
+   `position: absolute; filter: blur(70px)`. */
+.marketing .ai-ground {
+	background:
+		radial-gradient(60% 70% at 15% 0%, #e6f0ff 0%, transparent 60%),
+		radial-gradient(55% 65% at 88% 30%, #f1ecfe 0%, transparent 62%),
+		linear-gradient(180deg, #f7fbff 0%, #eef4fe 55%, #f6f4fe 100%);
+	--color-ink-muted: #576375;
+	--color-border: #cbd5e1;
+}
+
+/* The three gates, drawn as a chain: each one has to pass before the next is
+   asked. The rail is decorative — the list is still a numbered list. */
+.marketing .gate::before {
+	content: '';
+	position: absolute;
+	top: 2.25rem;
+	bottom: -1.25rem;
+	left: 1.0625rem;
+	width: 1px;
+	background: var(--color-border);
+}
+
+.marketing .gate:last-child::before {
+	display: none;
+}
+
+/* ── The footer scene ────────────────────────────────────────────────────
+   A landscape under the footer links, full width, as the last thing on the
+   page. Nothing is ever set on top of it, so it needs no overlay and clears no
+   contrast floor.
+
+   Boats on the haor — the country the shop is actually in.
+
+   Three bits of CSS do the work a flat illustration would do on its own: the
+   mask fades the top edge into the white above, so a bright sky never meets
+   the links as a hard line; the crop is set so the fade lands on cloud and the
+   boat sits low in the frame rather than on the seam; and saturation is pulled
+   back a little so a photograph sits beside the page's soft neutrals instead
+   of shouting over them. */
+
+.marketing .band {
+	display: block;
+	width: 100%;
+	height: clamp(15rem, 32vw, 27rem);
+	object-fit: cover;
+	object-position: center 58%;
+	filter: saturate(0.88);
+	mask-image: linear-gradient(to bottom, transparent, #000 20%);
+
+	/* Parallax, without a scroll listener. A scroll-driven animation moves the
+	   crop inside the frame as the band comes up the window, so the picture
+	   drifts more slowly than the page over it. Browsers without
+	   animation-timeline simply get the still photograph, which is the same
+	   thing anyone who has asked for less motion gets below. */
+	animation: band-drift linear both;
+	animation-timeline: view();
+	animation-range: entry 0% exit 100%;
+}
+
+@keyframes band-drift {
+	from {
+		object-position: center 34%;
+	}
+	to {
+		object-position: center 78%;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.marketing .band {
+		animation: none;
+	}
+}
+
+/* The caret in the search panel. It is the only thing on the page that says
+   "someone is typing this right now", which is the whole point of showing a
+   query that finds nothing. It stops blinking when motion is turned down. */
+
+.marketing .caret {
+	display: inline-block;
+	width: 1px;
+	height: 1em;
+	margin-left: 1px;
+	vertical-align: text-bottom;
+	background: var(--color-primary);
+	animation: caret-blink 1.1s steps(1) infinite;
+}
+
+@keyframes caret-blink {
+	50% {
+		opacity: 0;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.marketing .caret {
+		animation: none;
+	}
 }
