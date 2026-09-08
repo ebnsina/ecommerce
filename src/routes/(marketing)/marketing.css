@@ -297,6 +297,28 @@
 	max-width: calc(100vw - 1.5rem);
 }
 
+/* Eight tiles at their full size come to 429px, which does not fit a phone —
+   the flex row would squash them into rectangles rather than admit it. Below
+   480px everything shrinks by a quarter, which brings the dock to 329px and
+   keeps the tiles square. The hit areas stay above the 24px minimum. */
+@media (max-width: 30rem) {
+	.marketing .dock {
+		gap: 0.125rem;
+		padding: 0.375rem;
+		border-radius: 1.25rem;
+	}
+
+	.marketing .dock-item {
+		width: 2.25rem;
+		height: 2.25rem;
+		border-radius: 0.75rem;
+	}
+
+	.marketing .dock-sep {
+		margin: 0.25rem 0.25rem;
+	}
+}
+
 /* ── The tiles ────────────────────────────────────────────────────────────
    One squircle size for every tile, and no colour on any of them: the glyph is
    ink on the glass, and the plate stays the only thing carrying tone. Ink
