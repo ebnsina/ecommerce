@@ -71,7 +71,9 @@ export const load: PageServerLoad = async () => {
 							? ['AI_PROVIDER=ollama']
 							: aiProvider === 'openai'
 								? ['AI_PROVIDER=openai', 'OPENAI_API_KEY']
-								: ['AI_PROVIDER=anthropic', 'ANTHROPIC_API_KEY'],
+								: aiProvider === 'groq'
+									? ['AI_PROVIDER=groq', 'GROQ_API_KEY', 'AI_MODEL (optional)']
+									: ['AI_PROVIDER=anthropic', 'ANTHROPIC_API_KEY'],
 					webhook: null
 				}
 			]

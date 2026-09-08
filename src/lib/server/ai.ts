@@ -5,9 +5,12 @@
  * package. Swapping Anthropic → OpenAI → a local Ollama box is a config change,
  * not a code change.
  *
- *   AI_PROVIDER=anthropic|openai|ollama   (default: anthropic)
- *   AI_MODEL=<model id>                   (per-provider default below)
- *   ANTHROPIC_API_KEY / OPENAI_API_KEY    (ollama needs none)
+ *   AI_PROVIDER=anthropic|openai|groq|ollama  (default: anthropic)
+ *   AI_MODEL=<model id>                       (per-provider default below)
+ *   ANTHROPIC_API_KEY / OPENAI_API_KEY / GROQ_API_KEY   (ollama needs none)
+ *
+ * Groq speaks the OpenAI protocol at its own address, so it rides the
+ * OpenAI-compatible adapter rather than needing a package of its own.
  *
  * Adapter factories take the model positionally — verified against the shipped
  * type definitions, which differ from some published examples.
@@ -15,20 +18,27 @@
 import { env } from '$env/dynamic/private';
 import { anthropicText } from '@tanstack/ai-anthropic';
 import { openaiText } from '@tanstack/ai-openai';
+import { openaiCompatibleText } from '@tanstack/ai-openai/compatible';
 import { ollamaText } from '@tanstack/ai-ollama';
 import { getSettings } from './settings';
 
-export type Provider = 'anthropic' | 'openai' | 'ollama';
+export type Provider = 'anthropic' | 'openai' | 'groq' | 'ollama';
+
+/** Groq's OpenAI-compatible endpoint. */
+const GROQ_BASE_URL = 'https://api.groq.com/openai/v1';
 
 const DEFAULT_MODEL: Record<Provider, string> = {
 	anthropic: 'claude-sonnet-5',
 	openai: 'gpt-4o',
+	// Fast and cheap, which is what a reply suggestion wants; set AI_MODEL to
+	// openai/gpt-oss-120b or llama-3.3-70b-versatile for better answers.
+	groq: 'openai/gpt-oss-20b',
 	ollama: 'llama3'
 };
 
 export const provider = (): Provider => {
 	const p = env.AI_PROVIDER;
-	return p === 'openai' || p === 'ollama' ? p : 'anthropic';
+	return p === 'openai' || p === 'groq' || p === 'ollama' ? p : 'anthropic';
 };
 
 /** Ollama runs locally with no key, so "configured" differs per provider. */
@@ -36,6 +46,7 @@ export function isAiConfigured(): boolean {
 	const p = provider();
 	if (p === 'ollama') return true;
 	if (p === 'openai') return !!env.OPENAI_API_KEY;
+	if (p === 'groq') return !!env.GROQ_API_KEY;
 	return !!env.ANTHROPIC_API_KEY;
 }
 
@@ -44,6 +55,11 @@ export function textAdapter() {
 	switch (provider()) {
 		case 'openai':
 			return openaiText(model as Parameters<typeof openaiText>[0]);
+		case 'groq':
+			return openaiCompatibleText(model, {
+				baseURL: GROQ_BASE_URL,
+				apiKey: env.GROQ_API_KEY ?? ''
+			});
 		case 'ollama':
 			return ollamaText(model);
 		default:
