@@ -1,117 +1,127 @@
 <script lang="ts">
-	import { untrack } from 'svelte';
-	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import { Search, ShoppingCart } from '@lucide/svelte';
+	import { renderComponent, renderSnippet } from '@tanstack/svelte-table';
+	import type { ColumnDef } from '@tanstack/svelte-table';
+	import { Eye, Printer, Download } from '@lucide/svelte';
 	import { formatTk } from '$lib/money';
 	import { formatPhone } from '$lib/phone';
 	import OrderStatus from '$lib/shop/OrderStatus.svelte';
-	import Input from '$lib/ui/Input.svelte';
+	import Select from '$lib/ui/Select.svelte';
+	import Button from '$lib/ui/Button.svelte';
+	import DataTable from '$lib/admin/DataTable.svelte';
+	import PageHeader from '$lib/admin/PageHeader.svelte';
+	import RowActions from '$lib/admin/RowActions.svelte';
+	import MenuItem from '$lib/admin/MenuItem.svelte';
+	import { setParams } from '$lib/admin/listQuery';
 
 	let { data } = $props();
-	let q = $state(untrack(() => data.filters.q));
 
-	function apply(patch: Record<string, string>) {
-		const params = new URLSearchParams(page.url.searchParams);
-		for (const [k, v] of Object.entries(patch)) v ? params.set(k, v) : params.delete(k);
-		params.delete('page');
-		goto(`?${params}`, { keepFocus: true, noScroll: true });
-	}
+	type Order = (typeof data)['rows'][number];
 
-	let timer: ReturnType<typeof setTimeout>;
-	const search = (v: string) => {
-		clearTimeout(timer);
-		timer = setTimeout(() => apply({ q: v }), 250);
-	};
+	const day = (d: Date | string) =>
+		new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
 
-	const tabs = [
-		{ value: '', label: 'All' },
-		{ value: 'pending', label: 'Awaiting call' },
+	const statusOptions = $derived([
+		{ value: '', label: 'Every status' },
+		{
+			value: 'pending',
+			label: `Awaiting call${data.counts.pending ? ` (${data.counts.pending})` : ''}`
+		},
 		{ value: 'confirmed', label: 'Confirmed' },
 		{ value: 'packed', label: 'Packed' },
 		{ value: 'shipped', label: 'Shipped' },
 		{ value: 'delivered', label: 'Delivered' },
 		{ value: 'returned', label: 'Returned' },
 		{ value: 'cancelled', label: 'Cancelled' }
+	]);
+
+	/* Columns hold the data; the snippets below hold the markup, so a cell can
+	   use components and still live in the column definition. */
+	const columns: ColumnDef<any, Order>[] = [
+		{ id: 'order', header: 'Order', cell: (c) => renderSnippet(orderCell, c.row.original) },
+		{
+			id: 'customer',
+			header: 'Customer',
+			cell: (c) => renderSnippet(customerCell, c.row.original)
+		},
+		{
+			id: 'status',
+			header: 'Status',
+			cell: (c) => renderComponent(OrderStatus, { status: c.row.original.status })
+		},
+		{ id: 'payment', header: 'Payment', cell: (c) => renderSnippet(paymentCell, c.row.original) },
+		{ id: 'total', header: 'Total', cell: (c) => renderSnippet(totalCell, c.row.original) },
+		{ id: 'actions', header: '', cell: (c) => renderSnippet(actionsCell, c.row.original) }
 	];
 </script>
 
+{#snippet orderCell(o: Order)}
+	<a href="/admin/orders/{o.id}" class="num font-medium text-primary">{o.number}</a>
+	<span class="block text-xs text-ink-faint">{day(o.createdAt)}</span>
+{/snippet}
+
+{#snippet customerCell(o: Order)}
+	<span class="block text-ink">{o.name}</span>
+	<span class="num block text-xs text-ink-faint">{formatPhone(o.phone)}</span>
+{/snippet}
+
+{#snippet paymentCell(o: Order)}
+	<span class="text-xs text-ink-muted">
+		{o.paymentMethod === 'cod' ? 'COD' : 'Online'} · {o.paymentStatus}
+	</span>
+{/snippet}
+
+{#snippet totalCell(o: Order)}
+	<span class="num font-medium text-ink">{formatTk(o.total)}</span>
+{/snippet}
+
+{#snippet actionsCell(o: Order)}
+	<div class="flex justify-end">
+		<RowActions label="Actions for order {o.number}">
+			{#snippet menu()}
+				<MenuItem href="/admin/orders/{o.id}">
+					<Eye size={15} />
+					Open order
+				</MenuItem>
+				<MenuItem href="/admin/print/{o.id}">
+					<Printer size={15} />
+					Print invoice
+				</MenuItem>
+			{/snippet}
+		</RowActions>
+	</div>
+{/snippet}
+
 <svelte:head><title>Orders · Admin</title></svelte:head>
 
-<h1 class="text-2xl font-semibold tracking-tight text-ink">Orders</h1>
-<p class="mt-1 text-sm text-ink-muted"><span class="num">{data.total}</span> orders</p>
+<PageHeader title="Orders" count={data.total} description="Every order, newest first.">
+	{#snippet actions()}
+		<Button href="/admin/orders/export{page.url.search}" variant="secondary" size="sm">
+			<Download size={15} />
+			Export CSV
+		</Button>
+	{/snippet}
+</PageHeader>
 
-<div class="mt-6 flex flex-wrap gap-2">
-	{#each tabs as t (t.value)}
-		<button
-			class="rounded-xl border px-3 py-1.5 text-sm transition-colors duration-[180ms] ease-brand
-			       {data.filters.status === t.value
-				? 'border-primary bg-primary-soft font-medium text-primary'
-				: 'border-border text-ink-muted hover:border-brand-300 hover:text-ink'}"
-			onclick={() => apply({ status: t.value })}
-		>
-			{t.label}
-			{#if t.value && data.counts[t.value]}
-				<span class="num ml-1 text-ink-faint">{data.counts[t.value]}</span>
-			{/if}
-		</button>
-	{/each}
-</div>
-
-<div class="relative mt-4 max-w-sm">
-	<Input
-		placeholder="Order number, phone or name"
-		bind:value={q}
-		oninput={(e) => search(e.currentTarget.value)}
-		class="[&_input]:pl-9"
-		aria-label="Search orders"
-	/>
-	<Search size={15} class="pointer-events-none absolute top-3.5 left-3 text-ink-faint" />
-</div>
-
-<div class="mt-4 overflow-hidden rounded-3xl border border-border bg-surface">
-	<div class="overflow-x-auto">
-		<table class="w-full text-sm">
-			<thead>
-				<tr class="border-b border-border text-left text-xs text-ink-muted">
-					<th class="px-4 py-3 font-medium">Order</th>
-					<th class="px-4 py-3 font-medium">Customer</th>
-					<th class="px-4 py-3 font-medium">Status</th>
-					<th class="px-4 py-3 font-medium">Payment</th>
-					<th class="px-4 py-3 text-right font-medium">Total</th>
-				</tr>
-			</thead>
-			<tbody>
-				{#each data.rows as o (o.id)}
-					<tr class="border-b border-border transition-colors last:border-0 hover:bg-surface-alt">
-						<td class="px-4 py-3">
-							<a href="/admin/orders/{o.id}" class="num font-medium text-primary">{o.number}</a>
-							<span class="block text-xs text-ink-faint">
-								{new Date(o.createdAt).toLocaleDateString('en-GB', {
-									day: 'numeric',
-									month: 'short'
-								})}
-							</span>
-						</td>
-						<td class="px-4 py-3">
-							<span class="block text-ink">{o.name}</span>
-							<span class="num block text-xs text-ink-faint">{formatPhone(o.phone)}</span>
-						</td>
-						<td class="px-4 py-3"><OrderStatus status={o.status} /></td>
-						<td class="px-4 py-3 text-xs text-ink-muted">
-							{o.paymentMethod === 'cod' ? 'COD' : 'Online'} · {o.paymentStatus}
-						</td>
-						<td class="num px-4 py-3 text-right font-medium text-ink">{formatTk(o.total)}</td>
-					</tr>
-				{:else}
-					<tr>
-						<td colspan="5" class="px-4 py-16 text-center text-ink-faint">
-							<ShoppingCart size={22} class="mx-auto mb-3" />
-							No orders here.
-						</td>
-					</tr>
-				{/each}
-			</tbody>
-		</table>
-	</div>
+<div class="mt-6">
+	<DataTable
+		{columns}
+		rows={data.rows}
+		total={data.total}
+		page={data.page}
+		perPage={data.perPage}
+		q={data.filters.q}
+		rowId={(o) => o.id}
+		searchPlaceholder="Order number, phone or name"
+		empty="No orders match this view."
+	>
+		{#snippet filters()}
+			<Select
+				value={data.filters.status}
+				class="w-52"
+				options={statusOptions}
+				onchange={(v) => setParams({ status: v })}
+			/>
+		{/snippet}
+	</DataTable>
 </div>

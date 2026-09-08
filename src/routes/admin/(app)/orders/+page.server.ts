@@ -1,14 +1,12 @@
 import { and, desc, eq, ilike, or, sql, count } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { orders } from '$lib/server/db/schema';
+import { listParams } from '$lib/admin/listQuery';
 import type { PageServerLoad } from './$types';
 
-const PER_PAGE = 30;
-
 export const load: PageServerLoad = async ({ url }) => {
-	const q = url.searchParams.get('q')?.trim() ?? '';
+	const { q, page, perPage } = listParams(url);
 	const status = url.searchParams.get('status') ?? '';
-	const page = Math.max(1, Number(url.searchParams.get('page') ?? 1));
 
 	const where = and(
 		q
@@ -27,8 +25,8 @@ export const load: PageServerLoad = async ({ url }) => {
 			.from(orders)
 			.where(where)
 			.orderBy(desc(orders.createdAt))
-			.limit(PER_PAGE)
-			.offset((page - 1) * PER_PAGE),
+			.limit(perPage)
+			.offset((page - 1) * perPage),
 		db.select({ n: count() }).from(orders).where(where),
 		db.select({ status: orders.status, n: count() }).from(orders).groupBy(orders.status)
 	]);
@@ -37,7 +35,7 @@ export const load: PageServerLoad = async ({ url }) => {
 		rows,
 		total,
 		page,
-		pages: Math.max(1, Math.ceil(total / PER_PAGE)),
+		perPage,
 		counts: Object.fromEntries(counts.map((c) => [c.status, c.n])) as Record<string, number>,
 		filters: { q, status }
 	};

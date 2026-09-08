@@ -61,13 +61,15 @@
 	}
 </script>
 
-<!-- Track: muted, borderless, 3px padding — the shadcn TabsList shape. -->
+<!-- Track: the shadcn TabsList shape. It carries a hairline border as well as a
+     fill, because the admin's own page ground is surface-alt — a fill alone is
+     invisible there. -->
 <div
 	bind:this={list}
 	role="tablist"
 	tabindex="-1"
 	class="relative inline-flex h-9 w-fit max-w-full [scrollbar-width:none] items-center justify-center
-	       overflow-x-auto rounded-lg bg-surface-alt p-[3px] [&::-webkit-scrollbar]:hidden {klass}"
+	       overflow-x-auto rounded-lg border border-border bg-track p-[3px] [&::-webkit-scrollbar]:hidden {klass}"
 	onkeydown={onKey}
 >
 	<!-- The moving pill. shadcn uses a soft shadow here rather than a border. -->

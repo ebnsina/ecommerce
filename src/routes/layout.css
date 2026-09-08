@@ -38,6 +38,9 @@
 	--color-surface-alt: #f8fafc;
 	/* The page behind the cards. Overridden by the store theme. */
 	--color-page: #ffffff;
+	/* A step darker than surface-alt, so a tab track reads on both the white
+	   storefront and the slate admin ground rather than vanishing into one. */
+	--color-track: #ecf0f5;
 	--color-border: #e2e8f0; /* slate-200 — light borders instead of shadows */
 
 	/* Status pairs. A badge is text, so each foreground is measured against its
