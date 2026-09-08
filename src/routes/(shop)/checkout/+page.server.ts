@@ -9,6 +9,7 @@ import { getRegions, resolveZone } from '$lib/server/regions';
 import { normalizePhone } from '$lib/phone';
 import { sendSms } from '$lib/server/sms';
 import { capiConfigured, purchaseEventId, sendEvents } from '$lib/server/meta';
+import { createSession, paymentConfigured } from '$lib/server/payments';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
@@ -110,6 +111,14 @@ export const actions: Actions = {
 		const customerId = event.locals.user?.kind === 'customer' ? event.locals.user.id : null;
 		const settings = await getSettings();
 
+		// Only offer what the shop has switched on: a form can be posted with
+		// anything in it.
+		const asked = String(form.get('paymentMethod') ?? 'cod');
+		const method: 'cod' | 'sslcommerz' =
+			asked === 'sslcommerz' && settings.payment.sslcommerz && paymentConfigured()
+				? 'sslcommerz'
+				: 'cod';
+
 		const result = await placeOrder({
 			cartId: cart.id,
 			customerId,
@@ -122,7 +131,7 @@ export const actions: Actions = {
 				area: place.area ?? undefined,
 				line
 			},
-			paymentMethod: String(form.get('paymentMethod') ?? 'cod') as 'cod' | 'sslcommerz',
+			paymentMethod: method,
 			couponCode: String(form.get('couponCode') ?? '') || null,
 			note: String(form.get('note') ?? '').trim() || null
 		});
@@ -133,15 +142,19 @@ export const actions: Actions = {
 		if (customerId && !name)
 			await db.update(customers).set({ name }).where(eq(customers.id, customerId));
 
+		// The total is computed during placement — coupons and delivery are
+		// applied there — so it is read back rather than recomputed here. Both
+		// the ad reporting and the payment session need it.
+		const [placed] = await db
+			.select({ total: orders.total })
+			.from(orders)
+			.where(eq(orders.id, result.id))
+			.limit(1);
+
 		// Server-side Purchase, deduplicated against the browser pixel on the
 		// confirmation page by a shared event_id. Ad blockers never see this one.
 		const pixelId = settings.analytics?.metaPixelId;
 		if (capiConfigured(pixelId)) {
-			const [placed] = await db
-				.select({ total: orders.total })
-				.from(orders)
-				.where(eq(orders.id, result.id))
-				.limit(1);
 			await sendEvents(
 				pixelId!,
 				[
@@ -174,6 +187,29 @@ export const actions: Actions = {
 			phone,
 			`Order ${result.number} received. We will call you shortly to confirm. Thank you!`
 		);
+
+		/* Paying online means one more hop: the order exists and is unpaid, and
+		   the gateway sends the shopper back to /checkout/payment/…, which is
+		   where it actually gets marked paid. A session that cannot be created
+		   is not a lost order — it falls through to the confirmation page with
+		   the order sitting there unpaid, and staff can call. */
+		if (method === 'sslcommerz' && paymentConfigured()) {
+			const session = await createSession({
+				orderId: result.id,
+				orderNumber: result.number,
+				total: placed?.total ?? 0,
+				name,
+				phone,
+				// Customers here sign in by phone; the gateway only wants a
+				// syntactically valid address, so the adapter supplies a filler.
+				email: null,
+				address: { line, city: place.district!, area: place.area ?? undefined },
+				items: lines.map((l) => ({ title: l.title, unitPrice: l.unitPrice, qty: l.qty })),
+				origin: event.url.origin
+			});
+			if ('url' in session) redirect(303, session.url);
+			console.error('[checkout] payment session failed', session.error);
+		}
 
 		redirect(303, `/order/${result.number}`);
 	}

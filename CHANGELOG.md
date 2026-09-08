@@ -6,6 +6,12 @@ User-facing changes, newest first.
 
 ### Added
 
+- **Online payment.** Cards, bKash, Nagad, Rocket and internet banking through
+  SSLCommerz, switched on in Settings once the keys are in. Cash on delivery is
+  untouched and stays the default. If the gateway cannot be reached the order
+  is still placed — it simply sits unpaid for someone to call about, rather
+  than being lost.
+
 - **A blog.** Write articles in the admin with the same editor the pages use,
   give each a cover, a summary and tags, and keep it as a draft until it is
   ready — a draft is readable by you and nobody else. The shop gets `/blog`

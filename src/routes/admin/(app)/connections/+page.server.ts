@@ -4,6 +4,7 @@ import { courierStatusList } from '$lib/server/couriers';
 import { isAiConfigured, provider } from '$lib/server/ai';
 import { capiConfigured } from '$lib/server/meta';
 import { searchConfigured } from '$lib/server/search';
+import { paymentConfigured, isSandbox } from '$lib/server/payments';
 import { getSettings } from '$lib/server/settings';
 import type { PageServerLoad } from './$types';
 
@@ -105,12 +106,16 @@ export const load: PageServerLoad = async () => {
 				},
 				{
 					key: 'sslcommerz',
-					name: 'Online payment',
-					connected: false,
+					name: `Online payment (SSLCommerz${isSandbox() ? ' — sandbox' : ''})`,
+					connected: paymentConfigured(),
 					purpose:
-						'bKash, Nagad, Rocket and cards. Not built yet — cash on delivery covers you for now.',
-					vars: [],
-					webhook: null
+						'bKash, Nagad, Rocket, cards and internet banking through one page. Switch it on under Settings → Payment once the keys are in.',
+					vars: [
+						'SSLCOMMERZ_STORE_ID',
+						'SSLCOMMERZ_STORE_PASSWORD',
+						'SSLCOMMERZ_SANDBOX=1 (while testing)'
+					],
+					webhook: '/api/payments/sslcommerz/ipn'
 				}
 			]
 		},
