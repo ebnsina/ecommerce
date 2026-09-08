@@ -29,6 +29,13 @@ export type StoreSettings = {
 		ga4Id: string;
 	};
 	recovery: { enabled: boolean; delayHours: number; message: string };
+	autoReply: {
+		enabled: boolean;
+		/** Channels it may answer on. Nothing is answered on a channel not listed. */
+		channels: string[];
+		/** 0–100. Below this the assistant stays quiet and leaves it for a person. */
+		confidence: number;
+	};
 	promo: {
 		text: string;
 		textBn: string;
@@ -57,6 +64,9 @@ const FALLBACK: StoreSettings = {
 	search: { hints: [] },
 	theme: { preset: 'blue', surface: 'white' },
 	analytics: { metaPixelId: '', tiktokPixelId: '', gtmId: '', ga4Id: '' },
+	// Off, on no channels, at a high bar. Every one of those has to be changed
+	// deliberately before a customer hears from a machine.
+	autoReply: { enabled: false, channels: [], confidence: 85 },
 	recovery: {
 		enabled: false,
 		delayHours: 6,

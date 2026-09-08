@@ -16,6 +16,7 @@
  * type definitions, which differ from some published examples.
  */
 import { env } from '$env/dynamic/private';
+import { chat } from '@tanstack/ai';
 import { anthropicText } from '@tanstack/ai-anthropic';
 import { openaiText } from '@tanstack/ai-openai';
 import { openaiCompatibleText } from '@tanstack/ai-openai/compatible';
@@ -111,4 +112,41 @@ Rules:
 - Be brief. Two or three sentences is usually enough.
 - Every cash-on-delivery order is confirmed by phone before dispatch; say so if
   someone asks what happens next.`;
+}
+
+/**
+ * One-shot completion that must come back as JSON.
+ *
+ * Models wrap JSON in prose and fenced code blocks however firmly they are
+ * asked not to, so the first {...} in the response is what gets parsed.
+ * Returns null rather than throwing: every caller here has a safe path for
+ * "the assistant did not answer".
+ */
+export async function generateJson<T>(system: string, user: string): Promise<T | null> {
+	if (!isAiConfigured()) return null;
+
+	try {
+		const stream = chat({
+			adapter: textAdapter(),
+			// A UIMessage carries `parts`, not a bare `content` string.
+			messages: [
+				{ id: 'sys', role: 'system' as const, parts: [{ type: 'text' as const, content: system }] },
+				{ id: 'usr', role: 'user' as const, parts: [{ type: 'text' as const, content: user }] }
+			]
+		});
+
+		let text = '';
+		for await (const chunk of stream) {
+			const part = (chunk as { text?: string; delta?: string }).text ?? (chunk as any).delta ?? '';
+			if (typeof part === 'string') text += part;
+		}
+
+		const start = text.indexOf('{');
+		const end = text.lastIndexOf('}');
+		if (start === -1 || end <= start) return null;
+		return JSON.parse(text.slice(start, end + 1)) as T;
+	} catch (e) {
+		console.error('[ai] json completion failed', e);
+		return null;
+	}
 }

@@ -19,6 +19,9 @@ async function put(key: string, value: unknown) {
 const str = (f: FormData, k: string) => String(f.get(k) ?? '').trim();
 const on = (f: FormData, k: string) => f.get(k) === 'on';
 
+/** The channels the assistant may be switched on for. */
+const AUTO_REPLY_CHANNELS = ['site', 'messenger', 'instagram', 'whatsapp', 'telegram', 'sms'];
+
 export const actions: Actions = {
 	store: async ({ request }) => {
 		const f = await request.formData();
@@ -107,6 +110,23 @@ export const actions: Actions = {
 			callEnabled: on(f, 'callEnabled')
 		});
 		return { saved: 'contact' };
+	},
+
+	autoReply: async ({ request }) => {
+		const f = await request.formData();
+		const confidence = Number(str(f, 'confidence'));
+		await put('autoReply', {
+			enabled: on(f, 'enabled'),
+			// Only channels that were actually offered, so a stale form cannot
+			// switch on something that does not exist.
+			channels: f
+				.getAll('channels')
+				.map(String)
+				.filter((c) => AUTO_REPLY_CHANNELS.includes(c)),
+			// Never below 50: at a coin toss it is not an assistant, it is a risk.
+			confidence: Number.isFinite(confidence) ? Math.min(100, Math.max(50, confidence)) : 85
+		});
+		return { saved: 'autoReply' };
 	},
 
 	recovery: async ({ request }) => {

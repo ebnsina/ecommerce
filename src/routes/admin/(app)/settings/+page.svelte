@@ -6,6 +6,7 @@
 	import {
 		ChartNoAxesColumn,
 		ShoppingBasket,
+		Brain,
 		Check,
 		Store,
 		Megaphone,
@@ -518,6 +519,55 @@
 			</div>
 		{/snippet}
 		{@render section('search', Search, 'Search hints', 'What the search box suggests.', searchBody)}
+
+		{#snippet autoReplyBody()}
+			<div class="flex flex-col gap-4">
+				<Checkbox
+					name="enabled"
+					checked={s.autoReply?.enabled ?? false}
+					label="Let the assistant answer simple questions on its own"
+					hint="It only ever answers delivery charges, delivery times, payment methods, returns and opening hours — never anything about a particular order, price or complaint."
+				/>
+
+				<fieldset>
+					<legend class="mb-2 text-sm font-medium text-ink">Channels</legend>
+					<div class="flex flex-col gap-2.5">
+						{#each [{ v: 'site', l: 'Website chat' }, { v: 'messenger', l: 'Messenger' }, { v: 'instagram', l: 'Instagram' }, { v: 'whatsapp', l: 'WhatsApp' }, { v: 'telegram', l: 'Telegram' }, { v: 'sms', l: 'SMS' }] as ch (ch.v)}
+							<Checkbox
+								name="channels"
+								value={ch.v}
+								checked={(s.autoReply?.channels ?? []).includes(ch.v)}
+								label={ch.l}
+							/>
+						{/each}
+					</div>
+				</fieldset>
+
+				<Input
+					label="How sure it must be (%)"
+					name="confidence"
+					value={String(s.autoReply?.confidence ?? 85)}
+					numeric
+					type="number"
+					min="50"
+					max="100"
+					hint="Below this it stays quiet and leaves the message for a person. 85 is a good starting point; lower it only once you have read what it has been sending."
+				/>
+
+				<p class="text-xs text-ink-muted">
+					Every automatic reply appears in the Inbox marked as the assistant, and the thread stays
+					unread so somebody still looks at it. A thread a colleague has picked up is never answered
+					automatically, and it never replies twice to the same conversation.
+				</p>
+			</div>
+		{/snippet}
+		{@render section(
+			'autoReply',
+			Brain,
+			'Automatic replies',
+			'Letting the assistant answer the easy questions without waiting for a person.',
+			autoReplyBody
+		)}
 
 		{#snippet recoveryBody()}
 			<div class="flex flex-col gap-4">

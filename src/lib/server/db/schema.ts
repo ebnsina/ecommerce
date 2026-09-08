@@ -574,7 +574,10 @@ export const posts = pgTable(
 		cover: text(),
 		authorId: uuid('author_id').references(() => adminUsers.id, { onDelete: 'set null' }),
 		/** Free text, so an owner can group posts without managing a taxonomy. */
-		tags: text().array().notNull().default(sql`'{}'::text[]`),
+		tags: text()
+			.array()
+			.notNull()
+			.default(sql`'{}'::text[]`),
 		seoTitle: text('seo_title'),
 		seoDescription: text('seo_description'),
 		published: boolean().notNull().default(false),
@@ -634,7 +637,10 @@ export const searchQueries = pgTable(
 		customerId: uuid('customer_id').references(() => customers.id, { onDelete: 'set null' }),
 		createdAt: now()
 	},
-	(t) => [index('search_queries_term_idx').on(t.term), index('search_queries_at_idx').on(t.createdAt)]
+	(t) => [
+		index('search_queries_term_idx').on(t.term),
+		index('search_queries_at_idx').on(t.createdAt)
+	]
 );
 
 /**

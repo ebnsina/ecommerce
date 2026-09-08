@@ -128,6 +128,18 @@ export async function receiveMessage(input: {
 		body: input.body,
 		externalId: input.messageId
 	});
+
+	/* The assistant may answer this, if the owner has switched it on and the
+	   question is one the shop's own settings answer. It decides for itself and
+	   stays quiet by default; a failure here must never lose the message that
+	   has just been recorded. */
+	try {
+		const { considerAutoReply } = await import('./autoReply');
+		await considerAutoReply(conversation.id, input.body);
+	} catch (e) {
+		console.error('[inbox] auto-reply failed', e);
+	}
+
 	return conversation;
 }
 

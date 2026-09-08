@@ -6,6 +6,15 @@ User-facing changes, newest first.
 
 ### Added
 
+- **The assistant can answer the easy questions by itself** — off by default,
+  and switched on per channel with a confidence bar you set. It only ever
+  answers delivery charges, delivery times, payment methods, returns and
+  opening hours: things the shop's own settings answer. Anything about a
+  particular order, price, refund or complaint is always left for a person,
+  however certain it claims to be. It never answers a thread a colleague has
+  picked up, never replies twice to the same conversation, and every reply is
+  marked as the assistant in the Inbox with the thread left unread.
+
 - **Pathao as a courier**, alongside Steadfast. Pathao delivers by its own city
   and area numbers rather than a written address, so each order's address is
   matched against its lists by name — and an address it cannot place is
