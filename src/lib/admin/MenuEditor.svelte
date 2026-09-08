@@ -77,7 +77,7 @@
 				{options}
 				onchange={(v) => (node.href = v)}
 			/>
-			<Input label="URL" bind:value={node.href} placeholder="/c/electronics" />
+			<Input label="URL" bind:value={node.href} placeholder="/demo/c/electronics" />
 		</div>
 	</div>
 {/snippet}

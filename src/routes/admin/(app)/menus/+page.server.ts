@@ -3,6 +3,7 @@ import { db } from '$lib/server/db';
 import { menus, categories, pages } from '$lib/server/db/schema';
 import type { MenuNode } from '$lib/server/db/schema';
 import type { Actions, PageServerLoad } from './$types';
+import { shop } from '$lib/paths';
 
 export const load: PageServerLoad = async () => {
 	const [rows, cats, pageRows] = await Promise.all([
@@ -27,23 +28,23 @@ export const load: PageServerLoad = async () => {
 					{ label: 'Home', href: '/' },
 					...pageRows
 						.filter((p) => p.slug !== 'home')
-						.map((p) => ({ label: p.title, href: `/pages/${p.slug}` }))
+						.map((p) => ({ label: p.title, href: shop(`/pages/${p.slug}`) }))
 				]
 			},
 			{
 				group: 'Categories',
 				items: cats.map((c) => ({
 					label: c.parentId ? `— ${c.name}` : c.name,
-					href: `/c/${c.slug}`
+					href: shop(`/c/${c.slug}`)
 				}))
 			},
 			{
 				group: 'Shop',
 				items: [
-					{ label: 'All products', href: '/search' },
-					{ label: 'My account', href: '/account' },
-					{ label: 'Track my order', href: '/account/orders' },
-					{ label: 'Wishlist', href: '/account/wishlist' }
+					{ label: 'All products', href: shop('/search') },
+					{ label: 'My account', href: shop('/account') },
+					{ label: 'Track my order', href: shop('/account/orders') },
+					{ label: 'Wishlist', href: shop('/account/wishlist') }
 				]
 			}
 		]

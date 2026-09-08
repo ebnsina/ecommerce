@@ -8,6 +8,7 @@
 	import MenuItem from '$lib/ui/MenuItem.svelte';
 	import Breadcrumbs from '$lib/ui/Breadcrumbs.svelte';
 	import NotificationBell from '$lib/ui/NotificationBell.svelte';
+	import { SHOP } from '$lib/paths';
 
 	let { data, children } = $props();
 
@@ -120,7 +121,7 @@
 			<Breadcrumbs items={crumbs} />
 			<div class="ml-auto flex items-center gap-1">
 				<a
-					href="/"
+					href={SHOP}
 					target="_blank"
 					rel="noopener"
 					class="flex h-10 items-center gap-2 rounded-xl px-3 text-sm text-ink-muted transition-colors

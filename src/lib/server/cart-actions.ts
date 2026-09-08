@@ -5,6 +5,7 @@ import { db } from './db';
 import { wishlist } from './db/schema';
 import { getOrCreateCart, addToCart } from './cart';
 import { recordProductEvent } from './intent';
+import { SHOP, shop } from '$lib/paths';
 
 /**
  * Adds to the cart. `forceTo` lets "Buy now" jump straight to checkout without
@@ -30,15 +31,15 @@ async function add(event: RequestEvent, forceTo?: string) {
 }
 
 export const addAction = (event: RequestEvent) => add(event);
-export const buyNowAction = (event: RequestEvent) => add(event, '/checkout');
+export const buyNowAction = (event: RequestEvent) => add(event, shop('/checkout'));
 
 export async function wishlistAction(event: RequestEvent) {
 	const form = await event.request.formData();
 	const productId = String(form.get('productId') ?? '');
-	const next = String(form.get('redirectTo') ?? '/');
+	const next = String(form.get('redirectTo') ?? SHOP);
 
 	if (event.locals.user?.kind !== 'customer')
-		redirect(303, `/login?next=${encodeURIComponent(next)}`);
+		redirect(303, `${shop('/login')}?next=${encodeURIComponent(next)}`);
 
 	const customerId = event.locals.user.id;
 	const [row] = await db

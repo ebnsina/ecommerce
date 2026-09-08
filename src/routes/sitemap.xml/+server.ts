@@ -2,6 +2,7 @@ import { eq, desc } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { products, categories, pages } from '$lib/server/db/schema';
 import type { RequestHandler } from './$types';
+import { shop } from '$lib/paths';
 
 const esc = (s: string) =>
 	s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -30,14 +31,15 @@ export const GET: RequestHandler = async ({ url, setHeaders }) => {
 
 	const entries: Entry[] = [
 		{ loc: `${origin}/`, priority: '1.0', changefreq: 'daily' },
-		{ loc: `${origin}/search`, priority: '0.5', changefreq: 'weekly' },
+		{ loc: `${origin}${shop()}`, priority: '0.9', changefreq: 'daily' },
+		{ loc: `${origin}${shop('/search')}`, priority: '0.5', changefreq: 'weekly' },
 		...catRows.map((c) => ({
-			loc: `${origin}/c/${c.slug}`,
+			loc: `${origin}${shop(`/c/${c.slug}`)}`,
 			priority: '0.8',
 			changefreq: 'daily'
 		})),
 		...prodRows.map((p) => ({
-			loc: `${origin}/p/${p.slug}`,
+			loc: `${origin}${shop(`/p/${p.slug}`)}`,
 			lastmod: day(p.updatedAt),
 			priority: '0.7',
 			changefreq: 'weekly'
@@ -45,7 +47,7 @@ export const GET: RequestHandler = async ({ url, setHeaders }) => {
 		...pageRows
 			.filter((p) => p.slug !== 'home')
 			.map((p) => ({
-				loc: `${origin}/pages/${p.slug}`,
+				loc: `${origin}${shop(`/pages/${p.slug}`)}`,
 				lastmod: day(p.updatedAt),
 				priority: '0.4',
 				changefreq: 'monthly'

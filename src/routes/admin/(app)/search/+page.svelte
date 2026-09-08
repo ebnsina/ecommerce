@@ -3,6 +3,7 @@
 	import { RefreshCw, Search, Check, TriangleAlert, PackageX, Zap } from '@lucide/svelte';
 	import Button from '$lib/ui/Button.svelte';
 	import PageHeader from '$lib/admin/PageHeader.svelte';
+	import { shop } from '$lib/paths';
 
 	let { data, form } = $props();
 	let reindexing = $state(false);
@@ -78,7 +79,10 @@
 				<li
 					class="flex items-center justify-between gap-3 border-b border-border py-2 last:border-0"
 				>
-					<a href="/search?q={encodeURIComponent(row.term)}" class="truncate text-sm text-ink">
+					<a
+						href={shop(`/search?q=${encodeURIComponent(row.term)}`)}
+						class="truncate text-sm text-ink"
+					>
 						{row.term}
 					</a>
 					<span class="num text-sm text-ink-muted">{row.searches}</span>
@@ -102,7 +106,10 @@
 				<li
 					class="flex items-center justify-between gap-3 border-b border-border py-2 last:border-0"
 				>
-					<a href="/search?q={encodeURIComponent(row.term)}" class="truncate text-sm text-ink">
+					<a
+						href={shop(`/search?q=${encodeURIComponent(row.term)}`)}
+						class="truncate text-sm text-ink"
+					>
 						{row.term}
 					</a>
 					<span class="num text-sm text-ink-muted">{row.searches}</span>

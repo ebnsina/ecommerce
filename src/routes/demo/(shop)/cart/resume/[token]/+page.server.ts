@@ -4,6 +4,7 @@ import { db } from '$lib/server/db';
 import { carts } from '$lib/server/db/schema';
 import { adoptCart, getLines } from '$lib/server/cart';
 import type { PageServerLoad } from './$types';
+import { SHOP, shop } from '$lib/paths';
 
 /**
  * The link in a cart reminder. The token is the cart's own opaque cookie value,
@@ -16,5 +17,5 @@ export const load: PageServerLoad = async (event) => {
 
 	adoptCart(event, cart.token);
 	// An emptied cart means they already ordered — send them somewhere useful.
-	redirect(303, (await getLines(cart.id)).length ? '/demo/checkout' : '/');
+	redirect(303, (await getLines(cart.id)).length ? shop('/checkout') : SHOP);
 };

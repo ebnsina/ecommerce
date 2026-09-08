@@ -4,6 +4,7 @@
 	import Select from '$lib/ui/Select.svelte';
 	import PageHeader from '$lib/admin/PageHeader.svelte';
 	import { setParams } from '$lib/admin/listQuery';
+	import { shop } from '$lib/paths';
 
 	let { data } = $props();
 
@@ -66,7 +67,10 @@
 				<li
 					class="flex items-center justify-between gap-3 border-b border-border py-2 last:border-0"
 				>
-					<a href="/search?q={encodeURIComponent(row.term)}" class="truncate text-sm text-ink">
+					<a
+						href={shop(`/search?q=${encodeURIComponent(row.term)}`)}
+						class="truncate text-sm text-ink"
+					>
 						{row.term}
 					</a>
 					<span class="num shrink-0 text-sm text-ink-muted">{row.searches}</span>
@@ -90,7 +94,10 @@
 				<li
 					class="flex items-center justify-between gap-3 border-b border-border py-2 last:border-0"
 				>
-					<a href="/search?q={encodeURIComponent(row.term)}" class="truncate text-sm text-ink">
+					<a
+						href={shop(`/search?q=${encodeURIComponent(row.term)}`)}
+						class="truncate text-sm text-ink"
+					>
 						{row.term}
 					</a>
 					<span class="flex shrink-0 items-center gap-2">

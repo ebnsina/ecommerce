@@ -23,6 +23,7 @@
 	import Checkbox from '$lib/ui/Checkbox.svelte';
 	import Dialog from '$lib/ui/Dialog.svelte';
 	import FieldInput from '$lib/admin/FieldInput.svelte';
+	import { SHOP, shop } from '$lib/paths';
 
 	type Block = { id: string; type: string; props: Record<string, any> };
 
@@ -155,7 +156,7 @@
 		<div class="flex flex-wrap gap-2">
 			<Button
 				variant="ghost"
-				href={isHome ? '/?preview=1' : `/pages/${data.page.slug}?preview=1`}
+				href={isHome ? `${SHOP}?preview=1` : shop(`/pages/${data.page.slug}?preview=1`)}
 				target="_blank"
 			>
 				<Eye size={16} />

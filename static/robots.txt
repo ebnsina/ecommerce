@@ -1,9 +1,14 @@
 User-agent: *
 Allow: /
 
+# The shop lives at /demo. These are the paths under it that are private to a
+# shopper or meaningless to a crawler — a cart with no session behind it is an
+# empty page, and crawling checkout is worse than useless.
 Disallow: /admin
-Disallow: /account
-Disallow: /checkout
-Disallow: /cart
+Disallow: /demo/account
+Disallow: /demo/checkout
+Disallow: /demo/cart
+Disallow: /demo/compare
+Disallow: /demo/order
 
 Sitemap: /sitemap.xml

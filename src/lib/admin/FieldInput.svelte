@@ -53,7 +53,7 @@
 	<Input
 		label={field.label}
 		bind:value
-		placeholder={field.placeholder ?? '/c/slug'}
+		placeholder={field.placeholder ?? '/demo/c/slug'}
 		hint={field.hint}
 	/>
 {:else if field.type === 'textarea'}

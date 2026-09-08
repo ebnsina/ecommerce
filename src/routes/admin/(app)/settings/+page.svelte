@@ -224,7 +224,7 @@
 					<Input label="Text (Bangla)" name="textBn" value={s.promo.textBn} />
 				</div>
 				<div class="grid gap-4 sm:grid-cols-2">
-					<Input label="Link" name="href" value={s.promo.href} placeholder="/c/eid-sale" />
+					<Input label="Link" name="href" value={s.promo.href} placeholder="/demo/c/eid-sale" />
 					<Select
 						label="Background"
 						name="background"
