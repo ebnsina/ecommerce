@@ -4,7 +4,7 @@ import { db } from '$lib/server/db';
 import { addresses } from '$lib/server/db/schema';
 import { normalizePhone } from '$lib/phone';
 import { getSettings } from '$lib/server/settings';
-import { getRegions, resolveZone } from '$lib/server/regions';
+import { getRegions } from '$lib/server/regions';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {

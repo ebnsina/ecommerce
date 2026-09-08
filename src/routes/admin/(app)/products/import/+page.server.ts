@@ -1,5 +1,5 @@
 import { fail } from '@sveltejs/kit';
-import { eq, inArray, sql } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import {
 	products,

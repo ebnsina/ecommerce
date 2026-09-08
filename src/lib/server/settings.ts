@@ -1,4 +1,3 @@
-import { inArray } from 'drizzle-orm';
 import { db } from './db';
 import { settings } from './db/schema';
 

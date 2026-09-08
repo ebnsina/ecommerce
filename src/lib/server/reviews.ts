@@ -1,5 +1,5 @@
 /** Reviews and Q&A. Ratings on `products` are a cache of approved reviews. */
-import { and, eq, sql, desc, count, avg } from 'drizzle-orm';
+import { and, eq, desc, count, avg } from 'drizzle-orm';
 import { db } from './db';
 import { products, productReviews, productQuestions } from './db/schema';
 

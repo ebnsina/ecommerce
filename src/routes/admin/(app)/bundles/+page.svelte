@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { AdminTableFeatures } from '$lib/admin/table';
 	import { enhance } from '$app/forms';
 	import { renderSnippet } from '@tanstack/svelte-table';
 	import type { ColumnDef } from '@tanstack/svelte-table';
@@ -19,7 +20,7 @@
 
 	let open = $state(false);
 
-	const columns: ColumnDef<any, Bundle>[] = [
+	const columns: ColumnDef<AdminTableFeatures, Bundle>[] = [
 		{ id: 'bundle', header: 'Bundle', cell: (c) => renderSnippet(bundleCell, c.row.original) },
 		{ id: 'price', header: 'Price', cell: (c) => renderSnippet(priceCell, c.row.original) },
 		{ id: 'state', header: 'Live', cell: (c) => renderSnippet(stateCell, c.row.original) },

@@ -1,7 +1,9 @@
 <script lang="ts">
+	import type { CardProduct } from '$lib/shop/ProductCard.svelte';
+	import type { BlockProps } from './schema';
 	import ProductSection from '$lib/shop/ProductSection.svelte';
 
-	let { props, products }: { props: Record<string, any>; products: any[] } = $props();
+	let { props, products }: { props: BlockProps; products: CardProduct[] } = $props();
 </script>
 
 <ProductSection

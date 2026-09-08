@@ -1,9 +1,11 @@
 <script lang="ts">
+	import type { CardProduct } from '$lib/shop/ProductCard.svelte';
+	import type { BlockProps } from './schema';
 	import { ArrowRight } from '@lucide/svelte';
 	import ProductCard from '$lib/shop/ProductCard.svelte';
 
 	/** Multi-row grid. Same card as the rows, just no horizontal limit. */
-	let { props, products }: { props: Record<string, any>; products: any[] } = $props();
+	let { props, products }: { props: BlockProps; products: CardProduct[] } = $props();
 
 	const cols = $derived(
 		Number(props.columns) === 4 ? 'sm:grid-cols-3 lg:grid-cols-4' : 'sm:grid-cols-3 lg:grid-cols-5'

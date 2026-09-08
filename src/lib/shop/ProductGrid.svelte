@@ -20,8 +20,12 @@
 	} = $props();
 
 	function go(patch: Record<string, string>) {
+		// eslint-disable-next-line svelte/prefer-svelte-reactivity -- local to this function, never held as reactive state
 		const params = new URLSearchParams(page.url.searchParams);
-		for (const [k, v] of Object.entries(patch)) v ? params.set(k, v) : params.delete(k);
+		for (const [k, v] of Object.entries(patch)) {
+			if (v) params.set(k, v);
+			else params.delete(k);
+		}
 		goto(`?${params}`, { noScroll: false });
 	}
 </script>

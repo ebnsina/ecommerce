@@ -3,7 +3,7 @@
  * thana/upazila beneath them. The zone is a property of the place, not a
  * shopper choice, so the delivery charge follows automatically.
  */
-import { asc, eq, isNull, and } from 'drizzle-orm';
+import { asc, eq, and } from 'drizzle-orm';
 import { db } from './db';
 import { regions } from './db/schema';
 

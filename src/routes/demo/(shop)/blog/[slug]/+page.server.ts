@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit';
-import { and, desc, eq, ne, sql } from 'drizzle-orm';
+import { and, desc, eq, ne } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { posts, adminUsers } from '$lib/server/db/schema';
 import type { PageServerLoad } from './$types';

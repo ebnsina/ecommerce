@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { AdminTableFeatures } from '$lib/admin/table';
 	import { page } from '$app/state';
 	import { renderSnippet } from '@tanstack/svelte-table';
 	import type { ColumnDef } from '@tanstack/svelte-table';
@@ -33,7 +34,7 @@
 		archived: { Icon: Archive, color: 'var(--color-bad-fg)' }
 	};
 
-	const columns: ColumnDef<any, Product>[] = [
+	const columns: ColumnDef<AdminTableFeatures, Product>[] = [
 		{ id: 'product', header: 'Product', cell: (c) => renderSnippet(productCell, c.row.original) },
 		{ id: 'status', header: 'Status', cell: (c) => renderSnippet(statusCell, c.row.original) },
 		{ id: 'price', header: 'Price', cell: (c) => renderSnippet(priceCell, c.row.original) },

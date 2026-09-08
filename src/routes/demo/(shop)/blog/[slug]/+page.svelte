@@ -52,6 +52,7 @@
 	{/if}
 
 	<!-- Sanitised on save, never on render: the stored HTML is already safe. -->
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -- sanitised when the post is saved, as the comment above says -->
 	<div class="rich mt-6">{@html data.post.body}</div>
 
 	{#if data.post.tags?.length}

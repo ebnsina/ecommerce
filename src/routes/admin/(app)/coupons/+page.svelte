@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { AdminTableFeatures } from '$lib/admin/table';
 	import { enhance } from '$app/forms';
 	import { renderSnippet } from '@tanstack/svelte-table';
 	import type { ColumnDef } from '@tanstack/svelte-table';
@@ -65,7 +66,7 @@
 		return 'always';
 	};
 
-	const columns: ColumnDef<any, Row>[] = [
+	const columns: ColumnDef<AdminTableFeatures, Row>[] = [
 		{ id: 'code', header: 'Code', cell: (c) => renderSnippet(codeCell, c.row.original) },
 		{ id: 'window', header: 'Runs', cell: (c) => renderSnippet(windowCell, c.row.original) },
 		{ id: 'minimum', header: 'Minimum', cell: (c) => renderSnippet(minCell, c.row.original) },

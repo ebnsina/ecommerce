@@ -132,17 +132,18 @@ actually happens in chat apps rather than on the site.
 One threaded inbox in the admin that merges every channel a BD store gets
 messages on, so staff stop tab-switching between phones:
 
-| Channel | How it connects | Notes |
-|---|---|---|
-| Messenger (Facebook Page) | Meta Messenger Platform webhook + Send API | The dominant channel — most orders start here |
-| Instagram DM | Same Meta Graph app, IG messaging permission | Shares the Messenger plumbing |
-| WhatsApp | WhatsApp Business Cloud API | Template messages for anything outside the 24-hour window |
-| Telegram | Bot API | Cheapest to add, useful for staff-side alerts too |
-| imo | No public API today | Manual-log only until that changes |
-| SMS | The existing `sendSms()` adapter | Already built |
-| Site chat | Own widget writing into the same thread table | No third-party bubble |
+| Channel                   | How it connects                               | Notes                                                     |
+| ------------------------- | --------------------------------------------- | --------------------------------------------------------- |
+| Messenger (Facebook Page) | Meta Messenger Platform webhook + Send API    | The dominant channel — most orders start here             |
+| Instagram DM              | Same Meta Graph app, IG messaging permission  | Shares the Messenger plumbing                             |
+| WhatsApp                  | WhatsApp Business Cloud API                   | Template messages for anything outside the 24-hour window |
+| Telegram                  | Bot API                                       | Cheapest to add, useful for staff-side alerts too         |
+| imo                       | No public API today                           | Manual-log only until that changes                        |
+| SMS                       | The existing `sendSms()` adapter              | Already built                                             |
+| Site chat                 | Own widget writing into the same thread table | No third-party bubble                                     |
 
 Design notes:
+
 - **One `conversations` + `messages` schema, one `channel` column.** Each
   platform gets an adapter with `send()` and a webhook that normalises inbound
   payloads. The inbox never learns which platform a thread came from beyond a
@@ -189,22 +190,21 @@ The confirmation call, automated — the biggest single ops cost in a COD store:
 mode, then narrow auto-reply, then calling. Each stage is useful alone, and
 each one earns the right to the next.
 
-
 ## 1. Stack
 
-| Concern  | Choice                                                                                           | Why not the alternative                                                            |
-| -------- | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------- |
-| App      | SvelteKit 2 + Svelte 5 (TS), one project, `/` storefront + `/admin`                              | No separate admin SPA. Same DB, same session, half the code.                       |
-| DB       | Postgres + Drizzle ORM + drizzle-kit migrations                                                  | Prisma also fine; Drizzle is lighter and the SQL stays readable.                   |
-| Auth     | Own `sessions` table, cookie-based. Admin = email+password (argon2). Customer = **phone + OTP**. | Lucia is archived. Phone OTP isn't in any library anyway — it's ~150 lines.        |
-| Media    | Cloudflare R2 + Cloudflare Image Resizing (or Cloudinary free tier)                              | No self-hosted sharp pipeline for 500 SKUs.                                        |
-| Search   | Postgres `pg_trgm` + `ilike` + a GIN index                                                       | Meilisearch/Typesense is an extra service for a 500-row table. Add it at ~5k SKUs. |
-| Styling  | Tailwind + shadcn-svelte for admin                                                               | Admin UI is 60% of the work; don't hand-build tables, dialogs, comboboxes.         |
-| Jobs     | Postgres table + a `/api/cron` route hit by a scheduler                                          | No Redis, no BullMQ. Abandoned-cart and SMS retries don't need a broker.           |
+| Concern  | Choice                                                                                           | Why not the alternative                                                                                                                            |
+| -------- | ------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| App      | SvelteKit 2 + Svelte 5 (TS), one project, `/` storefront + `/admin`                              | No separate admin SPA. Same DB, same session, half the code.                                                                                       |
+| DB       | Postgres + Drizzle ORM + drizzle-kit migrations                                                  | Prisma also fine; Drizzle is lighter and the SQL stays readable.                                                                                   |
+| Auth     | Own `sessions` table, cookie-based. Admin = email+password (argon2). Customer = **phone + OTP**. | Lucia is archived. Phone OTP isn't in any library anyway — it's ~150 lines.                                                                        |
+| Media    | Cloudflare R2 + Cloudflare Image Resizing (or Cloudinary free tier)                              | No self-hosted sharp pipeline for 500 SKUs.                                                                                                        |
+| Search   | Postgres `pg_trgm` + `ilike` + a GIN index                                                       | Meilisearch/Typesense is an extra service for a 500-row table. Add it at ~5k SKUs.                                                                 |
+| Styling  | Tailwind + shadcn-svelte for admin                                                               | Admin UI is 60% of the work; don't hand-build tables, dialogs, comboboxes.                                                                         |
+| Jobs     | Postgres table + a `/api/cron` route hit by a scheduler                                          | No Redis, no BullMQ. Abandoned-cart and SMS retries don't need a broker.                                                                           |
 | Hosting  | **Any Node host**, `adapter-node`; Postgres anywhere (Neon Singapore is a good default)          | Deliberately host-agnostic: `pnpm build` gives a plain Node server, and the two scheduled jobs are ordinary HTTP endpoints any scheduler can call. |
-| Payments | **SSLCommerz** (one integration = cards + bKash + Nagad + Rocket) + **COD**                      | Direct bKash/Nagad merchant APIs only once volume justifies the lower fee.         |
-| Courier  | **Steadfast** or **Pathao Courier** API                                                          | Start with manual entry + CSV export; wire the API in Phase 4.                     |
-| SMS      | One provider (Alpha SMS / SSL Wireless) behind a 20-line `sendSms()`                             | SMS matters far more than email here.                                              |
+| Payments | **SSLCommerz** (one integration = cards + bKash + Nagad + Rocket) + **COD**                      | Direct bKash/Nagad merchant APIs only once volume justifies the lower fee.                                                                         |
+| Courier  | **Steadfast** or **Pathao Courier** API                                                          | Start with manual entry + CSV export; wire the API in Phase 4.                                                                                     |
+| SMS      | One provider (Alpha SMS / SSL Wireless) behind a 20-line `sendSms()`                             | SMS matters far more than email here.                                                                                                              |
 
 ---
 

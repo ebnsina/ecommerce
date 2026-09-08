@@ -21,6 +21,7 @@
 	   cart must not invite editing a single member of it. */
 	const groups = $derived.by(() => {
 		const loose = data.lines.filter((l) => !l.bundleId);
+		// eslint-disable-next-line svelte/prefer-svelte-reactivity -- local to this function, never held as reactive state
 		const byBundle = new Map<string, typeof data.lines>();
 		for (const l of data.lines) {
 			if (!l.bundleId) continue;

@@ -39,7 +39,7 @@
 		reviews: { rows: Review[]; breakdown: { stars: number; n: number }[]; total: number };
 		questions: Question[];
 		customerName?: string;
-		form?: Record<string, any> | null;
+		form?: Record<string, unknown> | null;
 	} = $props();
 
 	const tabs = $derived([

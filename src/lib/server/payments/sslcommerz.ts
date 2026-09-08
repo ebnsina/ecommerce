@@ -13,6 +13,7 @@
  */
 import { env } from '$env/dynamic/private';
 import { SHOP } from '$lib/paths';
+import type { JsonBody } from '../json';
 
 const HOSTS = {
 	sandbox: 'https://sandbox.sslcommerz.com',
@@ -100,7 +101,7 @@ export async function createSession(
 			headers: { 'content-type': 'application/x-www-form-urlencoded' },
 			body
 		});
-		const data = (await res.json()) as Record<string, any>;
+		const data = (await res.json()) as JsonBody;
 
 		if (data?.status !== 'SUCCESS' || !data?.GatewayPageURL)
 			return { error: data?.failedreason || 'The payment gateway refused to start a session.' };
@@ -137,7 +138,7 @@ export async function validatePayment(valId: string): Promise<Validation> {
 
 	try {
 		const res = await fetch(url);
-		const data = (await res.json()) as Record<string, any>;
+		const data = (await res.json()) as JsonBody;
 
 		// VALIDATED means we have asked before; both are successful payments.
 		const ok = data?.status === 'VALID' || data?.status === 'VALIDATED';

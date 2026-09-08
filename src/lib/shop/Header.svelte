@@ -1,16 +1,6 @@
 <script lang="ts">
 	import { SHOP } from '$lib/paths';
-	import {
-		Search,
-		Heart,
-		ShoppingBag,
-		User,
-		Menu,
-		X,
-		ChevronDown,
-		Phone,
-		Scale
-	} from '@lucide/svelte';
+	import { Search, Heart, ShoppingBag, User, Menu, X, ChevronDown, Scale } from '@lucide/svelte';
 	import { slide, fly } from 'svelte/transition';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
@@ -43,7 +33,6 @@
 		searchHints?: string[];
 		store: {
 			name: string;
-			phone: string;
 			logo?: { mode: 'text' | 'image'; text: string; image: string | null };
 		};
 		promo: {

@@ -1,5 +1,5 @@
 /** Inbox service: find-or-create threads, record messages, send replies. */
-import { and, desc, eq, sql, count, isNull } from 'drizzle-orm';
+import { and, desc, eq, sql, count } from 'drizzle-orm';
 import { db } from './db';
 import { conversations, messages, customers, orders, products } from './db/schema';
 import { adapters, type ChannelKey } from './channels';

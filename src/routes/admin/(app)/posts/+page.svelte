@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { AdminTableFeatures } from '$lib/admin/table';
 	import { enhance } from '$app/forms';
 	import { renderSnippet } from '@tanstack/svelte-table';
 	import type { ColumnDef, RowSelectionState } from '@tanstack/svelte-table';
@@ -24,7 +25,7 @@
 			? new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 			: '—';
 
-	const columns: ColumnDef<any, Post>[] = [
+	const columns: ColumnDef<AdminTableFeatures, Post>[] = [
 		{ id: 'post', header: 'Post', cell: (c) => renderSnippet(postCell, c.row.original) },
 		{ id: 'author', header: 'Author', cell: (c) => renderSnippet(authorCell, c.row.original) },
 		{ id: 'state', header: 'Live', cell: (c) => renderSnippet(stateCell, c.row.original) },

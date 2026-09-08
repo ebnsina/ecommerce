@@ -1,4 +1,4 @@
-import { and, desc, eq, ilike, or, sql, count, inArray } from 'drizzle-orm';
+import { and, desc, eq, ilike, or, sql, count } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { products, productImages, categories, productCategories } from '$lib/server/db/schema';
 import { listParams } from '$lib/admin/listQuery';

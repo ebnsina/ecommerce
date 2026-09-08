@@ -119,7 +119,18 @@ export const googleParams = (e: ShopEvent) => ({
 
 /* ── Vendors ─────────────────────────────────────────────────────────────── */
 
-const w = () => window as any;
+/**
+ * The window as the ad platforms leave it.
+ *
+ * Meta, TikTok and Google each hang their own queue object on `window` and
+ * then replace it when their script lands. There is no honest type for that —
+ * the shape changes underneath us — so the looseness is named once here and
+ * every vendor below goes through it.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- see above
+type VendorWindow = Window & Record<string, any>;
+
+const w = () => window as unknown as VendorWindow;
 
 function load(src: string) {
 	const s = document.createElement('script');
@@ -140,8 +151,9 @@ type Vendor = {
 const meta: Vendor = {
 	key: 'metaPixelId',
 	boot(id) {
-		const q: any = (w().fbq = function (...args: unknown[]) {
-			q.callMethod ? q.callMethod.apply(q, args) : q.queue.push(args);
+		const q: VendorWindow[string] = (w().fbq = function (...args: unknown[]) {
+			if (q.callMethod) q.callMethod(...args);
+			else q.queue.push(args);
 		});
 		w()._fbq ??= q;
 		q.push = q;
@@ -184,9 +196,9 @@ const tiktok: Vendor = {
 			'disableCookie'
 		];
 		w().TiktokAnalyticsObject = 'ttq';
-		const ttq: any = (w().ttq = w().ttq || []);
+		const ttq: VendorWindow[string] = (w().ttq = w().ttq || []);
 		ttq.methods = methods;
-		ttq.setAndDefer = (t: any, e: string) => {
+		ttq.setAndDefer = (t: VendorWindow[string], e: string) => {
 			t[e] = (...args: unknown[]) => t.push([e, ...args]);
 		};
 		for (const m of methods) ttq.setAndDefer(ttq, m);
@@ -228,9 +240,10 @@ const ga4: Vendor = {
 	key: 'ga4Id',
 	boot(id) {
 		w().dataLayer = w().dataLayer || [];
-		// Google's snippet pushes the Arguments object itself, not an array.
-		w().gtag = function () {
-			w().dataLayer.push(arguments);
+		// Google's own snippet pushes the Arguments object; rest parameters give
+		// dataLayer the same positional list without reaching for `arguments`.
+		w().gtag = function (...args: unknown[]) {
+			w().dataLayer.push(args);
 		};
 		load(`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(id)}`);
 		w().gtag('js', new Date());

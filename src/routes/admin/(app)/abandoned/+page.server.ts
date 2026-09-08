@@ -34,7 +34,6 @@ export const actions: Actions = {
 	remind: async ({ request, url }) => {
 		const form = await request.formData();
 		const id = String(form.get('id') ?? '');
-		const { recovery } = await getSettings();
 		const [cart] = (await abandonedCarts(new Date())).filter((c) => c.id === id);
 		if (!cart) return fail(404, { error: 'That cart is no longer waiting.' });
 

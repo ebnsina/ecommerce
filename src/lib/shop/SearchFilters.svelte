@@ -44,6 +44,7 @@
 	});
 
 	function apply(patch: Record<string, string | string[] | null>) {
+		// eslint-disable-next-line svelte/prefer-svelte-reactivity -- local to this function, never held as reactive state
 		const params = new URLSearchParams(page.url.searchParams);
 		for (const [key, value] of Object.entries(patch)) {
 			params.delete(key);
@@ -70,6 +71,7 @@
 	);
 
 	function clearAll() {
+		// eslint-disable-next-line svelte/prefer-svelte-reactivity -- local to this function, never held as reactive state
 		const params = new URLSearchParams();
 		const q = page.url.searchParams.get('q');
 		if (q) params.set('q', q);

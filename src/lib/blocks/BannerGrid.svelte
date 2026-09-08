@@ -1,8 +1,9 @@
 <script lang="ts">
+	import type { BlockItem, BlockProps } from './schema';
 	import Img from '$lib/shop/Img.svelte';
-	let { props }: { props: Record<string, any> } = $props();
+	let { props }: { props: BlockProps } = $props();
 
-	const banners = $derived((props.banners ?? []).filter((b: any) => b.image));
+	const banners = $derived((props.banners ?? []).filter((b: BlockItem) => b.image));
 	/** '2+3' splits the row; the others are a single row. */
 	const top = $derived(props.layout === '2+3' ? banners.slice(0, 2) : banners);
 	const bottom = $derived(props.layout === '2+3' ? banners.slice(2, 5) : []);

@@ -1,9 +1,11 @@
 <script lang="ts">
+	import type { CardProduct } from '$lib/shop/ProductCard.svelte';
+	import type { BlockProps } from './schema';
 	import { ArrowRight } from '@lucide/svelte';
 	import ProductCard from '$lib/shop/ProductCard.svelte';
 	import Countdown from './Countdown.svelte';
 
-	let { props, products }: { props: Record<string, any>; products: any[] } = $props();
+	let { props, products }: { props: BlockProps; products: CardProduct[] } = $props();
 
 	const feature = $derived(products.slice(0, 2));
 	const rest = $derived(products.slice(2));

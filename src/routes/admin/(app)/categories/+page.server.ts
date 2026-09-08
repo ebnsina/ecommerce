@@ -1,5 +1,5 @@
 import { fail } from '@sveltejs/kit';
-import { eq, asc, sql, and, ne, isNull, count } from 'drizzle-orm';
+import { eq, asc, sql, ne, isNull, count } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { categories, productCategories } from '$lib/server/db/schema';
 import { slugify, uniqueSlug } from '$lib/slug';

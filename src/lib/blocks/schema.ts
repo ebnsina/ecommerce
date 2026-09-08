@@ -4,6 +4,30 @@
  * Plain objects rather than a validation library: the audience is trusted staff,
  * and every value round-trips through the same six input types.
  */
+/**
+ * What a block is handed at render time.
+ *
+ * `props` is whatever the page builder saved for that block — free-form JSON
+ * whose shape is described by the `fields` below rather than by the type
+ * system, because the whole point is that staff add blocks without a
+ * developer. One `any` lives here so that a dozen components do not each
+ * declare their own.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- free-form CMS JSON; see above
+export type BlockProps = Record<string, any>;
+
+/** One entry inside a props array — a slide, a banner, a tile. Same story. */
+export type BlockItem = BlockProps;
+
+/** A category as the blocks read it. The nav rows carry more; this is the part
+    every category block actually touches. */
+export type BlockCategory = {
+	id: string;
+	slug: string;
+	name: string;
+	image?: string | null;
+};
+
 export type Field =
 	| {
 			key: string;

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { AdminTableFeatures } from '$lib/admin/table';
 	import { renderSnippet } from '@tanstack/svelte-table';
 	import type { ColumnDef } from '@tanstack/svelte-table';
 	import { Eye, Phone } from '@lucide/svelte';
@@ -17,7 +18,7 @@
 	const joined = (d: Date | string) =>
 		new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
-	const columns: ColumnDef<any, Customer>[] = [
+	const columns: ColumnDef<AdminTableFeatures, Customer>[] = [
 		{
 			id: 'customer',
 			header: 'Customer',

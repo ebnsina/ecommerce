@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { BlockProps } from '$lib/blocks/schema';
 	import { Plus, Trash2, ChevronUp, ChevronDown } from '@lucide/svelte';
 	import { slide } from 'svelte/transition';
 	import { slideOpen } from '$lib/motion';
@@ -23,7 +24,7 @@
 		catalog = []
 	}: {
 		field: Field;
-		value: any;
+		value: BlockProps[string];
 		categories?: { id: string; name: string; parentId: string | null }[];
 		catalog?: { id: string; title: string }[];
 	} = $props();

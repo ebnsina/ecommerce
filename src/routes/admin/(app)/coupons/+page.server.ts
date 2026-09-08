@@ -49,7 +49,7 @@ export const actions: Actions = {
 			return fail(400, { error: 'Codes are 3–24 letters, digits, dashes or underscores.' });
 
 		let value = 0;
-		let minOrder = 0;
+		let minOrder: number;
 		try {
 			minOrder = parseTk(String(f.get('minOrder') ?? '0') || '0');
 			if (type === 'percent') {

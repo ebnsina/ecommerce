@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { IconComponent } from '$lib/icons';
 	import { Globe, Send, Phone } from '@lucide/svelte';
 	import SiWhatsapp from '@icons-pack/svelte-simple-icons/icons/SiWhatsapp';
 	import SiFacebook from '@icons-pack/svelte-simple-icons/icons/SiFacebook';
@@ -6,7 +7,7 @@
 
 	/** Brand colours here are identity, not theme — a WhatsApp thread must look
 	    like WhatsApp at a glance in a mixed list. */
-	const map: Record<string, { Icon: any; tint: string; label: string }> = {
+	const map: Record<string, { Icon: IconComponent; tint: string; label: string }> = {
 		site: { Icon: Globe, tint: 'bg-surface-alt text-ink-muted', label: 'Website' },
 		messenger: { Icon: SiFacebook, tint: 'bg-[#0866FF]/10 text-[#0866FF]', label: 'Messenger' },
 		instagram: { Icon: SiInstagram, tint: 'bg-[#E1306C]/10 text-[#E1306C]', label: 'Instagram' },

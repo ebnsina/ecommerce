@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { AdminTableFeatures } from '$lib/admin/table';
 	import { enhance } from '$app/forms';
 	import { renderSnippet } from '@tanstack/svelte-table';
 	import type { ColumnDef } from '@tanstack/svelte-table';
@@ -19,7 +20,7 @@
 		return hours < 24 ? `${hours}h ago` : `${Math.round(hours / 24)}d ago`;
 	};
 
-	const columns: ColumnDef<any, Cart>[] = [
+	const columns: ColumnDef<AdminTableFeatures, Cart>[] = [
 		{ id: 'shopper', header: 'Shopper', cell: (c) => renderSnippet(shopperCell, c.row.original) },
 		{ id: 'value', header: 'Value', cell: (c) => renderSnippet(valueCell, c.row.original) },
 		{ id: 'items', header: 'Items', cell: (c) => renderSnippet(itemsCell, c.row.original) },

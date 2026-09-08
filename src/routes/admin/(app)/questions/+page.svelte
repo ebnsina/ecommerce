@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { AdminTableFeatures } from '$lib/admin/table';
 	import { enhance } from '$app/forms';
 	import { renderSnippet } from '@tanstack/svelte-table';
 	import type { ColumnDef, RowSelectionState } from '@tanstack/svelte-table';
@@ -35,7 +36,7 @@
 		dialogOpen = true;
 	}
 
-	const columns: ColumnDef<any, Question>[] = [
+	const columns: ColumnDef<AdminTableFeatures, Question>[] = [
 		{
 			id: 'question',
 			header: 'Question',
@@ -60,7 +61,9 @@
 {/snippet}
 
 {#snippet productCell(qn: Question)}
-	<a href="/demo/p/{qn.productSlug}" class="text-sm text-primary hover:underline">{qn.productTitle}</a>
+	<a href="/demo/p/{qn.productSlug}" class="text-sm text-primary hover:underline"
+		>{qn.productTitle}</a
+	>
 {/snippet}
 
 {#snippet stateCell(qn: Question)}

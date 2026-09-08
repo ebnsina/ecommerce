@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { ChevronDown } from '@lucide/svelte';
 	import { fly } from 'svelte/transition';
-	import { flyUp, flyDown } from '$lib/motion';
-	import { anchored } from './anchored';
+	import { flyUp } from '$lib/motion';
 
 	type Option = { value: string; label: string; hint?: string };
 
@@ -47,8 +46,6 @@
 	   opening an empty list. */
 	const isDisabled = $derived(disabled || options.length === 0);
 	let root: HTMLDivElement;
-	let button = $state<HTMLButtonElement | null>(null);
-	let side = $state<'top' | 'bottom'>('bottom');
 	let listEl = $state<HTMLElement | null>(null);
 
 	const selected = $derived(options.find((o) => o.value === value) ?? null);
@@ -125,6 +122,7 @@
 			aria-activedescendant={open ? `${id}-opt-${active}` : undefined}
 			aria-labelledby={label ? `${id}-label ${id}` : undefined}
 			aria-invalid={error ? 'true' : undefined}
+			aria-describedby={error || hint ? `${id}-msg` : undefined}
 			disabled={isDisabled}
 			class="flex h-11 w-full items-center justify-between gap-2 rounded-xl border border-border
 			       bg-surface px-3.5 text-sm transition-colors duration-[180ms] ease-brand
@@ -196,5 +194,9 @@
 		{/if}
 	</div>
 
-	{#if error}<p class="text-xs text-sale">{error}</p>{/if}
+	<!-- Same shape as Input: the error replaces the hint rather than stacking
+	     under it, and both are announced through aria-describedby. -->
+	{#if error || hint}
+		<p id="{id}-msg" class="text-xs {error ? 'text-sale' : 'text-ink-muted'}">{error ?? hint}</p>
+	{/if}
 </div>

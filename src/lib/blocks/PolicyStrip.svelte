@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { BlockProps } from './schema';
 	import {
 		RotateCcw,
 		ShieldCheck,
@@ -8,7 +9,7 @@
 		BadgePercent
 	} from '@lucide/svelte';
 
-	const icons: Record<string, any> = {
+	const icons: BlockProps = {
 		RotateCcw,
 		ShieldCheck,
 		Truck,
@@ -17,7 +18,7 @@
 		BadgePercent
 	};
 
-	let { props }: { props: Record<string, any> } = $props();
+	let { props }: { props: BlockProps } = $props();
 	const items = $derived(props.items ?? []);
 </script>
 

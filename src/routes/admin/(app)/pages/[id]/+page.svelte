@@ -1,9 +1,11 @@
 <script lang="ts">
+	import type { Block } from '$lib/server/db/schema';
+	import type { BlockItem } from '$lib/blocks/schema';
 	import TourButton from '$lib/admin/TourButton.svelte';
 	import type { Tour } from '$lib/admin/tour';
 	import { untrack } from 'svelte';
 	import { enhance } from '$app/forms';
-	import { slide, fly } from 'svelte/transition';
+	import { slide } from 'svelte/transition';
 	import {
 		ArrowLeft,
 		Plus,
@@ -16,7 +18,7 @@
 		LayoutTemplate
 	} from '@lucide/svelte';
 	import { blockDefs, blockDef } from '$lib/blocks/schema';
-	import { slideOpen, flyUp } from '$lib/motion';
+	import { slideOpen } from '$lib/motion';
 	import Button from '$lib/ui/Button.svelte';
 	import Input from '$lib/ui/Input.svelte';
 	import Textarea from '$lib/ui/Textarea.svelte';
@@ -24,8 +26,6 @@
 	import Dialog from '$lib/ui/Dialog.svelte';
 	import FieldInput from '$lib/admin/FieldInput.svelte';
 	import { SHOP, shop } from '$lib/paths';
-
-	type Block = { id: string; type: string; props: Record<string, any> };
 
 	let { data, form } = $props();
 	const init = untrack(() => data);
@@ -72,9 +72,10 @@
 		const p = block.props;
 		if (p.heading) return p.heading;
 		if (p.text) return p.text;
-		if (Array.isArray(p.slides)) return `${p.slides.filter((s: any) => s.image).length} slide(s)`;
+		if (Array.isArray(p.slides))
+			return `${p.slides.filter((s: BlockItem) => s.image).length} slide(s)`;
 		if (Array.isArray(p.banners))
-			return `${p.banners.filter((b: any) => b.image).length} banner(s)`;
+			return `${p.banners.filter((b: BlockItem) => b.image).length} banner(s)`;
 		if (Array.isArray(p.items)) return `${p.items.length} item(s)`;
 		return blockDef(block.type)?.description ?? '';
 	}

@@ -1,10 +1,11 @@
 <script lang="ts">
+	import type { BlockProps } from './schema';
 	import { X } from '@lucide/svelte';
 	import { slide } from 'svelte/transition';
 	import { slideOpen } from '$lib/motion';
 	import { bg } from './backgrounds';
 
-	let { props }: { props: Record<string, any> } = $props();
+	let { props }: { props: BlockProps } = $props();
 	let closed = $state(false);
 </script>
 

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { AdminTableFeatures } from '$lib/admin/table';
 	import { enhance } from '$app/forms';
 	import { renderSnippet } from '@tanstack/svelte-table';
 	import type { ColumnDef, RowSelectionState } from '@tanstack/svelte-table';
@@ -19,7 +20,7 @@
 	const when = (d: Date | string) =>
 		new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
-	const columns: ColumnDef<any, Review>[] = [
+	const columns: ColumnDef<AdminTableFeatures, Review>[] = [
 		{ id: 'review', header: 'Review', cell: (c) => renderSnippet(reviewCell, c.row.original) },
 		{ id: 'product', header: 'Product', cell: (c) => renderSnippet(productCell, c.row.original) },
 		{ id: 'rating', header: 'Rating', cell: (c) => renderSnippet(ratingCell, c.row.original) },
@@ -39,7 +40,8 @@
 {/snippet}
 
 {#snippet productCell(r: Review)}
-	<a href="/demo/p/{r.productSlug}" class="text-sm text-primary hover:underline">{r.productTitle}</a>
+	<a href="/demo/p/{r.productSlug}" class="text-sm text-primary hover:underline">{r.productTitle}</a
+	>
 {/snippet}
 
 {#snippet ratingCell(r: Review)}

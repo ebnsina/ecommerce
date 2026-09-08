@@ -39,7 +39,7 @@ const run: RequestHandler = async ({ request }) => {
 		const adapter = key ? couriers[key] : null;
 		if (!adapter?.configured()) continue;
 
-		let courierStatus: string | null = null;
+		let courierStatus: string | null;
 		try {
 			courierStatus = await adapter.status(order.consignmentId!);
 		} catch {

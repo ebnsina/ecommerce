@@ -137,7 +137,8 @@ export async function generateJson<T>(system: string, user: string): Promise<T |
 
 		let text = '';
 		for await (const chunk of stream) {
-			const part = (chunk as { text?: string; delta?: string }).text ?? (chunk as any).delta ?? '';
+			const c = chunk as { text?: string; delta?: string };
+			const part = c.text ?? c.delta ?? '';
 			if (typeof part === 'string') text += part;
 		}
 

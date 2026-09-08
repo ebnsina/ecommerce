@@ -2,7 +2,7 @@
  * Search: Typesense when it is configured and reachable, the database when it
  * is not. One function so no caller has to know which.
  */
-import { eq, inArray, sql } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 import { db } from '../db';
 import { products, categories, productCategories } from '../db/schema';
 import { cardColumns } from '../catalog';

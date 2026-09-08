@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { AdminTableFeatures } from '$lib/admin/table';
 	import { page } from '$app/state';
 	import { renderComponent, renderSnippet } from '@tanstack/svelte-table';
 	import type { ColumnDef } from '@tanstack/svelte-table';
@@ -37,7 +38,7 @@
 
 	/* Columns hold the data; the snippets below hold the markup, so a cell can
 	   use components and still live in the column definition. */
-	const columns: ColumnDef<any, Order>[] = [
+	const columns: ColumnDef<AdminTableFeatures, Order>[] = [
 		{ id: 'order', header: 'Order', cell: (c) => renderSnippet(orderCell, c.row.original) },
 		{
 			id: 'customer',

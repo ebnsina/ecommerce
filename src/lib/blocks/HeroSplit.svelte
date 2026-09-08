@@ -1,10 +1,11 @@
 <script lang="ts">
+	import type { BlockItem, BlockProps } from './schema';
 	import Carousel from './Carousel.svelte';
 
-	let { props }: { props: Record<string, any> } = $props();
+	let { props }: { props: BlockProps } = $props();
 
-	const slides = $derived((props.slides ?? []).filter((s: any) => s.image));
-	const tiles = $derived((props.tiles ?? []).filter((t: any) => t.image).slice(0, 4));
+	const slides = $derived((props.slides ?? []).filter((s: BlockItem) => s.image));
+	const tiles = $derived((props.tiles ?? []).filter((t: BlockItem) => t.image).slice(0, 4));
 	/* Tiles fill the same height as the slider. '1+1+2' = two full-width rows then
 	   a split row, so the column is three rows tall, not four. */
 	const tileGrid = $derived(

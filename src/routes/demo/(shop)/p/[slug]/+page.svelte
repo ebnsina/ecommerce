@@ -9,13 +9,8 @@
 		ChevronRight,
 		Heart,
 		ShoppingBag,
-		Truck,
-		RotateCcw,
-		ShieldCheck,
-		Banknote,
 		Phone,
 		Share2,
-		Copy,
 		Zap,
 		Check,
 		Minus,
@@ -40,6 +35,7 @@
 	);
 
 	$effect(() => {
+		// eslint-disable-next-line @typescript-eslint/no-unused-expressions -- read to register a reactive dependency
 		data.product.id;
 		activeImage = 0;
 		qty = 1;
@@ -165,7 +161,7 @@
 	/* Delivery estimate straight from the settings table, so it can never
 	   contradict what checkout actually charges. */
 	const zones = $derived(
-		Object.values(data.settings.delivery ?? {}).map((z: any) => ({
+		Object.values(data.settings.delivery ?? {}).map((z) => ({
 			label: z.label,
 			charge: z.charge,
 			free: z.freeAbove > 0 && price >= z.freeAbove
@@ -204,7 +200,10 @@
 	{#if data.product.seoDescription}
 		<meta name="description" content={data.product.seoDescription} />
 	{/if}
-	{@html `<script type="application/ld+json">${jsonLd}</script>`}
+	<!-- The closing tag is interpolated so the literal characters never appear in
+	     the template: a bare </script> here ends the element for the parser. -->
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -- JSON-LD we build ourselves from the product row -->
+	{@html `<script type="application/ld+json">${jsonLd}</${'script'}>`}
 </svelte:head>
 
 <div class="mx-auto max-w-7xl px-4 py-6">

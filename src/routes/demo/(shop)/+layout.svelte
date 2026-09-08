@@ -9,6 +9,7 @@
 <!-- Theme variables land in the head, so a change in Settings re-themes every
      page at once with no rebuild. -->
 <svelte:head>
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -- CSS generated from the theme tokens on the server, not user input -->
 	{@html `<style>${data.themeCss}</style>`}
 </svelte:head>
 

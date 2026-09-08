@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { IconComponent } from '$lib/icons';
 	import { untrack } from 'svelte';
 	import { enhance } from '$app/forms';
 	import { fade } from 'svelte/transition';
@@ -41,7 +42,7 @@
 	let assurances = $state(structuredClone(s.assurances ?? []));
 	/* Older stores saved a plain label; both shapes load. */
 	let paymentMethods = $state(
-		(s.footer?.paymentMethods ?? []).map((m: any) =>
+		(s.footer?.paymentMethods ?? []).map((m: string | { name: string; logo?: string }) =>
 			typeof m === 'string' ? { name: m, logo: '' } : { name: m.name, logo: m.logo ?? '' }
 		)
 	);
@@ -134,11 +135,10 @@
 
 	{#snippet section(
 		key: string,
-		Icon: any,
+		Icon: IconComponent,
 		title: string,
 		description: string,
-		body: Snippet,
-		colspan = false
+		body: Snippet
 	)}
 		<form
 			method="POST"

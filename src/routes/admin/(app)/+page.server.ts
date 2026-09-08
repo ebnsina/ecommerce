@@ -1,4 +1,4 @@
-import { sql, eq, gte, desc, count } from 'drizzle-orm';
+import { sql, gte, desc, count } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { orders, products, customers } from '$lib/server/db/schema';
 import type { PageServerLoad } from './$types';

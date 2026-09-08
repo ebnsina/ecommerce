@@ -1,7 +1,8 @@
 <script lang="ts">
+	import type { BlockCategory, BlockProps } from './schema';
 	import Img from '$lib/shop/Img.svelte';
 	/** Horizontal category row under the header — the first thing shoppers scan. */
-	let { props, categories }: { props: Record<string, any>; categories: any[] } = $props();
+	let { props, categories }: { props: BlockProps; categories: BlockCategory[] } = $props();
 
 	const items = $derived(categories.slice(0, Number(props.limit) || 8));
 </script>

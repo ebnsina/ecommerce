@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any --
+   This file stands in for drizzle's query builder and the AI client. A mock of
+   a fluent builder is `any` by nature: the whole point is to accept whatever
+   the code under test chains onto it and record what came out. Typing the
+   double against the real signatures would test the double, not the gates. */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 /* Each gate is a reason a customer does not hear from a machine. A regression

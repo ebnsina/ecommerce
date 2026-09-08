@@ -27,6 +27,7 @@
 </script>
 
 <svelte:head>
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -- CSS generated from the theme tokens on the server, not user input -->
 	{@html `<style>${data.themeCss}</style>`}
 </svelte:head>
 
@@ -91,25 +92,23 @@
 					</span>
 				{/snippet}
 
-				{#snippet children()}
-					<p class="truncate px-3 py-1.5 text-xs text-ink-muted">{data.admin?.email}</p>
-					<div class="my-1 h-px bg-border"></div>
-					<MenuItem href="/admin/settings">
-						<Settings size={16} />
-						Store settings
+				<p class="truncate px-3 py-1.5 text-xs text-ink-muted">{data.admin?.email}</p>
+				<div class="my-1 h-px bg-border"></div>
+				<MenuItem href="/admin/settings">
+					<Settings size={16} />
+					Store settings
+				</MenuItem>
+				<MenuItem href="/">
+					<Store size={16} />
+					View storefront
+				</MenuItem>
+				<div class="my-1 h-px bg-border"></div>
+				<form method="POST" action="/admin/logout">
+					<MenuItem danger>
+						<LogOut size={16} />
+						Sign out
 					</MenuItem>
-					<MenuItem href="/">
-						<Store size={16} />
-						View storefront
-					</MenuItem>
-					<div class="my-1 h-px bg-border"></div>
-					<form method="POST" action="/admin/logout">
-						<MenuItem danger>
-							<LogOut size={16} />
-							Sign out
-						</MenuItem>
-					</form>
-				{/snippet}
+				</form>
 			</Dropdown>
 		</div>
 	</aside>

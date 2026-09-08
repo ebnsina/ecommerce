@@ -29,6 +29,7 @@
 <svelte:head>
 	{#if ids.metaPixelId}
 		<!-- Meta's no-JavaScript fallback is the only part that must be in markup. -->
+		<!-- eslint-disable-next-line svelte/no-at-html-tags -- Meta's own markup; the only value interpolated is an encoded id -->
 		{@html `<noscript><img height="1" width="1" style="display:none" alt=""
 			src="https://www.facebook.com/tr?id=${encodeURIComponent(ids.metaPixelId)}&ev=PageView&noscript=1" /></noscript>`}
 	{/if}
@@ -37,6 +38,7 @@
 {#if ids.gtmId}
 	<!-- Tag Manager's fallback for visitors without JavaScript. It has to live in
 	     the body, so it is rendered here rather than in the head above. -->
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -- Tag Manager's own markup; the only value interpolated is an encoded id -->
 	{@html `<noscript><iframe title="Google Tag Manager"
 		src="https://www.googletagmanager.com/ns.html?id=${encodeURIComponent(ids.gtmId)}"
 		height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>`}

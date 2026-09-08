@@ -29,7 +29,9 @@
 	}
 
 	$effect(() => {
+		// eslint-disable-next-line @typescript-eslint/no-unused-expressions -- read to register a reactive dependency
 		value;
+		// eslint-disable-next-line @typescript-eslint/no-unused-expressions -- read to register a reactive dependency
 		tabs.length;
 		measure();
 	});
@@ -47,7 +49,7 @@
 	/** Arrow keys move between tabs, as a tablist should. */
 	function onKey(e: KeyboardEvent) {
 		const i = tabs.findIndex((t) => t.value === value);
-		let next = i;
+		let next: number;
 		if (e.key === 'ArrowRight') next = (i + 1) % tabs.length;
 		else if (e.key === 'ArrowLeft') next = (i - 1 + tabs.length) % tabs.length;
 		else if (e.key === 'Home') next = 0;

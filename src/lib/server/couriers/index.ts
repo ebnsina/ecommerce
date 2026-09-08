@@ -11,6 +11,7 @@
  * time and refuses rather than guessing when a name does not match.
  */
 import { env } from '$env/dynamic/private';
+import type { JsonBody } from '../json';
 
 export type CourierKey = 'steadfast' | 'pathao';
 
@@ -52,7 +53,7 @@ async function steadfastFetch(path: string, init?: RequestInit) {
 		}
 	});
 
-	const data = (await res.json().catch(() => ({}))) as Record<string, any>;
+	const data = (await res.json().catch(() => ({}))) as JsonBody;
 	if (!res.ok) throw new Error(data.message ?? `Steadfast refused the request (${res.status}).`);
 	return data;
 }
@@ -126,7 +127,7 @@ async function pathaoToken(): Promise<string> {
 			grant_type: 'password'
 		})
 	});
-	const data = (await res.json().catch(() => ({}))) as Record<string, any>;
+	const data = (await res.json().catch(() => ({}))) as JsonBody;
 	if (!res.ok || !data.access_token)
 		throw new Error(data.message ?? 'Pathao refused the credentials.');
 
@@ -147,7 +148,7 @@ async function pathaoFetch(path: string, init?: RequestInit) {
 			...(init?.headers ?? {})
 		}
 	});
-	const data = (await res.json().catch(() => ({}))) as Record<string, any>;
+	const data = (await res.json().catch(() => ({}))) as JsonBody;
 	if (!res.ok) throw new Error(data.message ?? `Pathao refused the request (${res.status}).`);
 	return data;
 }
@@ -159,9 +160,9 @@ const sameName = (a: string, b: string) => {
 	return x === y || x.includes(y) || y.includes(x);
 };
 
-const placeCache = new Map<string, any[]>();
+const placeCache = new Map<string, JsonBody[]>();
 
-async function pathaoList(path: string, key: string): Promise<any[]> {
+async function pathaoList(path: string, key: string): Promise<JsonBody[]> {
 	if (!placeCache.has(key)) {
 		const data = await pathaoFetch(path);
 		placeCache.set(key, data?.data?.data ?? []);

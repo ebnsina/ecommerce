@@ -1,13 +1,8 @@
-<script lang="ts" generics="T extends Record<string, any>">
+<script lang="ts" generics="T extends Record<string, unknown>">
 	import { untrack, type Snippet } from 'svelte';
-	import {
-		createTable,
-		FlexRender,
-		renderSnippet,
-		tableFeatures,
-		rowSelectionFeature
-	} from '@tanstack/svelte-table';
-	import type { ColumnDef, RowSelectionState } from '@tanstack/svelte-table';
+	import { createTable, FlexRender, renderSnippet } from '@tanstack/svelte-table';
+	import { adminTableFeatures, type AdminTableFeatures } from './table';
+	import type { CellContext, ColumnDef, Row, RowSelectionState } from '@tanstack/svelte-table';
 	import { Search, ChevronLeft, ChevronRight, X } from '@lucide/svelte';
 	import Select from '$lib/ui/Select.svelte';
 	import Checkbox from '$lib/ui/Checkbox.svelte';
@@ -35,7 +30,7 @@
 		bulk,
 		rowId = (_row: T, i: number) => String(i)
 	}: {
-		columns: ColumnDef<any, T>[];
+		columns: ColumnDef<AdminTableFeatures, T>[];
 		rows: T[];
 		total: number;
 		page: number;
@@ -51,8 +46,6 @@
 		rowId?: (row: T, index: number) => string;
 	} = $props();
 
-	const features = tableFeatures({ rowSelectionFeature });
-
 	/* The tick column is added here rather than by each page, so selection looks
 	   and behaves the same everywhere it is switched on. */
 	const allColumns = $derived(
@@ -61,22 +54,22 @@
 					{
 						id: 'select',
 						header: () => renderSnippet(headerTick, null),
-						cell: (c: any) => renderSnippet(rowTick, c.row)
-					} as ColumnDef<any, T>,
+						cell: (c: CellContext<AdminTableFeatures, T, unknown>) => renderSnippet(rowTick, c.row)
+					} as ColumnDef<AdminTableFeatures, T>,
 					...columns
 				]
 			: columns
 	);
 
 	const table = createTable({
-		features,
+		features: adminTableFeatures,
 		get columns() {
-			return allColumns as any;
+			return allColumns;
 		},
 		get data() {
-			return rows as any;
+			return rows;
 		},
-		getRowId: untrack(() => rowId) as any,
+		getRowId: untrack(() => rowId),
 		state: {
 			get rowSelection() {
 				return selection;
@@ -97,12 +90,10 @@
 	const to = $derived(Math.min(page * perPage, total));
 	const lastPage = $derived(Math.max(1, Math.ceil(total / perPage)));
 
-	let searchValue = $state(untrack(() => q));
 	// Follows the URL when it changes from elsewhere — a cleared filter, a back
-	// button — without fighting what is being typed.
-	$effect(() => {
-		searchValue = q;
-	});
+	// button — and still takes what is being typed, because a writable $derived
+	// keeps a local assignment until its source changes again.
+	let searchValue = $derived(q);
 </script>
 
 {#snippet headerTick()}
@@ -115,7 +106,7 @@
 	/>
 {/snippet}
 
-{#snippet rowTick(row: any)}
+{#snippet rowTick(row: Row<AdminTableFeatures, T>)}
 	<Checkbox
 		checked={row.getIsSelected()}
 		label="Select this row"

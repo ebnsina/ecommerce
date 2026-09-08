@@ -1,9 +1,10 @@
 <script lang="ts">
+	import type { BlockProps } from './schema';
 	import Rating from '$lib/shop/Rating.svelte';
 
-	type Brand = { brand: string; count: number; rating: number; images: string[] };
+	export type Brand = { brand: string; count: number; rating: number; images: string[] };
 
-	let { props, brands = [] }: { props: Record<string, any>; brands?: Brand[] } = $props();
+	let { props, brands = [] }: { props: BlockProps; brands?: Brand[] } = $props();
 </script>
 
 {#if brands.length}

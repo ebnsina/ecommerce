@@ -1,11 +1,12 @@
 <script lang="ts">
+	import type { BlockItem, BlockProps } from './schema';
 	import Carousel from './Carousel.svelte';
 	import Img from '$lib/shop/Img.svelte';
 	import { bg, isDark } from './backgrounds';
 
-	let { props }: { props: Record<string, any> } = $props();
+	let { props }: { props: BlockProps } = $props();
 
-	const slides = $derived((props.slides ?? []).filter((s: any) => s.image));
+	const slides = $derived((props.slides ?? []).filter((s: BlockItem) => s.image));
 	const tone = $derived(bg(props.background));
 	const dark = $derived(isDark(props.background));
 	const hasCopy = $derived(!!(props.heading || props.subtitle));

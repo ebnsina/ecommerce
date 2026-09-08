@@ -709,16 +709,6 @@ if (process.env.SEED_DEMO) {
 		['Narayanganj', 'suburban_dhaka']
 	] as const;
 	const streets = ['Road 12, Banani', 'Zindabazar', 'GEC Circle', 'Sonadanga', 'Tongi Bazar'];
-	const statuses = [
-		'pending',
-		'confirmed',
-		'packed',
-		'shipped',
-		'delivered',
-		'returned',
-		'cancelled'
-	] as const;
-
 	/* Four months of trading, busier at weekends and heavier lately, so the
 	   dashboard and the Insights window have a shape rather than a flat line.
 	   Old orders are settled; recent ones are still moving. */
@@ -973,26 +963,26 @@ if (process.env.SEED_DEMO) {
 		cat.brands.flatMap((brand) =>
 			cat.items.flatMap((item) =>
 				(VARIANTS[cat.name] ?? ['']).map((suffix) => {
-			const title = `${brand} ${item}${suffix}`;
-			// Price band per category — groceries are not Tk 15,000.
-			const [lo, hi] = PRICE_BANDS[cat.name] ?? [200, 3000];
-			const price = between(lo, hi) * 100;
-			const hasDiscount = Math.random() > 0.25;
-			return {
-				categorySlug: slugify(cat.name),
-				title,
-				slug: slugify(title),
-				brand,
-				status: 'active' as const,
-				price,
-				compareAtPrice: hasDiscount ? Math.round(price * (1 + between(5, 45) / 100)) : null,
-				stock: between(0, 60),
-				featured: Math.random() > 0.7,
-				rating: between(30, 50),
-				reviewCount: between(0, 240),
-				soldCount: between(0, 900),
-				description: `${title}. Genuine product with brand warranty, delivered anywhere in Bangladesh. Cash on delivery available.`
-			};
+					const title = `${brand} ${item}${suffix}`;
+					// Price band per category — groceries are not Tk 15,000.
+					const [lo, hi] = PRICE_BANDS[cat.name] ?? [200, 3000];
+					const price = between(lo, hi) * 100;
+					const hasDiscount = Math.random() > 0.25;
+					return {
+						categorySlug: slugify(cat.name),
+						title,
+						slug: slugify(title),
+						brand,
+						status: 'active' as const,
+						price,
+						compareAtPrice: hasDiscount ? Math.round(price * (1 + between(5, 45) / 100)) : null,
+						stock: between(0, 60),
+						featured: Math.random() > 0.7,
+						rating: between(30, 50),
+						reviewCount: between(0, 240),
+						soldCount: between(0, 900),
+						description: `${title}. Genuine product with brand warranty, delivered anywhere in Bangladesh. Cash on delivery available.`
+					};
 				})
 			)
 		)

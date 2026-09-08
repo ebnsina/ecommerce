@@ -2,7 +2,7 @@
 	import { untrack } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import { Search, Inbox, ShoppingBag } from '@lucide/svelte';
+	import { Search, Inbox } from '@lucide/svelte';
 	import Input from '$lib/ui/Input.svelte';
 	import Tabs from '$lib/ui/Tabs.svelte';
 	import PageHeader from '$lib/admin/PageHeader.svelte';
@@ -14,8 +14,12 @@
 	let status = $state(untrack(() => data.filters.status));
 
 	function apply(patch: Record<string, string>) {
+		// eslint-disable-next-line svelte/prefer-svelte-reactivity -- local to this function, never held as reactive state
 		const params = new URLSearchParams(page.url.searchParams);
-		for (const [k, v] of Object.entries(patch)) v ? params.set(k, v) : params.delete(k);
+		for (const [k, v] of Object.entries(patch)) {
+			if (v) params.set(k, v);
+			else params.delete(k);
+		}
 		goto(`?${params}`, { keepFocus: true, noScroll: true });
 	}
 

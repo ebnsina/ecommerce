@@ -12,6 +12,7 @@
 import { createHash } from 'node:crypto';
 import { env } from '$env/dynamic/private';
 import { normalizePhone, toInternational } from '$lib/phone';
+import type { JsonBody } from './json';
 export { purchaseEventId } from '$lib/track';
 
 const GRAPH = 'https://graph.facebook.com/v21.0';
@@ -134,7 +135,7 @@ export async function sendEvents(
 				body: JSON.stringify(payload)
 			}
 		);
-		const data = (await res.json().catch(() => ({}))) as Record<string, any>;
+		const data = (await res.json().catch(() => ({}))) as JsonBody;
 		if (!res.ok)
 			return { error: data?.error?.message ?? `Meta refused the events (${res.status}).` };
 		return { sent: data.events_received ?? events.length };

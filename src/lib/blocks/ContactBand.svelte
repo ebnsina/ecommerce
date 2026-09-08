@@ -1,15 +1,17 @@
 <script lang="ts">
+	import type { StoreSettings } from '$lib/server/settings';
+	import type { BlockProps } from './schema';
 	import { Phone, MessageCircle, ArrowRight } from '@lucide/svelte';
 	import { page } from '$app/state';
 	import Button from '$lib/ui/Button.svelte';
 	import { formatPhone } from '$lib/phone';
 
-	let { props }: { props: Record<string, any> } = $props();
+	let { props }: { props: BlockProps } = $props();
 
 	/* The shop phone lives in Settings; repeating it in a block would be a
 	   second place to forget to update. */
-	const store = $derived((page.data.settings as any)?.store ?? {});
-	const phone = $derived(String(props.phone || store.phone || '').trim());
+	const store = $derived((page.data.settings as StoreSettings | undefined)?.store);
+	const phone = $derived(String(props.phone || store?.phone || '').trim());
 	const whatsapp = $derived(String(props.whatsapp || phone).replace(/\D/g, ''));
 </script>
 

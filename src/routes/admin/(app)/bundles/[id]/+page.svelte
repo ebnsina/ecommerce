@@ -2,7 +2,7 @@
 	import { untrack } from 'svelte';
 	import { enhance } from '$app/forms';
 	import { slide } from 'svelte/transition';
-	import { ArrowLeft, Plus, Trash2, X } from '@lucide/svelte';
+	import { ArrowLeft, Trash2, X } from '@lucide/svelte';
 	import { formatTk } from '$lib/money';
 	import { slideOpen } from '$lib/motion';
 	import Button from '$lib/ui/Button.svelte';

@@ -1,6 +1,6 @@
 import { and, desc, eq, ilike, or, sql } from 'drizzle-orm';
 import { db } from '$lib/server/db';
-import { conversations, messages, products } from '$lib/server/db/schema';
+import { conversations, products } from '$lib/server/db/schema';
 import { channelStatus } from '$lib/server/channels';
 import type { PageServerLoad } from './$types';
 

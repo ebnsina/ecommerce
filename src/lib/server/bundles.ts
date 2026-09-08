@@ -7,7 +7,7 @@
  */
 import { and, asc, eq, inArray, sql } from 'drizzle-orm';
 import { db } from './db';
-import { bundles, bundleItems, products, productImages, variants, cartItems } from './db/schema';
+import { bundles, bundleItems, products, variants, cartItems } from './db/schema';
 
 export type BundleMember = {
 	productId: string;

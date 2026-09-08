@@ -19,10 +19,13 @@ async function resolveSource(source: ProductSource | undefined) {
 			.select(cardColumns)
 			.from(products)
 			.where(and(eq(products.status, 'active'), inArray(products.id, source.ids)));
-		// Keep the order the admin chose.
+		// Keep the order the admin chose, and drop any id that no longer resolves
+		// — a product deleted or hidden since the block was saved. `.filter(Boolean)`
+		// looked like it did this but does not narrow the type, so the hole was
+		// being handed to the grid as undefined.
 		return source.ids
 			.map((id) => rows.find((r) => r.id === id))
-			.filter(Boolean)
+			.filter((row) => row !== undefined)
 			.slice(0, limit);
 	}
 

@@ -1,7 +1,7 @@
 /** Product queries shared by the homepage, category pages and search. */
 import { and, asc, count, desc, eq, gt, gte, ilike, inArray, lte, or, sql } from 'drizzle-orm';
 import { db } from './db';
-import { products, productImages, productCategories, categories } from './db/schema';
+import { products, productCategories, categories } from './db/schema';
 
 export const cardColumns = {
 	id: products.id,

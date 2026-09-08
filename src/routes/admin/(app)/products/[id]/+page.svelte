@@ -4,7 +4,6 @@
 	import { slide } from 'svelte/transition';
 	import { Plus, Trash2, ArrowLeft } from '@lucide/svelte';
 	import { slugify } from '$lib/slug';
-	import { formatTk } from '$lib/money';
 	import { slideOpen } from '$lib/motion';
 	import Button from '$lib/ui/Button.svelte';
 	import Input from '$lib/ui/Input.svelte';

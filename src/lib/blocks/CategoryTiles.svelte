@@ -1,6 +1,7 @@
 <script lang="ts">
+	import type { BlockCategory, BlockProps } from './schema';
 	import Img from '$lib/shop/Img.svelte';
-	let { props, categories }: { props: Record<string, any>; categories: any[] } = $props();
+	let { props, categories }: { props: BlockProps; categories: BlockCategory[] } = $props();
 
 	const tiles = $derived(categories.slice(0, Number(props.limit) || 6));
 </script>

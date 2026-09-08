@@ -52,6 +52,7 @@
 	});
 
 	const isActive = (name: string, attrs?: Record<string, unknown>) => {
+		// eslint-disable-next-line @typescript-eslint/no-unused-expressions -- read to register a reactive dependency
 		revision; // re-run when the selection or document changes
 		return editor?.isActive(name, attrs) ?? false;
 	};

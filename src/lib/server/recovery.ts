@@ -9,7 +9,7 @@
 import { and, eq, isNotNull, isNull, lt, sql } from 'drizzle-orm';
 import { SHOP } from '$lib/paths';
 import { db } from './db';
-import { carts, cartItems, products, variants } from './db/schema';
+import { carts } from './db/schema';
 import { getSettings } from './settings';
 import { sendSms } from './sms';
 

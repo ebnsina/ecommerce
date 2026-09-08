@@ -1,4 +1,7 @@
 <script lang="ts">
+	import type { CardProduct } from '$lib/shop/ProductCard.svelte';
+	import type { Brand } from './Brands.svelte';
+	import type { BlockCategory, BlockProps } from './schema';
 	import CategoryStrip from './CategoryStrip.svelte';
 	import HeroSplit from './HeroSplit.svelte';
 	import PolicyStrip from './PolicyStrip.svelte';
@@ -13,7 +16,7 @@
 	import ContactBand from './ContactBand.svelte';
 
 	/** type -> component. Adding a block means one entry here and one in schema.ts. */
-	const registry: Record<string, any> = {
+	const registry: BlockProps = {
 		categoryStrip: CategoryStrip,
 		heroSplit: HeroSplit,
 		policyStrip: PolicyStrip,
@@ -31,12 +34,12 @@
 	type Rendered = {
 		id: string;
 		type: string;
-		props: Record<string, any>;
-		products?: any[];
-		brands?: any[];
+		props: BlockProps;
+		products?: CardProduct[];
+		brands?: Brand[];
 	};
 
-	let { blocks, categories = [] }: { blocks: Rendered[]; categories?: any[] } = $props();
+	let { blocks, categories = [] }: { blocks: Rendered[]; categories?: BlockCategory[] } = $props();
 </script>
 
 {#each blocks as block (block.id)}

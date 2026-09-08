@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { slide } from 'svelte/transition';
 	import {
 		Plus,
 		Pencil,
@@ -12,7 +11,6 @@
 		FolderTree
 	} from '@lucide/svelte';
 	import { slugify } from '$lib/slug';
-	import { slideOpen } from '$lib/motion';
 	import Button from '$lib/ui/Button.svelte';
 	import Input from '$lib/ui/Input.svelte';
 	import Select from '$lib/ui/Select.svelte';

@@ -1,6 +1,6 @@
 import { and, eq, ilike, or, sql, desc } from 'drizzle-orm';
 import { db } from '$lib/server/db';
-import { products, categories, productCategories } from '$lib/server/db/schema';
+import { products } from '$lib/server/db/schema';
 import { toCsv } from '$lib/csv';
 import { PRODUCT_CSV_COLUMNS } from '$lib/productCsv';
 import type { RequestHandler } from './$types';

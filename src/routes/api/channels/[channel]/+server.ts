@@ -19,6 +19,7 @@ import { env } from '$env/dynamic/private';
 import { receiveMessage } from '$lib/server/inbox';
 import type { ChannelKey } from '$lib/server/channels';
 import type { RequestHandler } from './$types';
+import type { JsonBody } from '$lib/server/json';
 
 const META_CHANNELS = new Set(['whatsapp', 'messenger', 'instagram']);
 const SUPPORTED = new Set(['telegram', 'whatsapp', 'messenger', 'instagram']);
@@ -64,7 +65,7 @@ type Normalised = {
 	ref?: string | null;
 };
 
-function fromTelegram(payload: any): Normalised[] {
+function fromTelegram(payload: JsonBody): Normalised[] {
 	const msg = payload?.message ?? payload?.edited_message;
 	if (!msg?.chat?.id || !msg?.text) return [];
 	const from = msg.from ?? {};
@@ -81,12 +82,12 @@ function fromTelegram(payload: any): Normalised[] {
 	];
 }
 
-function fromWhatsApp(payload: any): Normalised[] {
+function fromWhatsApp(payload: JsonBody): Normalised[] {
 	const out: Normalised[] = [];
 	for (const entry of payload?.entry ?? []) {
 		for (const change of entry?.changes ?? []) {
 			const value = change?.value ?? {};
-			const contacts: any[] = value.contacts ?? [];
+			const contacts: JsonBody[] = value.contacts ?? [];
 			for (const m of value.messages ?? []) {
 				if (m.type !== 'text' || !m.text?.body) continue;
 				const contact = contacts.find((c) => c.wa_id === m.from);
@@ -107,7 +108,7 @@ function fromWhatsApp(payload: any): Normalised[] {
 }
 
 /** Messenger and Instagram share the Graph messaging envelope. */
-function fromMeta(payload: any): Normalised[] {
+function fromMeta(payload: JsonBody): Normalised[] {
 	const out: Normalised[] = [];
 	for (const entry of payload?.entry ?? []) {
 		for (const evt of entry?.messaging ?? []) {
@@ -142,7 +143,7 @@ export const POST: RequestHandler = async ({ params, request }) => {
 		error(403, 'Bad signature');
 	}
 
-	let payload: any;
+	let payload: JsonBody;
 	try {
 		payload = JSON.parse(raw);
 	} catch {
