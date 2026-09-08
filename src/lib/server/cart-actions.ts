@@ -4,6 +4,7 @@ import { and, eq } from 'drizzle-orm';
 import { db } from './db';
 import { wishlist } from './db/schema';
 import { getOrCreateCart, addToCart } from './cart';
+import { recordProductEvent } from './intent';
 
 /**
  * Adds to the cart. `forceTo` lets "Buy now" jump straight to checkout without
@@ -20,6 +21,8 @@ async function add(event: RequestEvent, forceTo?: string) {
 		Math.max(1, Number(form.get('qty') ?? 1))
 	);
 	if (!result.ok) return fail(400, { error: result.error });
+
+	recordProductEvent(String(form.get('productId') ?? ''), 'cart');
 
 	const to = forceTo ?? String(form.get('redirectTo') ?? '');
 	if (to) redirect(303, to);

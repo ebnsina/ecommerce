@@ -6,6 +6,15 @@ User-facing changes, newest first.
 
 ### Added
 
+- **Insights.** A new screen showing what shoppers searched for, what they
+  looked at, and what they actually bought — including the two things sales
+  figures cannot tell you apart: searches that found nothing (demand you have
+  no product for) and products people look at but never buy. It also shows how
+  orders end, with the cash-on-delivery refusal rate called out, since a
+  refused parcel is paid for twice and sold none.
+- **"Customers also bought"** on the product page, counted from real orders
+  rather than guessed — so it can be explained, and needs no second service.
+
 - **Reviews and Questions are now two screens**, each with its own search,
   filters and bulk actions — publishing five reviews at once no longer means
   five clicks in two directions. Answering a question happens in a dialog and

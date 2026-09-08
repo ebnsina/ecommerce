@@ -3,7 +3,7 @@
  * Run: pnpm db:seed  (idempotent — safe to re-run)
  */
 import postgres from 'postgres';
-import { eq } from 'drizzle-orm';
+import { count, eq } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { hashPassword } from '../src/lib/server/password.ts';
 import * as s2 from '../src/lib/server/db/schema.ts';
@@ -1036,10 +1036,7 @@ if (process.env.SEED_DEMO) {
 
 	/* Reviews and questions. Ratings alone left the product tabs empty, which
 	   made the demo store look broken rather than new. */
-	const productRows = await db
-		.select({ id: s2.products.id })
-		.from(s2.products)
-		.limit(120);
+	const productRows = await db.select({ id: s2.products.id }).from(s2.products).limit(120);
 
 	const reviewTitles = [
 		'Exactly as described',
@@ -1102,6 +1099,51 @@ if (process.env.SEED_DEMO) {
 		})
 	);
 	if (questionValues.length) await db.insert(s2.productQuestions).values(questionValues);
+
+	/* Order lines. The demo orders are written before the catalogue exists, so
+	   they start empty — which left best sellers, "customers also bought" and
+	   every revenue figure at zero. Fill them in now that products are here, and
+	   move the order totals to match what is actually on them. */
+	const orderRows = await db
+		.select({ id: s2.orders.id, shipping: s2.orders.shipping })
+		.from(s2.orders);
+	const priced = await db
+		.select({ id: s2.products.id, title: s2.products.title, price: s2.products.price })
+		.from(s2.products)
+		.limit(200);
+
+	let lineCount = 0;
+	for (const order of orderRows) {
+		const [{ n }] = await db
+			.select({ n: count() })
+			.from(s2.orderItems)
+			.where(eq(s2.orderItems.orderId, order.id));
+		if (n > 0) continue;
+
+		// One to three distinct products, so co-purchase has something to count.
+		const chosen = new Map<string, (typeof priced)[number]>();
+		for (let i = 0; i < between(1, 3); i++) {
+			const p = pick(priced);
+			chosen.set(p.id, p);
+		}
+
+		const lines = [...chosen.values()].map((p) => ({
+			orderId: order.id,
+			productId: p.id,
+			title: p.title,
+			unitPrice: p.price,
+			qty: between(1, 2)
+		}));
+		await db.insert(s2.orderItems).values(lines);
+		lineCount += lines.length;
+
+		const subtotal = lines.reduce((sum, l) => sum + l.unitPrice * l.qty, 0);
+		await db
+			.update(s2.orders)
+			.set({ subtotal, total: subtotal + order.shipping })
+			.where(eq(s2.orders.id, order.id));
+	}
+	console.log(`demo: ${lineCount} order lines`);
 
 	console.log(`demo: ${reviewValues.length} reviews, ${questionValues.length} questions`);
 }

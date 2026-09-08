@@ -20,6 +20,7 @@ import {
 } from '$lib/server/reviews';
 import { fail } from '@sveltejs/kit';
 import { addAction, buyNowAction, wishlistAction } from '$lib/server/cart-actions';
+import { recordProductEvent, boughtTogether } from '$lib/server/intent';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ params }) => {
@@ -56,6 +57,14 @@ export const load: PageServerLoad = async ({ params }) => {
 
 	const offers = await bundlesForProduct(product.id);
 
+	// What this page is worth knowing about later: somebody looked at it.
+	recordProductEvent(product.id, 'view');
+
+	/* Bought together beats "same category" as a suggestion, because it is what
+	   customers actually did. Category neighbours stay as the fallback for a
+	   product nobody has ordered with anything yet. */
+	const alsoBought = await boughtTogether(product.id);
+
 	const related = cats.length
 		? await db
 				.select(cardColumns)
@@ -89,6 +98,7 @@ export const load: PageServerLoad = async ({ params }) => {
 		reviews,
 		bundles: offers,
 		questions: publicQuestions(questions),
+		alsoBought,
 		related
 	};
 };

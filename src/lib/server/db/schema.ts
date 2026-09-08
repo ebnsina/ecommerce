@@ -587,3 +587,42 @@ export const orderRelations = relations(orders, ({ many }) => ({
 }));
 
 export const cartRelations = relations(carts, ({ many }) => ({ items: many(cartItems) }));
+
+/**
+ * What shoppers looked for. One row per search, kept so the owner can see the
+ * demand the catalogue is not meeting — a term searched often that returns
+ * nothing is a product worth stocking.
+ */
+export const searchQueries = pgTable(
+	'search_queries',
+	{
+		id: id(),
+		term: text().notNull(),
+		/** How many products the search returned. Zero is the interesting case. */
+		results: integer().notNull(),
+		customerId: uuid('customer_id').references(() => customers.id, { onDelete: 'set null' }),
+		createdAt: now()
+	},
+	(t) => [index('search_queries_term_idx').on(t.term), index('search_queries_at_idx').on(t.createdAt)]
+);
+
+/**
+ * Interest in a product short of buying it. Views and add-to-carts, recorded
+ * per event so "looked at a lot, bought rarely" can be told from "nobody sees
+ * it" — two very different problems with the same sales figure.
+ *
+ * ponytail: rows accumulate. At this shop's size that is fine for years; add a
+ * nightly roll-up into daily totals if it ever stops being.
+ */
+export const productEvents = pgTable(
+	'product_events',
+	{
+		id: id(),
+		productId: uuid('product_id')
+			.notNull()
+			.references(() => products.id, { onDelete: 'cascade' }),
+		kind: text().notNull().$type<'view' | 'cart'>(),
+		createdAt: now()
+	},
+	(t) => [index('product_events_idx').on(t.productId, t.kind, t.createdAt)]
+);

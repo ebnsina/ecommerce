@@ -525,4 +525,10 @@
 	{form}
 />
 
+<!-- What other buyers of this actually took as well. It only appears once
+     there is real order history behind it. -->
+{#if data.alsoBought.length}
+	<ProductSection title="Customers also bought" products={data.alsoBought} />
+{/if}
+
 <ProductSection title="You may also like" products={data.related} />

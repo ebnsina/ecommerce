@@ -1,6 +1,7 @@
 /** Admin navigation — one source of truth for the sidebar AND the breadcrumb labels. */
 import {
 	LayoutDashboard,
+	ChartNoAxesCombined,
 	Package,
 	PackagePlus,
 	FolderTree,
@@ -23,7 +24,13 @@ export type NavItem = { href: string; label: string; icon?: typeof Icon };
 export type NavGroup = { title: string; items: NavItem[] };
 
 export const navGroups: NavGroup[] = [
-	{ title: 'Overview', items: [{ href: '/admin', icon: LayoutDashboard, label: 'Dashboard' }] },
+	{
+		title: 'Overview',
+		items: [
+			{ href: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
+			{ href: '/admin/insights', icon: ChartNoAxesCombined, label: 'Insights' }
+		]
+	},
 	{
 		title: 'Catalog',
 		items: [
