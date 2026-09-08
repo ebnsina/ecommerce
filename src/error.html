@@ -1,0 +1,91 @@
+<!doctype html>
+<!--
+  The fallback error page.
+
+  This is what a visitor sees when the app cannot render its own error page —
+  the root layout threw, or the server fell over before SvelteKit got that far.
+  So it carries no framework, no fonts and no assets: everything is inline,
+  because the reason we are here may be that assets are not being served.
+
+  Colours are copied from the design tokens rather than imported for the same
+  reason. They are the only hardcoded ones in the project, and this comment is
+  the note to change them here too if the ramp ever moves.
+-->
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="robots" content="noindex" />
+		<title>%sveltekit.status% — Dukkan</title>
+		<style>
+			:root {
+				color-scheme: light;
+			}
+			body {
+				margin: 0;
+				min-height: 100vh;
+				display: grid;
+				place-items: center;
+				padding: 2rem 1.5rem;
+				background: #fcfcfd;
+				color: #0f172a;
+				font-family:
+					system-ui,
+					-apple-system,
+					'Segoe UI',
+					sans-serif;
+				line-height: 1.55;
+			}
+			main {
+				max-width: 34rem;
+			}
+			.status {
+				margin: 0;
+				font-family: ui-monospace, monospace;
+				font-size: 0.875rem;
+				font-weight: 600;
+				color: #1565c0;
+			}
+			h1 {
+				margin: 0.75rem 0 0;
+				font-size: clamp(1.75rem, 5vw, 2.75rem);
+				font-weight: 600;
+				line-height: 1.1;
+				letter-spacing: -0.03em;
+				text-wrap: balance;
+			}
+			p {
+				margin: 1.25rem 0 0;
+				color: #64748b;
+			}
+			a {
+				display: inline-flex;
+				align-items: center;
+				height: 3rem;
+				margin-top: 2rem;
+				padding: 0 1.75rem;
+				border-radius: 0.75rem;
+				background: #1565c0;
+				color: #fff;
+				font-size: 0.9375rem;
+				font-weight: 500;
+				text-decoration: none;
+			}
+			a:focus-visible {
+				outline: 2px solid #1565c0;
+				outline-offset: 2px;
+			}
+		</style>
+	</head>
+	<body>
+		<main>
+			<p class="status">Error %sveltekit.status%</p>
+			<h1>Something broke at our end.</h1>
+			<p>
+				%sveltekit.error.message% The fault is ours rather than yours, and it has been logged. Most
+				of these are momentary, so loading the page again often works.
+			</p>
+			<a href="/">Back to the front page</a>
+		</main>
+	</body>
+</html>
