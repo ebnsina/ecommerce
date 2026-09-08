@@ -6,6 +6,21 @@
 	import Button from '$lib/ui/Button.svelte';
 
 	let { data } = $props();
+
+	// Fires once the pixel has booted in the layout. Meta drops the duplicate of
+	// whichever of the two events (this one, or the server's) arrives second.
+	$effect(() => {
+		const p = data.purchase;
+		if (p)
+			(window as any).fbq?.(
+				'track',
+				'Purchase',
+				{ value: p.value / 100, currency: 'BDT' },
+				{
+					eventID: p.eventId
+				}
+			);
+	});
 </script>
 
 <svelte:head><title>Order {data.order.number} · {data.settings.store.name}</title></svelte:head>

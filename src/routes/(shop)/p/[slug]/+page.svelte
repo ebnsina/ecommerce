@@ -2,6 +2,7 @@
 	import { untrack, onMount } from 'svelte';
 	import { fly } from 'svelte/transition';
 	import { enhance } from '$app/forms';
+	import { track } from '$lib/track';
 	import { page } from '$app/state';
 	import {
 		ChevronRight,
@@ -273,7 +274,22 @@
 
 			<!-- Buy box. `bind:this` anchors the sticky mobile bar below. -->
 			<div bind:this={buyBox} class="mt-6">
-				<form method="POST" action="?/add" use:enhance class="flex flex-wrap items-center gap-3">
+				<form
+					method="POST"
+					action="?/add"
+					use:enhance={() =>
+						async ({ result, update }) => {
+							if (result.type === 'success')
+								track('AddToCart', {
+									currency: 'BDT',
+									value: (price * qty) / 100,
+									content_type: 'product',
+									contents: [{ id: data.product.id, quantity: qty }]
+								});
+							await update();
+						}}
+					class="flex flex-wrap items-center gap-3"
+				>
 					<input type="hidden" name="productId" value={data.product.id} />
 					{#if variant}<input type="hidden" name="variantId" value={variant.id} />{/if}
 					<input type="hidden" name="qty" value={qty} />

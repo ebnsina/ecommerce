@@ -16,6 +16,7 @@
 		ClipboardCheck
 	} from '@lucide/svelte';
 	import { formatTk } from '$lib/money';
+	import { track } from '$lib/track';
 	import { formatPhone, normalizePhone } from '$lib/phone';
 	import { fadeIn, DUR_SLOW, reduced } from '$lib/motion';
 	import Button from '$lib/ui/Button.svelte';
@@ -24,6 +25,15 @@
 	import Select from '$lib/ui/Select.svelte';
 
 	let { data, form } = $props();
+
+	// Reaching this page is the "InitiateCheckout" signal Meta optimises against.
+	$effect(() => {
+		track('InitiateCheckout', {
+			currency: 'BDT',
+			value: data.subtotal / 100,
+			num_items: data.lines.reduce((n, l) => n + l.qty, 0)
+		});
+	});
 
 	/* Prefills only — the form owns these once rendered. */
 	const init = untrack(() => data);

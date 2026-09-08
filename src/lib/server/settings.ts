@@ -22,6 +22,7 @@ export type StoreSettings = {
 	/** Rotating hints typed out in the header search box. */
 	search: { hints: string[] };
 	theme: { preset: string; surface: string };
+	analytics: { metaPixelId: string };
 	promo: {
 		text: string;
 		textBn: string;
@@ -49,6 +50,7 @@ const FALLBACK: StoreSettings = {
 	assurances: [],
 	search: { hints: [] },
 	theme: { preset: 'blue', surface: 'white' },
+	analytics: { metaPixelId: '' },
 	promo: { text: '', textBn: '', href: '', active: false, dismissible: true, background: 'ink' }
 };
 

@@ -109,6 +109,13 @@ export const actions: Actions = {
 		return { saved: 'contact' };
 	},
 
+	analytics: async ({ request }) => {
+		const f = await request.formData();
+		// Digits only: the id is interpolated into the pixel snippet.
+		await put('analytics', { metaPixelId: str(f, 'metaPixelId').replace(/\D/g, '') });
+		return { saved: 'analytics' };
+	},
+
 	theme: async ({ request }) => {
 		const f = await request.formData();
 		// normalizeTheme rejects anything not in the preset list, so a hand-posted

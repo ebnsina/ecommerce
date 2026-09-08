@@ -4,6 +4,7 @@
 	import { fade } from 'svelte/transition';
 	import type { Snippet } from 'svelte';
 	import {
+		ChartNoAxesColumn,
 		Check,
 		Store,
 		Megaphone,
@@ -502,6 +503,31 @@
 			</div>
 		{/snippet}
 		{@render section('search', Search, 'Search hints', 'What the search box suggests.', searchBody)}
+
+		{#snippet analyticsBody()}
+			<div class="flex flex-col gap-4">
+				<Input
+					label="Meta Pixel ID"
+					name="metaPixelId"
+					value={s.analytics?.metaPixelId ?? ''}
+					numeric
+					placeholder="1234567890"
+					hint="From Meta Events Manager. Tracks views, add-to-cart and purchases for your ads."
+				/>
+				<p class="text-xs text-ink-muted">
+					Server-side tracking needs an access token as well, which is a secret — see
+					<a href="/admin/connections" class="underline">Connections</a>. Without it the pixel still
+					works, but a good share of events are lost to ad blockers.
+				</p>
+			</div>
+		{/snippet}
+		{@render section(
+			'analytics',
+			ChartNoAxesColumn,
+			'Facebook ads tracking',
+			'Lets Meta see which ads produce orders.',
+			analyticsBody
+		)}
 
 		{#snippet socialBody()}
 			<div class="grid gap-4 sm:grid-cols-3">

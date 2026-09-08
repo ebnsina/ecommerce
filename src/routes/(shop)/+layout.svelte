@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Header from '$lib/shop/Header.svelte';
 	import Footer from '$lib/shop/Footer.svelte';
+	import MetaPixel from '$lib/shop/MetaPixel.svelte';
 
 	let { data, children } = $props();
 </script>
@@ -10,6 +11,8 @@
 <svelte:head>
 	{@html `<style>${data.themeCss}</style>`}
 </svelte:head>
+
+<MetaPixel pixelId={data.settings.analytics?.metaPixelId ?? ''} />
 
 <div class="flex min-h-screen flex-col">
 	<Header

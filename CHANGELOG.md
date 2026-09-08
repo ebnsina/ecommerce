@@ -6,6 +6,13 @@ User-facing changes, newest first.
 
 ### Added
 
+- **Facebook ads tracking.** Add your Meta Pixel ID in Settings and the
+  storefront reports page views, add-to-cart and purchases back to Meta, so ads
+  can be judged on the orders they actually produced. Purchases are also sent
+  from the server (Conversions API) with a shared event ID, which recovers the
+  large share of events ad blockers and iOS privacy settings hide — and cannot
+  double-count them.
+
 - **Inbox threads say what they are about.** A message that opens with "koto
   taka?" now carries the product the customer was looking at, shown on the thread
   and in the list. It is picked up from a Messenger referral, from a product link

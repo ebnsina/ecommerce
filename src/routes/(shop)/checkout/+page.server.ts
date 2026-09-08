@@ -1,13 +1,14 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { eq, sql } from 'drizzle-orm';
 import { db } from '$lib/server/db';
-import { addresses, customers } from '$lib/server/db/schema';
+import { addresses, customers, orders } from '$lib/server/db/schema';
 import { findCart, getLines, summarise } from '$lib/server/cart';
 import { applyCoupon, shippingFor, placeOrder } from '$lib/server/orders';
 import { getSettings } from '$lib/server/settings';
 import { getRegions, resolveZone } from '$lib/server/regions';
 import { normalizePhone } from '$lib/phone';
 import { sendSms } from '$lib/server/sms';
+import { capiConfigured, purchaseEventId, sendEvents } from '$lib/server/meta';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
@@ -92,6 +93,7 @@ export const actions: Actions = {
 		if (!line) return fail(400, { error: 'Enter the full delivery address.' });
 
 		const customerId = event.locals.user?.kind === 'customer' ? event.locals.user.id : null;
+		const settings = await getSettings();
 
 		const result = await placeOrder({
 			cartId: cart.id,
@@ -115,6 +117,43 @@ export const actions: Actions = {
 		// Name the account after the first order so staff have something to call them.
 		if (customerId && !name)
 			await db.update(customers).set({ name }).where(eq(customers.id, customerId));
+
+		// Server-side Purchase, deduplicated against the browser pixel on the
+		// confirmation page by a shared event_id. Ad blockers never see this one.
+		const pixelId = settings.analytics?.metaPixelId;
+		if (capiConfigured(pixelId)) {
+			const [placed] = await db
+				.select({ total: orders.total })
+				.from(orders)
+				.where(eq(orders.id, result.id))
+				.limit(1);
+			await sendEvents(
+				pixelId!,
+				[
+					{
+						name: 'Purchase',
+						eventId: purchaseEventId(result.id),
+						sourceUrl: event.url.href,
+						value: placed?.total ?? 0,
+						contents: lines.map((l) => ({
+							id: l.productId,
+							quantity: l.qty,
+							item_price: +(l.unitPrice / 100).toFixed(2)
+						}))
+					}
+				],
+				{
+					phone,
+					firstName: name.split(' ')[0],
+					lastName: name.split(' ').slice(1).join(' ') || null,
+					city: place.district,
+					fbp: event.cookies.get('_fbp'),
+					fbc: event.cookies.get('_fbc'),
+					ip: event.getClientAddress(),
+					userAgent: event.request.headers.get('user-agent')
+				}
+			);
+		}
 
 		await sendSms(
 			phone,

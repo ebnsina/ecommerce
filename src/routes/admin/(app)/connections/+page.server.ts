@@ -2,6 +2,7 @@ import { env } from '$env/dynamic/private';
 import { channelStatus } from '$lib/server/channels';
 import { courierStatusList } from '$lib/server/couriers';
 import { isAiConfigured, provider } from '$lib/server/ai';
+import { capiConfigured } from '$lib/server/meta';
 import { getSettings } from '$lib/server/settings';
 import type { PageServerLoad } from './$types';
 
@@ -106,6 +107,31 @@ export const load: PageServerLoad = async () => {
 					purpose:
 						'bKash, Nagad, Rocket and cards. Not built yet — cash on delivery covers you for now.',
 					vars: [],
+					webhook: null
+				}
+			]
+		},
+		{
+			title: 'Advertising',
+			blurb:
+				'Lets Facebook and Instagram ads see which of them actually produced an order, so the money follows what works.',
+			items: [
+				{
+					key: 'meta-pixel',
+					name: 'Meta Pixel',
+					connected: !!settings.analytics?.metaPixelId,
+					purpose:
+						'Tracks page views, add-to-cart and purchases in the browser. Add the pixel ID under Settings → Facebook ads tracking.',
+					vars: [],
+					webhook: null
+				},
+				{
+					key: 'meta-capi',
+					name: 'Conversions API',
+					connected: capiConfigured(settings.analytics?.metaPixelId),
+					purpose:
+						'Sends the same purchases from the server, so the ones ad blockers hide still get counted. Needs the pixel ID as well.',
+					vars: ['META_CAPI_TOKEN', 'META_TEST_EVENT_CODE (while testing)'],
 					webhook: null
 				}
 			]
