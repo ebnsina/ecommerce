@@ -2,7 +2,7 @@
 	import { untrack } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import { Search, Inbox, Circle } from '@lucide/svelte';
+	import { Search, Inbox } from '@lucide/svelte';
 	import Input from '$lib/ui/Input.svelte';
 	import Tabs from '$lib/ui/Tabs.svelte';
 	import ChannelBadge from '$lib/admin/ChannelBadge.svelte';
@@ -44,19 +44,22 @@
 	</div>
 </div>
 
-<!-- Which channels are actually connected, stated plainly rather than failing at send time. -->
+<!-- Each channel wears its own mark, so the row reads at a glance rather than
+     as six identical grey pills. Connected ones are full strength; the rest are
+     dimmed and say why. -->
 <div class="mt-4 flex flex-wrap gap-2">
 	{#each data.channels as c (c.key)}
 		<span
-			class="flex items-center gap-1.5 rounded-xl border px-2.5 py-1 text-xs
-			       {c.configured ? 'border-border text-ink-muted' : 'border-border text-ink-faint'}"
+			class="flex items-center gap-2 rounded-xl border border-border bg-surface py-1.5 pr-3 pl-2
+			       {c.configured ? '' : 'opacity-60'}"
 		>
-			<Circle
-				size={7}
-				class={c.configured ? 'fill-success text-success' : 'fill-ink-faint text-ink-faint'}
-			/>
-			{c.label}
-			{#if !c.configured}<span class="text-ink-faint">· not connected</span>{/if}
+			<ChannelBadge channel={c.key} />
+			<span class="text-sm font-medium text-ink">{c.label}</span>
+			{#if c.configured}
+				<span class="size-1.5 rounded-full bg-ok-fg" title="Connected"></span>
+			{:else}
+				<span class="text-xs text-ink-faint">not connected</span>
+			{/if}
 		</span>
 	{/each}
 </div>

@@ -4,8 +4,18 @@
 	let {
 		name = 'files',
 		multiple = true,
+		accept = 'image/*',
+		label = 'Drop images here or click to choose',
+		hint = 'JPG, PNG, WebP, AVIF or SVG · up to 5MB each',
 		onfiles
-	}: { name?: string; multiple?: boolean; onfiles?: (files: FileList) => void } = $props();
+	}: {
+		name?: string;
+		multiple?: boolean;
+		accept?: string;
+		label?: string;
+		hint?: string;
+		onfiles?: (files: FileList) => void;
+	} = $props();
 
 	let input = $state<HTMLInputElement | null>(null);
 	let dragging = $state(false);
@@ -35,11 +45,11 @@
 		type="file"
 		{name}
 		{multiple}
-		accept="image/*"
+		{accept}
 		class="sr-only"
 		onchange={(e) => e.currentTarget.files && onfiles?.(e.currentTarget.files)}
 	/>
 	<Upload size={20} class="text-ink-faint" />
-	<span class="text-sm font-medium text-ink">Drop images here or click to choose</span>
-	<span class="text-xs text-ink-faint">JPG, PNG, WebP, AVIF or SVG · up to 5MB each</span>
+	<span class="text-sm font-medium text-ink">{label}</span>
+	<span class="text-xs text-ink-faint">{hint}</span>
 </label>

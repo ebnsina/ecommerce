@@ -6,10 +6,15 @@ User-facing changes, newest first.
 
 ### Added
 
-- **Theme picker.** Six colour presets and a choice of white or warm page
+- **Theme picker.** Seven colour presets and a choice of white or warm page
   background, set in Settings and applied across both the storefront and the
   admin without a rebuild. Every palette is checked for legibility before it
   ships, so no choice can make buttons or links unreadable.
+
+### Fixed
+
+- **The product importer offered to accept images.** Its upload area used the
+  media library's wording; it now asks for a CSV and accepts only CSV files.
 
 ### Changed
 

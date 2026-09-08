@@ -7,12 +7,12 @@
  * The tokens in layout.css derive from this ramp — --color-primary is
  * --color-brand-700 — so overriding the ramp re-themes the whole app.
  */
-export type ThemeKey = 'blue' | 'emerald' | 'violet' | 'amber' | 'rose' | 'slate';
+export type ThemeKey = 'blue' | 'emerald' | 'violet' | 'amber' | 'orange' | 'rose' | 'slate';
 export type SurfaceKey = 'white' | 'warm';
 
 export type Theme = { preset: ThemeKey; surface: SurfaceKey };
 
-export const DEFAULT_THEME: Theme = { preset: 'blue', surface: 'warm' };
+export const DEFAULT_THEME: Theme = { preset: 'blue', surface: 'white' };
 
 type Ramp = readonly [string, string, string, string, string, string, string, string, string];
 
@@ -73,6 +73,20 @@ export const PRESETS: Record<ThemeKey, { label: string; ramp: Ramp }> = {
 			'#92400E'
 		]
 	},
+	orange: {
+		label: 'Orange',
+		ramp: [
+			'#FFF7ED',
+			'#FFEDD5',
+			'#FED7AA',
+			'#FDBA74',
+			'#FB923C',
+			'#F97316',
+			'#EA580C',
+			'#C2410C',
+			'#9A3412'
+		]
+	},
 	rose: {
 		label: 'Rose',
 		ramp: [
@@ -105,9 +119,49 @@ export const PRESETS: Record<ThemeKey, { label: string; ramp: Ramp }> = {
 	}
 };
 
-export const SURFACES: Record<SurfaceKey, { label: string; page: string; hint: string }> = {
-	white: { label: 'White', page: '#FFFFFF', hint: 'Crisp and clinical' },
-	warm: { label: 'Warm', page: '#FAF9F7', hint: 'Softer; cards still white' }
+export type SurfaceTokens = {
+	label: string;
+	hint: string;
+	page: string;
+	surfaceAlt: string;
+	border: string;
+	ink: string;
+	inkMuted: string;
+	inkFaint: string;
+};
+
+/**
+ * A surface is a whole neutral family, not just a page colour. Warming the page
+ * while leaving cool slate panels and borders behind is what makes a theme look
+ * mismatched, so both move together.
+ *
+ * Every value here is measured: muted ink clears 4.5:1 on its own panel, and the
+ * border is visible against its page — a design that uses borders instead of
+ * shadows cannot afford an invisible border.
+ */
+export const SURFACES: Record<SurfaceKey, SurfaceTokens> = {
+	white: {
+		label: 'White',
+		hint: 'Crisp and clinical',
+		page: '#FFFFFF',
+		surfaceAlt: '#F8FAFC',
+		border: '#D9E0E8',
+		ink: '#0F172A',
+		inkMuted: '#64748B',
+		inkFaint: '#94A3B8'
+	},
+	warm: {
+		// A soft neutral, not a beige. Warming a page with brown-grey borders reads
+		// as dated; a near-white zinc keeps the softness and stays modern.
+		label: 'Soft grey',
+		hint: 'Softer than white; cards stay white',
+		page: '#FAFAFA',
+		surfaceAlt: '#F4F4F5',
+		border: '#D9D9DE',
+		ink: '#18181B',
+		inkMuted: '#52525B',
+		inkFaint: '#A1A1AA'
+	}
 };
 
 export const normalizeTheme = (value: unknown): Theme => {
@@ -124,13 +178,22 @@ export const normalizeTheme = (value: unknown): Theme => {
  */
 export function themeCss(theme: Theme): string {
 	const { ramp } = PRESETS[theme.preset];
-	const page = SURFACES[theme.surface].page;
+	const s = SURFACES[theme.surface];
 
 	const stops = [50, 100, 200, 300, 400, 500, 600, 700, 800]
 		.map((stop, i) => `--color-brand-${stop}:${ramp[i]}`)
 		.join(';');
 
-	// --color-page backs the body; cards keep --color-surface so a warm page
-	// makes the white cards read as raised rather than washing everything out.
-	return `:root{${stops};--color-page:${page}}`;
+	// Cards keep --color-surface white in both modes, so a warm page makes them
+	// read as raised rather than washing the whole screen out.
+	const neutrals = [
+		`--color-page:${s.page}`,
+		`--color-surface-alt:${s.surfaceAlt}`,
+		`--color-border:${s.border}`,
+		`--color-ink:${s.ink}`,
+		`--color-ink-muted:${s.inkMuted}`,
+		`--color-ink-faint:${s.inkFaint}`
+	].join(';');
+
+	return `:root{${stops};${neutrals}}`;
 }

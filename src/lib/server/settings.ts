@@ -48,7 +48,7 @@ const FALLBACK: StoreSettings = {
 	footer: { paymentMethods: [], note: '' },
 	assurances: [],
 	search: { hints: [] },
-	theme: { preset: 'blue', surface: 'warm' },
+	theme: { preset: 'blue', surface: 'white' },
 	promo: { text: '', textBn: '', href: '', active: false, dismissible: true, background: 'ink' }
 };
 
