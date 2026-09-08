@@ -1,0 +1,102 @@
+@import 'tailwindcss';
+
+/* Fonts — weight axis only (smaller than the full variable files) */
+@import '@fontsource-variable/mona-sans/wght.css';
+@import '@fontsource-variable/geist-mono/wght.css';
+@import '@fontsource-variable/noto-sans-bengali/wght.css';
+
+/* ─────────────────────────────────────────────────────────────
+   Design tokens — the single source of truth.
+   @theme emits these as :root custom properties AND generates
+   Tailwind utilities (bg-primary, text-ink, font-mono, …).
+   Never hardcode a colour anywhere else.
+   ───────────────────────────────────────────────────────────── */
+@theme {
+	/* Brand ramp — Material Blue, extended past 400 so text can pass contrast */
+	--color-brand-50: #e3f2fd;
+	--color-brand-100: #bbdefb;
+	--color-brand-200: #90caf9;
+	--color-brand-300: #64b5f6;
+	--color-brand-400: #42a5f5;
+	--color-brand-500: #2196f3;
+	--color-brand-600: #1e88e5;
+	--color-brand-700: #1565c0;
+	--color-brand-800: #0d47a1;
+
+	/* Semantic — ratios are against --color-surface (white), WCAG AA = 4.5 text / 3 UI */
+	--color-primary: var(--color-brand-700); /* 5.68:1 — buttons, links, active nav */
+	--color-primary-hover: var(--color-brand-800); /* 8.63:1 — hover, focus ring */
+	--color-primary-accent: var(--color-brand-600); /* 3.68:1 — large text, icons, borders ONLY */
+	--color-primary-soft: var(--color-brand-50); /* tinted section backgrounds */
+	--color-accent: var(--color-brand-400); /* 2.65:1 — decoration only, never foreground */
+
+	--color-ink: #0f172a; /* 17.9:1 — headings, body */
+	--color-ink-muted: #64748b; /* 4.75:1 — secondary text */
+	--color-ink-faint: #94a3b8; /* 2.72:1 — disabled/placeholder only */
+
+	--color-surface: #ffffff;
+	--color-surface-alt: #f8fafc;
+	--color-border: #e2e8f0; /* slate-200 — light borders instead of shadows */
+
+	--color-sale: #e11d48; /* 4.70:1 — deal price, discount badge */
+	--color-star: #f59e0b; /* icon graphic only, not text */
+	--color-success: #059669;
+
+	/* Type — Mona Sans everywhere, Geist Mono for every number */
+	--font-sans: 'Mona Sans Variable', 'Noto Sans Bengali Variable', system-ui, sans-serif;
+	--font-mono: 'Geist Mono Variable', ui-monospace, monospace;
+
+	/* Motion — professional, not funky */
+	--ease-brand: cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+/* Durations for svelte/transition to read via getComputedStyle-free constants
+   live in $lib/motion.ts — these mirror them for pure-CSS transitions. */
+:root {
+	--dur: 180ms;
+	--dur-slow: 280ms;
+}
+
+@layer base {
+	html {
+		-webkit-text-size-adjust: 100%;
+	}
+
+	body {
+		background: var(--color-surface);
+		color: var(--color-ink);
+		font-family: var(--font-sans);
+		-webkit-font-smoothing: antialiased;
+	}
+
+	/* Every number — price, review count, quantity, order id — is mono + tabular */
+	.num {
+		font-family: var(--font-mono);
+		font-feature-settings: 'tnum' 1;
+		font-variant-numeric: tabular-nums;
+	}
+
+	/* Ring only — never touch border-radius here, the outline already follows
+	   whatever radius the element has (a 3xl card kept an xl corner otherwise). */
+	:focus-visible {
+		outline: 2px solid var(--color-primary);
+		outline-offset: 2px;
+	}
+
+	::selection {
+		background: var(--color-brand-100);
+	}
+}
+
+/* Honour the OS setting — applies to CSS transitions and to svelte/transition
+   (see reduced() in $lib/motion.ts) */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+}
