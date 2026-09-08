@@ -49,7 +49,7 @@
 		{:else}
 			The shop is searching the database directly. That works, but it matches only what is typed
 			exactly: a shopper who writes "washing mashine" gets nothing. Connecting Typesense fixes that
-			— the settings it needs are on the Connections page.
+			— the settings it needs are on the Integrations page.
 		{/if}
 	</p>
 	<p class="num mt-3 text-xs text-ink-faint">{data.active} products searchable</p>

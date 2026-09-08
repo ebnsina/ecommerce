@@ -67,7 +67,7 @@ export const navGroups: NavGroup[] = [
 		items: [
 			{ href: '/admin/search', icon: SearchCode, label: 'Search' },
 			{ href: '/admin/settings', icon: Settings, label: 'Settings' },
-			{ href: '/admin/connections', icon: Plug, label: 'Connections' }
+			{ href: '/admin/integrations', icon: Plug, label: 'Integrations' }
 		]
 	}
 ];

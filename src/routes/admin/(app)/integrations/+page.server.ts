@@ -9,8 +9,11 @@ import { getSettings } from '$lib/server/settings';
 import type { PageServerLoad } from './$types';
 
 /**
- * One page that answers "what is not connected, what is it for, and what does
- * my developer need to set". Only variable *names* are listed — never values.
+ * The integrations catalogue: everything the shop can plug into, whether it is
+ * set up, and what a developer needs to set for the ones that are not.
+ *
+ * Only variable *names* are ever listed — never values. Secrets live outside
+ * this admin, which is the whole reason this page exists.
  */
 export const load: PageServerLoad = async () => {
 	const settings = await getSettings();
@@ -223,9 +226,19 @@ export const load: PageServerLoad = async () => {
 		}
 	];
 
+	// Flattened into one catalogue, each entry carrying the category it belongs
+	// to, so the page can filter without re-deriving anything.
+	const items = groups.flatMap((g) => g.items.map((i) => ({ ...i, category: g.title })));
+
 	return {
-		groups,
-		connected: groups.flatMap((g) => g.items).filter((i) => i.connected).length,
-		total: groups.flatMap((g) => g.items).length
+		categories: groups.map((g) => ({
+			title: g.title,
+			blurb: g.blurb,
+			total: g.items.length,
+			connected: g.items.filter((i) => i.connected).length
+		})),
+		items,
+		connected: items.filter((i) => i.connected).length,
+		total: items.length
 	};
 };

@@ -19,7 +19,7 @@ export const actions: Actions = {
 	reindex: async () => {
 		const result = await reindexAll();
 		if (!result.configured)
-			return { error: 'Search is not connected yet — see Connections for the settings it needs.' };
+			return { error: 'Search is not connected yet — see Integrations for the settings it needs.' };
 		return { indexed: result.indexed };
 	}
 };

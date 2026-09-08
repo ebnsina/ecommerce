@@ -253,8 +253,8 @@
 					</Button>
 
 					{#if !data.aiReady}
-						<a href="/admin/connections" class="text-xs text-ink-muted underline">
-							Needs an API key — see Connections
+						<a href="/admin/integrations" class="text-xs text-ink-muted underline">
+							Needs an API key — see Integrations
 						</a>
 					{/if}
 

@@ -56,7 +56,7 @@
 			{#if c.configured}
 				<span class="size-1.5 rounded-full bg-ok-fg" title="Connected"></span>
 			{:else}
-				<a href="/admin/connections" class="text-xs text-ink-faint underline">not connected</a>
+				<a href="/admin/integrations" class="text-xs text-ink-faint underline">not connected</a>
 			{/if}
 		</span>
 	{/each}

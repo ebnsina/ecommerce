@@ -66,6 +66,8 @@ User-facing changes, newest first.
 
 ### Changed
 
+- **Connections is now Integrations**, laid out as a catalogue you can browse:
+  filter by category, search it, or show only what is not set up yet.
 - **Runs under Docker**, with its own Postgres and its own Typesense — one
   command brings up the whole shop, and nothing is published beyond the shop
   itself.

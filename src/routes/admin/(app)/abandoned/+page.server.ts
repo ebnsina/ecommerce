@@ -41,6 +41,6 @@ export const actions: Actions = {
 		const ok = await sendReminder(cart, url.origin);
 		return ok
 			? { sent: cart.phone }
-			: fail(502, { error: 'The SMS gateway refused the message. Check Connections.' });
+			: fail(502, { error: 'The SMS gateway refused the message. Check Integrations.' });
 	}
 };

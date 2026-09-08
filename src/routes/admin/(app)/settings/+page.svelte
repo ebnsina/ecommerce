@@ -634,7 +634,7 @@
 				<p class="text-xs text-ink-muted">
 					Leave any of these blank and nothing for it is loaded. Meta can also report purchases from
 					the server, which recovers the ones ad blockers hide — that needs a secret, see
-					<a href="/admin/connections" class="underline">Connections</a>.
+					<a href="/admin/integrations" class="underline">Integrations</a>.
 				</p>
 			</div>
 		{/snippet}
