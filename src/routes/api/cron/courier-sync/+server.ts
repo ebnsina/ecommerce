@@ -83,7 +83,7 @@ const run: RequestHandler = async ({ request }) => {
 	return json({ inFlight: inFlight.length, checked, advanced });
 };
 
-/* Vercel invokes a cron with GET and sends `Authorization: Bearer $CRON_SECRET`
-   by itself. POST stays for triggering a run by hand. */
+/* Either verb: most schedulers issue a GET, and POST is there for triggering
+   a run by hand. The secret goes in an Authorization: Bearer header. */
 export const GET = run;
 export const POST = run;

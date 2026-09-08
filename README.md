@@ -1,42 +1,76 @@
-# sv
+# Store
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+An ecommerce platform for the Bangladeshi market, built so that the person who
+runs the shop — not a developer — can change everything about it.
 
-## Creating a project
+SvelteKit, Postgres, Tailwind. No hosting provider is baked in: `pnpm build`
+produces a plain Node server that runs anywhere Node runs.
 
-If you're seeing this, you've probably already done this step. Congrats!
-
-```sh
-# create a new project
-npx sv create my-app
-```
-
-To recreate this project with the same configuration:
+## Getting started
 
 ```sh
-# recreate this project
-pnpm dlx sv@0.17.0 create --template minimal --types ts --add prettier eslint vitest="usages:unit" tailwindcss="plugins:none" sveltekit-adapter="adapter:vercel" drizzle="database:postgresql+postgresql:neon" --no-download-check --install pnpm .
+pnpm install
+cp .env.example .env       # fill in DATABASE_URL at minimum
+pnpm db:push               # create the tables
+pnpm db:seed               # demo catalogue, pages, districts and areas
+pnpm dev
 ```
 
-## Developing
+The seed prints the admin sign-in it created.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Deploying
 
 ```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+pnpm build                 # → build/
+node build/index.js        # listens on PORT, default 3000
 ```
 
-## Building
+Anything that can run a Node process will do: a VPS, a container, a
+platform-as-a-service. Set the environment variables from `.env.example` and
+put a reverse proxy in front of it for TLS.
 
-To create a production version of your app:
+### Scheduled work
+
+Two jobs need calling on a schedule. Both are ordinary HTTP endpoints taking
+GET or POST with an `Authorization: Bearer $CRON_SECRET` header, so anything
+can drive them — a crontab line, a systemd timer, a CI schedule, an uptime
+pinger:
+
+```
+0  * * * *  curl -fsS -H "Authorization: Bearer $CRON_SECRET" https://your-shop/api/cron/courier-sync
+30 * * * *  curl -fsS -H "Authorization: Bearer $CRON_SECRET" https://your-shop/api/cron/abandoned-carts
+```
+
+Both are safe to run twice or to miss entirely: a cart reminder is claimed
+before it is sent, and courier sync only reconciles with what the courier
+reports.
+
+### What is optional
+
+The shop runs with nothing but a database. Each of these adds something and
+degrades cleanly when absent — see the Connections screen in the admin, which
+lists what is set up and the exact variables anything missing needs.
+
+|                        | Without it                                                        |
+| ---------------------- | ----------------------------------------------------------------- |
+| Typesense              | Search matches only what is typed exactly                         |
+| S3-compatible storage  | Uploads go to local disk, which a serverless host wipes on deploy |
+| SMS gateway            | Codes and notices are logged to the server console                |
+| Courier API            | Consignments are entered by hand                                  |
+| Meta / TikTok / Google | No ad attribution                                                 |
+| An AI key              | The inbox drafts no reply suggestions                             |
+
+## Commands
 
 ```sh
-npm run build
+pnpm dev            # development server
+pnpm build          # production build
+pnpm check          # types and Svelte a11y
+pnpm test           # unit tests
+pnpm db:push        # apply schema changes
+pnpm db:studio      # browse the database
+pnpm db:seed        # demo data
 ```
 
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+Read `CLAUDE.md` before changing the UI: accessibility and the design tokens
+are hard rules here, not preferences.

@@ -7,7 +7,7 @@
  *   STORAGE_DRIVER=s3     any S3-compatible bucket: Cloudflare R2, MinIO,
  *                         DigitalOcean Spaces, Wasabi, AWS S3.
  *
- * Serverless hosts (Vercel) have an ephemeral filesystem, so `local` there
+ * A serverless host has an ephemeral filesystem, so `local` there
  * loses every upload on redeploy — use s3.
  *
  * Signing is done by aws4fetch rather than by hand: SigV4 is a security

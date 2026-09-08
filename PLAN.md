@@ -1,6 +1,6 @@
 # Ecommerce + CMS — Build Plan
 
-**Target:** single store, <500 SKUs, 1–3 admins, Bangladesh, SvelteKit, Vercel + Neon.
+**Target:** single store, <500 SKUs, 1–3 admins, Bangladesh, SvelteKit, any Node host + Postgres.
 **Rule:** MVP below ships first. Everything after §MVP is the backlog, in order.
 
 ---
@@ -201,7 +201,7 @@ each one earns the right to the next.
 | Search   | Postgres `pg_trgm` + `ilike` + a GIN index                                                       | Meilisearch/Typesense is an extra service for a 500-row table. Add it at ~5k SKUs. |
 | Styling  | Tailwind + shadcn-svelte for admin                                                               | Admin UI is 60% of the work; don't hand-build tables, dialogs, comboboxes.         |
 | Jobs     | Postgres table + a `/api/cron` route hit by a scheduler                                          | No Redis, no BullMQ. Abandoned-cart and SMS retries don't need a broker.           |
-| Hosting  | **Vercel + Neon (Singapore)**, `adapter-vercel`                                                  | Decided. Revisit only if egress cost or BD latency bites.                          |
+| Hosting  | **Any Node host**, `adapter-node`; Postgres anywhere (Neon Singapore is a good default)          | Deliberately host-agnostic: `pnpm build` gives a plain Node server, and the two scheduled jobs are ordinary HTTP endpoints any scheduler can call. |
 | Payments | **SSLCommerz** (one integration = cards + bKash + Nagad + Rocket) + **COD**                      | Direct bKash/Nagad merchant APIs only once volume justifies the lower fee.         |
 | Courier  | **Steadfast** or **Pathao Courier** API                                                          | Start with manual entry + CSV export; wire the API in Phase 4.                     |
 | SMS      | One provider (Alpha SMS / SSL Wireless) behind a 20-line `sendSms()`                             | SMS matters far more than email here.                                              |
