@@ -1,16 +1,14 @@
 import { and, desc, eq, ilike, or, sql, count, inArray } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { products, productImages, categories, productCategories } from '$lib/server/db/schema';
+import { listParams } from '$lib/admin/listQuery';
 import type { PageServerLoad } from './$types';
 
-const PER_PAGE = 25;
-
 export const load: PageServerLoad = async ({ url }) => {
-	const q = url.searchParams.get('q')?.trim() ?? '';
+	const { q, page, perPage } = listParams(url);
 	const status = url.searchParams.get('status') ?? '';
 	const categoryId = url.searchParams.get('category') ?? '';
 	const lowStock = url.searchParams.get('filter') === 'low-stock';
-	const page = Math.max(1, Number(url.searchParams.get('page') ?? 1));
 
 	const where = and(
 		q ? or(ilike(products.title, `%${q}%`), ilike(products.slug, `%${q}%`)) : undefined,
@@ -42,8 +40,8 @@ export const load: PageServerLoad = async ({ url }) => {
 			.from(products)
 			.where(where)
 			.orderBy(desc(products.createdAt))
-			.limit(PER_PAGE)
-			.offset((page - 1) * PER_PAGE),
+			.limit(perPage)
+			.offset((page - 1) * perPage),
 
 		db.select({ n: count() }).from(products).where(where),
 
@@ -58,7 +56,7 @@ export const load: PageServerLoad = async ({ url }) => {
 		categories: cats,
 		total,
 		page,
-		pages: Math.max(1, Math.ceil(total / PER_PAGE)),
+		perPage,
 		filters: { q, status, categoryId, lowStock }
 	};
 };
