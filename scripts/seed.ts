@@ -274,6 +274,7 @@ await db
 					href: '',
 					children: [
 						{ label: 'Track my order', href: '/account/orders' },
+						{ label: 'Blog', href: '/blog' },
 						{ label: 'Delivery charges', href: '/pages/delivery' },
 						{ label: 'Cancellation & returns', href: '/pages/returns' },
 						{ label: 'Payment methods', href: '/pages/payment' }
@@ -1143,6 +1144,77 @@ if (process.env.SEED_DEMO) {
 			.set({ subtotal, total: subtotal + order.shipping })
 			.where(eq(s2.orders.id, order.id));
 	}
+	/* Blog posts. A new shop with an empty blog looks abandoned, and these are
+	   the three questions this market actually asks before it buys. */
+	const [author] = await db.select({ id: s2.adminUsers.id }).from(s2.adminUsers).limit(1);
+	const articles = [
+		{
+			slug: 'cash-on-delivery-how-it-works',
+			title: 'Cash on delivery: how it works, and why we ask you to check the parcel',
+			titleBn: 'ক্যাশ অন ডেলিভারি কীভাবে কাজ করে',
+			excerpt:
+				'You pay the courier at your door, not us in advance. Here is what happens between your order and that moment — and what to do if the box is not right.',
+			tags: ['delivery', 'how we work'],
+			body: `<p>Most orders here are paid at the door. You order, we call to confirm, the courier brings it, and you hand over the money then. Nothing is taken from you before that.</p>
+<h2>What happens after you order</h2>
+<p>You get an SMS with your order number straight away. Within a few working hours somebody calls to confirm the address and the phone number — this call is the reason so few of our parcels come back, so please pick up.</p>
+<p>Inside Dhaka the parcel usually reaches you the next day. Outside Dhaka it is two to five days, depending on where you are.</p>
+<h2>Check the parcel before you pay</h2>
+<p>The courier will wait while you open the box. Look for three things: the right product, the right quantity, and no damage. If something is wrong, do not pay — hand it straight back and call us. That costs you nothing.</p>
+<p>Once you have paid and the courier has gone, a wrong item becomes a return, which takes days. Thirty seconds at the door saves all of it.</p>
+<h2>When cash on delivery is not offered</h2>
+<p>Very large orders sometimes need part payment in advance. If that applies to yours, we will say so on the confirmation call — never afterwards, and never by SMS asking you to send money to a personal number. We will never ask for that.</p>`
+		},
+		{
+			slug: 'choosing-a-rice-cooker',
+			title: 'Choosing a rice cooker: capacity, inner pot, and what the wattage really tells you',
+			titleBn: 'রাইস কুকার কেনার আগে',
+			excerpt:
+				'Three things decide whether you are happy with a rice cooker two years from now. Price is not one of them.',
+			tags: ['buying guide', 'kitchen'],
+			body: `<h2>Start with capacity, not price</h2>
+<p>Cooker capacity is measured in dry litres, and a litre of dry rice feeds roughly four people. A 1.8 litre cooker suits a family of four to six. A 2.8 works for a household that cooks once for the whole day.</p>
+<p>Buying larger than you need is not free: a half-empty pot cooks unevenly, and the rice at the top stays firm.</p>
+<h2>The inner pot is the part that wears out</h2>
+<p>A thin pressed-aluminium pot with a sprayed coating will lose that coating within a year of daily scrubbing. A thicker pot, or one with a hard-anodised layer, costs a little more and outlasts the cooker.</p>
+<p>Whatever you buy, wash the pot with a soft sponge. A steel scourer takes the coating off in weeks, and no warranty covers that.</p>
+<h2>Wattage tells you speed, not quality</h2>
+<p>A 700W cooker and a 1000W cooker of the same size cook the same rice. The larger one gets there faster and draws more from your line while it does. In a house where several things run at once, the lower-wattage model is often the easier neighbour.</p>
+<h2>Before you order</h2>
+<p>Check that the lid seal is removable — a fixed seal traps starch and starts to smell. Check that a spare inner pot is available. And check the warranty covers the pot, not only the body; most do not, and it is worth knowing before rather than after.</p>`
+		},
+		{
+			slug: 'genuine-or-copy',
+			title: 'Genuine or copy: how to tell before you pay',
+			titleBn: 'আসল না নকল, বুঝবেন যেভাবে',
+			excerpt:
+				'The copies have got good. These are the checks that still work at the door, in half a minute.',
+			tags: ['buying guide', 'how we work'],
+			body: `<p>Nearly every question we get in the inbox is a version of this one, so here is the honest answer: a good copy can look right in a photograph. What it usually cannot do is survive four small checks at the door.</p>
+<h2>The box</h2>
+<p>Print quality is where copies fail first. Look at the smallest text on the box — the certification marks and the address. On a genuine box it is sharp; on a copy it is soft or slightly doubled.</p>
+<h2>The seal</h2>
+<p>A factory seal is even and centred. A resealed box has a seal that is slightly off, or two layers of tape.</p>
+<h2>The serial</h2>
+<p>Most brands let you check a serial number on their own website or by SMS. Do it while the courier is there, not afterwards.</p>
+<h2>The weight</h2>
+<p>Copies are usually lighter. If you have handled the genuine article before, you will feel it immediately.</p>
+<h2>What we do about it</h2>
+<p>We buy from the authorised distributor and the warranty card in the box is the manufacturer's, not ours. If anything you receive from us turns out not to be genuine, send it back and we refund it in full — that is not a favour, it is the deal.</p>`
+		}
+	];
+
+	const postValues = articles.map((a) => ({
+		...a,
+		authorId: author?.id ?? null,
+		published: true,
+		publishedAt: new Date(),
+		seoTitle: null,
+		seoDescription: a.excerpt
+	}));
+	await db.insert(s2.posts).values(postValues).onConflictDoNothing({ target: s2.posts.slug });
+	console.log(`demo: ${postValues.length} blog posts`);
+
 	console.log(`demo: ${lineCount} order lines`);
 
 	console.log(`demo: ${reviewValues.length} reviews, ${questionValues.length} questions`);

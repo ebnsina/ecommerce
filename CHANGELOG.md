@@ -6,6 +6,12 @@ User-facing changes, newest first.
 
 ### Added
 
+- **A blog.** Write articles in the admin with the same editor the pages use,
+  give each a cover, a summary and tags, and keep it as a draft until it is
+  ready — a draft is readable by you and nobody else. The shop gets `/blog`
+  with tag filtering, and three articles ship seeded: how cash on delivery
+  works, choosing a rice cooker, and telling a genuine product from a copy.
+
 - **"Often bought with this" in the cart.** One line per suggestion with a
   single Add button, taken from what buyers of the things already in the cart
   actually bought alongside them — never something already in the cart.

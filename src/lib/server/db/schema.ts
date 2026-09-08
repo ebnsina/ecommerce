@@ -555,6 +555,37 @@ export const pages = pgTable('pages', {
 	updatedAt: now()
 });
 
+/**
+ * Blog posts. Separate from `pages` on purpose: a post has an author, a date
+ * and a cover, appears in a chronological list, and is written as prose rather
+ * than assembled out of blocks.
+ */
+export const posts = pgTable(
+	'posts',
+	{
+		id: id(),
+		slug: text().notNull().unique(),
+		title: text().notNull(),
+		titleBn: text('title_bn'),
+		/** Shown in the list and used for the meta description when none is set. */
+		excerpt: text(),
+		/** Sanitised HTML from the editor. */
+		body: text().notNull().default(''),
+		cover: text(),
+		authorId: uuid('author_id').references(() => adminUsers.id, { onDelete: 'set null' }),
+		/** Free text, so an owner can group posts without managing a taxonomy. */
+		tags: text().array().notNull().default(sql`'{}'::text[]`),
+		seoTitle: text('seo_title'),
+		seoDescription: text('seo_description'),
+		published: boolean().notNull().default(false),
+		/** When it went live, which is what the list is ordered by. */
+		publishedAt: timestamp('published_at', { withTimezone: true }),
+		createdAt: now(),
+		updatedAt: now()
+	},
+	(t) => [index('posts_published_idx').on(t.published, t.publishedAt)]
+);
+
 export type MenuNode = { label: string; labelBn?: string; href: string; children?: MenuNode[] };
 
 export const menus = pgTable('menus', {

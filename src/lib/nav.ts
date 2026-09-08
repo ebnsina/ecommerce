@@ -14,6 +14,7 @@ import {
 	MessageCircleQuestion,
 	Inbox as InboxIcon,
 	FileText,
+	Newspaper,
 	Menu as MenuIcon,
 	Settings,
 	SearchCode,
@@ -57,6 +58,7 @@ export const navGroups: NavGroup[] = [
 		title: 'Storefront',
 		items: [
 			{ href: '/admin/pages', icon: FileText, label: 'Pages' },
+			{ href: '/admin/posts', icon: Newspaper, label: 'Blog' },
 			{ href: '/admin/menus', icon: MenuIcon, label: 'Menus' }
 		]
 	},

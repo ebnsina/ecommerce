@@ -199,3 +199,50 @@
 		animation: none !important;
 	}
 }
+
+/* Saved HTML — policy pages, blog articles — rendered with the same voice
+   wherever it appears. Sanitised on save, never on render. */
+.rich {
+	color: var(--color-ink-muted);
+	font-size: 0.9375rem;
+	line-height: 1.7;
+}
+.rich > * + * {
+	margin-top: 1em;
+}
+.rich h2 {
+	color: var(--color-ink);
+	font-size: 1.125rem;
+	font-weight: 600;
+	letter-spacing: -0.01em;
+	margin-top: 1.75em;
+}
+.rich h3 {
+	color: var(--color-ink);
+	font-size: 1rem;
+	font-weight: 600;
+	margin-top: 1.5em;
+}
+.rich ul {
+	list-style: disc;
+	padding-left: 1.25rem;
+}
+.rich ol {
+	list-style: decimal;
+	padding-left: 1.25rem;
+}
+.rich li + li {
+	margin-top: 0.35em;
+}
+.rich a {
+	color: var(--color-primary);
+	text-decoration: underline;
+}
+.rich blockquote {
+	border-left: 2px solid var(--color-border);
+	padding-left: 1rem;
+}
+.rich strong {
+	color: var(--color-ink);
+	font-weight: 600;
+}
