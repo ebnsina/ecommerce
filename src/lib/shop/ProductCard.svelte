@@ -31,6 +31,7 @@
 	   site renders this card, and threading the shortlist through all of them
 	   is how half of them end up not showing it. */
 	const compared = $derived(((page.data.compareIds as string[]) ?? []).includes(product.id));
+	const saved = $derived(((page.data.wishlistIds as string[]) ?? []).includes(product.id));
 
 	const off = $derived(discountPercent(product.price, product.compareAtPrice));
 	const soldOut = $derived(!product.hasVariants && product.stock <= 0);
@@ -61,6 +62,21 @@
 			</span>
 		{/if}
 	</span>
+{/snippet}
+
+{#snippet wishlistButton(cls: string)}
+	<form method="POST" action="/cart?/wishlist" use:enhance>
+		<input type="hidden" name="productId" value={product.id} />
+		<input type="hidden" name="redirectTo" value={page.url.pathname + page.url.search} />
+		<button
+			class="grid place-items-center transition-colors {cls}
+			       {saved ? 'text-sale' : 'text-ink-faint hover:text-sale'}"
+			aria-label={saved ? `Remove ${product.title} from your wishlist` : `Save ${product.title}`}
+			aria-pressed={saved}
+		>
+			<Heart size={16} class={saved ? 'fill-sale' : ''} />
+		</button>
+	</form>
 {/snippet}
 
 {#snippet compareButton(cls: string)}
@@ -107,12 +123,7 @@
 					<ShoppingBag size={15} />
 					Buy now
 				</Button>
-				<button
-					class="grid size-9 place-items-center rounded-xl border border-border text-ink-faint transition-colors hover:border-brand-300 hover:text-sale"
-					aria-label="Add {product.title} to wishlist"
-				>
-					<Heart size={16} />
-				</button>
+				{@render wishlistButton('size-9 rounded-xl border border-border hover:border-brand-300')}
 				{@render compareButton('size-9 rounded-xl border border-border hover:border-brand-300')}
 			</div>
 		</div>
@@ -153,13 +164,7 @@
 		{#if size !== 'compact'}
 			<!-- Outside the lifting wrapper, so the buttons stay under the pointer. -->
 			<div class="absolute top-4 right-4 flex flex-col gap-1.5">
-				<button
-					class="grid size-8 place-items-center rounded-lg bg-surface/80 text-ink-faint
-					       backdrop-blur-sm transition-colors hover:text-sale"
-					aria-label="Add {product.title} to wishlist"
-				>
-					<Heart size={16} />
-				</button>
+				{@render wishlistButton('size-8 rounded-lg bg-surface/80 backdrop-blur-sm')}
 				{@render compareButton('size-8 rounded-lg bg-surface/80 backdrop-blur-sm')}
 			</div>
 		{/if}

@@ -8,7 +8,7 @@ import { getSettings } from '$lib/server/settings';
 import { abandonedCarts, sendReminder } from '$lib/server/recovery';
 import type { RequestHandler } from './$types';
 
-export const POST: RequestHandler = async ({ request, url }) => {
+const run: RequestHandler = async ({ request, url }) => {
 	const secret = env.CRON_SECRET;
 	if (!secret) error(503, 'CRON_SECRET is not set');
 	if (request.headers.get('authorization') !== `Bearer ${secret}`) error(403, 'Bad secret');
@@ -24,3 +24,8 @@ export const POST: RequestHandler = async ({ request, url }) => {
 
 	return json({ enabled: true, found: carts.length, sent });
 };
+
+/* Vercel invokes a cron with GET and sends `Authorization: Bearer $CRON_SECRET`
+   by itself. POST stays for triggering a run by hand. */
+export const GET = run;
+export const POST = run;

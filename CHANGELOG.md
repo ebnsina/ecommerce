@@ -4,6 +4,17 @@ User-facing changes, newest first.
 
 ## Unreleased
 
+### Fixed
+
+- **The heart on a product card now saves it.** It was a button with nothing
+  behind it: the wishlist page and the save action both existed, only the card
+  was never wired up. It also shows when something is already saved.
+- **Scheduled jobs now actually run in production.** Courier status sync and
+  cart reminders are scheduled, and answer the kind of request the scheduler
+  makes — they only accepted the other kind, so neither would ever have fired.
+  A reminder is claimed before it is sent, so a job that runs twice still texts
+  a shopper once.
+
 ### Added
 
 - **A proper filter panel on search.** Category, price, rating, brand, in-stock

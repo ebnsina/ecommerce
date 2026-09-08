@@ -1,6 +1,6 @@
 import { asc, eq } from 'drizzle-orm';
 import { db } from '$lib/server/db';
-import { categories, menus } from '$lib/server/db/schema';
+import { categories, menus, wishlist } from '$lib/server/db/schema';
 import { getSettings } from '$lib/server/settings';
 import { findCart, getLines, summarise } from '$lib/server/cart';
 import { getCompareIds } from '$lib/server/compare';
@@ -31,6 +31,16 @@ export const load: LayoutServerLoad = async (event) => {
 		? summarise(await getLines(cart.id))
 		: { count: 0, subtotal: 0, problems: [] };
 
+	/* Which products are already saved, so every heart on the site can show it.
+	   Ids only — the cards already have everything else they need. */
+	const saved =
+		locals.user?.kind === 'customer'
+			? await db
+					.select({ productId: wishlist.productId })
+					.from(wishlist)
+					.where(eq(wishlist.customerId, locals.user.id))
+			: [];
+
 	const roots = rows.filter((r) => !r.parentId);
 
 	return {
@@ -40,6 +50,7 @@ export const load: LayoutServerLoad = async (event) => {
 		customer: locals.user?.kind === 'customer' ? locals.user : null,
 		cartCount: cartSummary.count,
 		compareIds: getCompareIds(event),
+		wishlistIds: saved.map((w) => w.productId),
 		themeCss: themeCss(normalizeTheme(config.theme))
 	};
 };

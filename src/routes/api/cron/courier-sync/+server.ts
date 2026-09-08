@@ -17,7 +17,7 @@ import type { RequestHandler } from './$types';
 const byLabel = (label: string | null): CourierKey | null =>
 	label?.toLowerCase() === 'steadfast' ? 'steadfast' : null;
 
-export const POST: RequestHandler = async ({ request }) => {
+const run: RequestHandler = async ({ request }) => {
 	const secret = env.CRON_SECRET;
 	if (!secret) error(503, 'CRON_SECRET is not set');
 	if (request.headers.get('authorization') !== `Bearer ${secret}`) error(403, 'Bad secret');
@@ -82,3 +82,8 @@ export const POST: RequestHandler = async ({ request }) => {
 
 	return json({ inFlight: inFlight.length, checked, advanced });
 };
+
+/* Vercel invokes a cron with GET and sends `Authorization: Bearer $CRON_SECRET`
+   by itself. POST stays for triggering a run by hand. */
+export const GET = run;
+export const POST = run;

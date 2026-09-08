@@ -3,12 +3,22 @@
 	import ProductGrid from '$lib/shop/ProductGrid.svelte';
 	import SearchFilters from '$lib/shop/SearchFilters.svelte';
 	import Dialog from '$lib/ui/Dialog.svelte';
+	import { track } from '$lib/track';
 
 	let { data } = $props();
 
 	/* The panel is a sidebar on a desktop and a dialog on a phone — where most
 	   of these shoppers are, and where a permanent sidebar would eat the grid. */
 	let filtersOpen = $state(false);
+
+	/* One report per term, not per filter change: narrowing a result set is not
+	   a new search. */
+	let reported = $state('');
+	$effect(() => {
+		if (!data.q || reported === data.q) return;
+		reported = data.q;
+		track({ kind: 'search', searchTerm: data.q });
+	});
 </script>
 
 <svelte:head>

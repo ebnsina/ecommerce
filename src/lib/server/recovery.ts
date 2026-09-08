@@ -71,6 +71,18 @@ export function renderMessage(
 }
 
 export async function sendReminder(cart: AbandonedCart, origin: string) {
+	// Claim the cart first. Cron delivery can fire the same scheduled run twice,
+	// and two runs picking up the same cart would text the shopper twice; the
+	// conditional update means only one of them wins.
+	const claimed = await db
+		.update(carts)
+		.set({ remindedAt: new Date() })
+		.where(and(eq(carts.id, cart.id), isNull(carts.remindedAt)))
+		.returning({ id: carts.id });
+	// A cart being reminded again by hand has a stamp already, so an empty
+	// result only blocks the automatic path.
+	if (!claimed.length && !cart.remindedAt) return false;
+
 	const settings = await getSettings();
 	const text = renderMessage(settings.recovery.message, {
 		name: cart.name?.split(' ')[0] ?? 'Hi',
@@ -79,7 +91,8 @@ export async function sendReminder(cart: AbandonedCart, origin: string) {
 		link: `${origin}/cart/resume/${cart.token}`
 	});
 	const ok = await sendSms(cart.phone, text);
-	// Stamped even on failure, so a broken gateway cannot spam one shopper.
+	// Stamped whatever happens — on the claim above for an automatic send, here
+	// for a manual one — so a broken gateway cannot spam one shopper.
 	await db.update(carts).set({ remindedAt: new Date() }).where(eq(carts.id, cart.id));
 	return ok;
 }
