@@ -6,6 +6,9 @@ User-facing changes, newest first.
 
 ### Added
 
+- **A page explaining the product** at `/platform` — what it is, what it does,
+  what it connects to, what it costs, and the questions people actually ask.
+
 - **The assistant can answer the easy questions by itself** — off by default,
   and switched on per channel with a confidence bar you set. It only ever
   answers delivery charges, delivery times, payment methods, returns and
