@@ -544,21 +544,42 @@
 					name="metaPixelId"
 					value={s.analytics?.metaPixelId ?? ''}
 					numeric
-					placeholder="1234567890"
-					hint="From Meta Events Manager. Tracks views, add-to-cart and purchases for your ads."
+					placeholder="1234567890123456"
+					hint="Facebook and Instagram ads. From Meta Events Manager."
+				/>
+				<Input
+					label="TikTok Pixel ID"
+					name="tiktokPixelId"
+					value={s.analytics?.tiktokPixelId ?? ''}
+					placeholder="CXXXXXXXXXXXXXXXXXXX"
+					hint="TikTok ads. From TikTok Events Manager."
+				/>
+				<Input
+					label="Google Tag Manager ID"
+					name="gtmId"
+					value={s.analytics?.gtmId ?? ''}
+					placeholder="GTM-XXXXXXX"
+					hint="Loads whatever tags you have set up in GTM. Every event below is pushed to its data layer too."
+				/>
+				<Input
+					label="Google Analytics ID"
+					name="ga4Id"
+					value={s.analytics?.ga4Id ?? ''}
+					placeholder="G-XXXXXXXXXX"
+					hint="Only fill this in if you are not already loading Analytics through Tag Manager — otherwise every visit is counted twice."
 				/>
 				<p class="text-xs text-ink-muted">
-					Server-side tracking needs an access token as well, which is a secret — see
-					<a href="/admin/connections" class="underline">Connections</a>. Without it the pixel still
-					works, but a good share of events are lost to ad blockers.
+					Leave any of these blank and nothing for it is loaded. Meta can also report purchases from
+					the server, which recovers the ones ad blockers hide — that needs a secret, see
+					<a href="/admin/connections" class="underline">Connections</a>.
 				</p>
 			</div>
 		{/snippet}
 		{@render section(
 			'analytics',
 			ChartNoAxesColumn,
-			'Facebook ads tracking',
-			'Lets Meta see which ads produce orders.',
+			'Ads and analytics',
+			'Lets Facebook, TikTok and Google see which visits turn into orders.',
 			analyticsBody
 		)}
 

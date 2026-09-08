@@ -12,6 +12,7 @@
 import { createHash } from 'node:crypto';
 import { env } from '$env/dynamic/private';
 import { normalizePhone, toInternational } from '$lib/phone';
+export { purchaseEventId } from '$lib/track';
 
 const GRAPH = 'https://graph.facebook.com/v21.0';
 
@@ -141,6 +142,3 @@ export async function sendEvents(
 		return { error: (e as Error).message };
 	}
 }
-
-/** Deterministic, so the browser and the server agree without passing state. */
-export const purchaseEventId = (orderId: string) => `purchase.${orderId}`;

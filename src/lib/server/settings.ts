@@ -22,7 +22,12 @@ export type StoreSettings = {
 	/** Rotating hints typed out in the header search box. */
 	search: { hints: string[] };
 	theme: { preset: string; surface: string };
-	analytics: { metaPixelId: string };
+	analytics: {
+		metaPixelId: string;
+		tiktokPixelId: string;
+		gtmId: string;
+		ga4Id: string;
+	};
 	recovery: { enabled: boolean; delayHours: number; message: string };
 	promo: {
 		text: string;
@@ -51,7 +56,7 @@ const FALLBACK: StoreSettings = {
 	assurances: [],
 	search: { hints: [] },
 	theme: { preset: 'blue', surface: 'white' },
-	analytics: { metaPixelId: '' },
+	analytics: { metaPixelId: '', tiktokPixelId: '', gtmId: '', ga4Id: '' },
 	recovery: {
 		enabled: false,
 		delayHours: 6,

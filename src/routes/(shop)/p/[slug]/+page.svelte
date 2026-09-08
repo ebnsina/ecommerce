@@ -61,6 +61,28 @@
 	}
 
 	const price = $derived(variant?.price ?? data.product.price);
+
+	// Viewing a product is what the ad platforms build retargeting audiences
+	// from. Adding to the cart re-runs the load, which hands us a fresh `data`
+	// object for the same product — reporting that as a second view would
+	// inflate every view count, so the id is what decides.
+	let viewed = $state('');
+	$effect(() => {
+		if (viewed === data.product.id) return;
+		viewed = data.product.id;
+		track({
+			kind: 'view_item',
+			value: data.product.price,
+			items: [
+				{
+					id: data.product.id,
+					name: data.product.title,
+					price: data.product.price,
+					quantity: 1
+				}
+			]
+		});
+	});
 	const compareAt = $derived(variant?.compareAtPrice ?? data.product.compareAtPrice);
 	const stock = $derived(data.options.length ? (variant?.stock ?? 0) : data.product.stock);
 	const off = $derived(discountPercent(price, compareAt));
@@ -279,12 +301,21 @@
 					action="?/add"
 					use:enhance={() =>
 						async ({ result, update }) => {
-							if (result.type === 'success')
-								track('AddToCart', {
-									currency: 'BDT',
-									value: (price * qty) / 100,
-									content_type: 'product',
-									contents: [{ id: data.product.id, quantity: qty }]
+							// The action redirects back to this page, so a successful add
+							// arrives as 'redirect', not 'success'. Only 'failure' means
+							// nothing was added.
+							if (result.type !== 'failure' && result.type !== 'error')
+								track({
+									kind: 'add_to_cart',
+									value: price * qty,
+									items: [
+										{
+											id: data.product.id,
+											name: data.product.title,
+											price,
+											quantity: qty
+										}
+									]
 								});
 							await update();
 						}}

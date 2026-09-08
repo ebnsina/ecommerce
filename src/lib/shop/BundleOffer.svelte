@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { track } from '$lib/track';
 	import { Plus, PackagePlus, ShoppingBag } from '@lucide/svelte';
 	import { formatTk } from '$lib/money';
 	import Button from '$lib/ui/Button.svelte';
@@ -72,7 +73,26 @@
 			{/if}
 		</div>
 
-		<form method="POST" action="/cart?/addBundle" use:enhance>
+		<form
+			method="POST"
+			action="/cart?/addBundle"
+			use:enhance={() =>
+				async ({ result, update }) => {
+					// The action redirects back, so anything but a failure means the
+					// set went in. Each part is reported at its allocated share.
+					if (result.type !== 'failure' && result.type !== 'error')
+						track({
+							kind: 'add_to_cart',
+							value: bundle.price,
+							items: bundle.items.map((i) => ({
+								id: i.productId,
+								name: i.title,
+								quantity: 1
+							}))
+						});
+					await update();
+				}}
+		>
 			<input type="hidden" name="bundleId" value={bundle.id} />
 			<input type="hidden" name="redirectTo" value={redirectTo} />
 			<Button type="submit" disabled={!bundle.inStock}>

@@ -123,8 +123,18 @@ export const actions: Actions = {
 
 	analytics: async ({ request }) => {
 		const f = await request.formData();
-		// Digits only: the id is interpolated into the pixel snippet.
-		await put('analytics', { metaPixelId: str(f, 'metaPixelId').replace(/\D/g, '') });
+		// Every id here is interpolated into a script tag, so each is stripped to
+		// the shape its vendor actually uses and nothing else.
+		await put('analytics', {
+			metaPixelId: str(f, 'metaPixelId').replace(/\D/g, ''),
+			tiktokPixelId: str(f, 'tiktokPixelId').replace(/[^A-Za-z0-9]/g, ''),
+			gtmId: str(f, 'gtmId')
+				.toUpperCase()
+				.replace(/[^A-Z0-9-]/g, ''),
+			ga4Id: str(f, 'ga4Id')
+				.toUpperCase()
+				.replace(/[^A-Z0-9-]/g, '')
+		});
 		return { saved: 'analytics' };
 	},
 

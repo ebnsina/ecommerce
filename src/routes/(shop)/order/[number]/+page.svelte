@@ -4,22 +4,26 @@
 	import { formatPhone } from '$lib/phone';
 	import OrderStatus from '$lib/shop/OrderStatus.svelte';
 	import Button from '$lib/ui/Button.svelte';
+	import { track } from '$lib/track';
 
 	let { data } = $props();
 
-	// Fires once the pixel has booted in the layout. Meta drops the duplicate of
-	// whichever of the two events (this one, or the server's) arrives second.
+	// Fires once the pixels have booted in the layout. The order id is what
+	// pairs this with the server-side event, so one order is counted once.
 	$effect(() => {
-		const p = data.purchase;
-		if (p)
-			(window as any).fbq?.(
-				'track',
-				'Purchase',
-				{ value: p.value / 100, currency: 'BDT' },
-				{
-					eventID: p.eventId
-				}
-			);
+		if (data.purchase)
+			track({
+				kind: 'purchase',
+				value: data.purchase.value,
+				orderId: data.purchase.orderId,
+				orderNumber: data.purchase.orderNumber,
+				items: data.items.map((i) => ({
+					id: i.productId ?? i.id,
+					name: i.title,
+					price: i.unitPrice,
+					quantity: i.qty
+				}))
+			});
 	});
 </script>
 

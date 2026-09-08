@@ -28,10 +28,15 @@
 
 	// Reaching this page is the "InitiateCheckout" signal Meta optimises against.
 	$effect(() => {
-		track('InitiateCheckout', {
-			currency: 'BDT',
-			value: data.subtotal / 100,
-			num_items: data.lines.reduce((n, l) => n + l.qty, 0)
+		track({
+			kind: 'begin_checkout',
+			value: data.subtotal,
+			items: data.lines.map((l) => ({
+				id: l.productId,
+				name: l.title,
+				price: l.unitPrice,
+				quantity: l.qty
+			}))
 		});
 	});
 

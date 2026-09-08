@@ -112,26 +112,51 @@ export const load: PageServerLoad = async () => {
 			]
 		},
 		{
-			title: 'Advertising',
+			title: 'Advertising and analytics',
 			blurb:
-				'Lets Facebook and Instagram ads see which of them actually produced an order, so the money follows what works.',
+				'Lets each ad platform see which of its ads produced an order, so the money follows what works. Every ID is set under Settings → Ads and analytics.',
 			items: [
 				{
 					key: 'meta-pixel',
 					name: 'Meta Pixel',
 					connected: !!settings.analytics?.metaPixelId,
-					purpose:
-						'Tracks page views, add-to-cart and purchases in the browser. Add the pixel ID under Settings → Facebook ads tracking.',
+					purpose: 'Facebook and Instagram ads: page views, add-to-cart and purchases.',
 					vars: [],
 					webhook: null
 				},
 				{
 					key: 'meta-capi',
-					name: 'Conversions API',
+					name: 'Meta Conversions API',
 					connected: capiConfigured(settings.analytics?.metaPixelId),
 					purpose:
-						'Sends the same purchases from the server, so the ones ad blockers hide still get counted. Needs the pixel ID as well.',
+						'Sends the same purchases from the server, so the ones ad blockers hide still get counted. Needs the Meta pixel ID as well.',
 					vars: ['META_CAPI_TOKEN', 'META_TEST_EVENT_CODE (while testing)'],
+					webhook: null
+				},
+				{
+					key: 'tiktok-pixel',
+					name: 'TikTok Pixel',
+					connected: !!settings.analytics?.tiktokPixelId,
+					purpose: 'TikTok ads: the same events, reported to TikTok Events Manager.',
+					vars: [],
+					webhook: null
+				},
+				{
+					key: 'gtm',
+					name: 'Google Tag Manager',
+					connected: !!settings.analytics?.gtmId,
+					purpose:
+						'Loads whatever tags you manage in GTM, and receives every shop event on its data layer.',
+					vars: [],
+					webhook: null
+				},
+				{
+					key: 'ga4',
+					name: 'Google Analytics',
+					connected: !!settings.analytics?.ga4Id,
+					purpose:
+						'Traffic and ecommerce reporting. Leave it blank if Analytics is already loaded through Tag Manager.',
+					vars: [],
 					webhook: null
 				}
 			]
