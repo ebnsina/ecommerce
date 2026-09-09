@@ -202,42 +202,57 @@ export async function listProducts({
 		.filter((w) => w.length > 1 && !STOP_WORDS.has(w))
 		.slice(0, 6);
 
-	const where = and(
-		eq(products.status, 'active'),
-		q
-			? words.length
-				? and(
-						...words.map((w) =>
-							or(ilike(products.title, `%${w}%`), ilike(products.brand, `%${w}%`))
-						)
-					)
-				: or(ilike(products.title, `%${q}%`), ilike(products.brand, `%${q}%`))
-			: undefined,
-		categoryIds?.length
-			? sql`exists (select 1 from ${productCategories}
-					where ${productCategories.productId} = ${products.id}
-					  and ${productCategories.categoryId} in ${categoryIds})`
-			: undefined,
-		...filterConditions(filters)
-	);
+	const anyWord = (w: string) =>
+		or(ilike(products.title, `%${w}%`), ilike(products.brand, `%${w}%`));
 
-	const [rows, [{ n: total }]] = await Promise.all([
-		db
-			.select(cardColumns)
-			.from(products)
-			.where(where)
-			/* A worded search is ranked by how close the title is, which is what
-			   the pg_trgm index on products.title is there for. Browsing keeps
-			   whatever order the shopper asked for. */
-			.orderBy(
-				q && sort === 'newest'
-					? sql`similarity(${products.title}, ${q}) desc, ${products.createdAt} desc`
-					: (sorts[sort] ?? sorts.newest)
-			)
-			.limit(perPage)
-			.offset((page - 1) * perPage),
-		db.select({ n: count() }).from(products).where(where)
-	]);
+	const whereFor = (every: boolean) =>
+		and(
+			eq(products.status, 'active'),
+			q
+				? words.length
+					? every
+						? and(...words.map(anyWord))
+						: or(...words.map(anyWord))
+					: or(ilike(products.title, `%${q}%`), ilike(products.brand, `%${q}%`))
+				: undefined,
+			categoryIds?.length
+				? sql`exists (select 1 from ${productCategories}
+						where ${productCategories.productId} = ${products.id}
+						  and ${productCategories.categoryId} in ${categoryIds})`
+				: undefined,
+			...filterConditions(filters)
+		);
+
+	const run = async (every: boolean) => {
+		const where = whereFor(every);
+		const [rows, [{ n: total }]] = await Promise.all([
+			db
+				.select(cardColumns)
+				.from(products)
+				.where(where)
+				/* A worded search is ranked by how close the title is, which is what
+				   the pg_trgm index on products.title is there for. Browsing keeps
+				   whatever order the shopper asked for. */
+				.orderBy(
+					q && sort === 'newest'
+						? sql`similarity(${products.title}, ${q}) desc, ${products.createdAt} desc`
+						: (sorts[sort] ?? sorts.newest)
+				)
+				.limit(perPage)
+				.offset((page - 1) * perPage),
+			db.select({ n: count() }).from(products).where(where)
+		]);
+		return { rows, total };
+	};
+
+	/* Every word, then any word. "kitchen things that are on offer" has no
+	   product with "kitchen" in its title, and demanding all of the words left
+	   the shopper reading "nothing matches" while a shelf of rice cookers sat
+	   two clicks away. The loose pass is only run when the strict one found
+	   nothing, and trigram ranking puts the closest titles at the top of it, so
+	   a page of near-misses beats a page of nothing. */
+	let { rows, total } = await run(true);
+	if (total === 0 && words.length > 1) ({ rows, total } = await run(false));
 
 	return { rows, total, pages: Math.max(1, Math.ceil(total / perPage)), page };
 }

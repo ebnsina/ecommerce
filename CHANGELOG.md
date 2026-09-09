@@ -17,6 +17,17 @@ User-facing changes, newest first.
   bring its own front page, and `?layout=grocery` on the demo switches and
   sticks, so one deployment can be shown as five different shops.
 
+- **Conversations are kept.** The assistant now has a sidebar of past chats —
+  new chat, pick one up where it stopped, delete one — kept against a cookie
+  rather than an account, because nobody should have to register to ask a
+  shopkeeper a question. A saved answer stores product ids, not prices: reopen
+  it next week and it shows what the shop charges then. Threads have their own
+  URLs, so one can be sent to someone, and a conversation started with
+  JavaScript off is saved the same way.
+- **A search that finds nothing tries again, loosely.** "Kitchen things that
+  are on offer" matched no title and said so, with a shelf of rice cookers two
+  clicks away. When every word together finds nothing, any word is tried, with
+  the closest titles first.
 - **The assistant has its own screen.** No header, no category bar, no footer
   — the window is the conversation. The thread scrolls inside a fixed frame
   with the box you type in pinned below it, so an answer can no longer arrive

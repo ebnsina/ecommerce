@@ -5,6 +5,7 @@ import { getSettings } from '$lib/server/settings';
 import { getCompareIds } from '$lib/server/compare';
 import { normalizeTheme, themeCss } from '$lib/theme';
 import { layoutOf } from '$lib/layouts';
+import { listThreads, visitorId } from '$lib/server/chat';
 import type { LayoutServerLoad } from './$types';
 
 /**
@@ -16,6 +17,10 @@ import type { LayoutServerLoad } from './$types';
 export const load: LayoutServerLoad = async (event) => {
 	const config = await getSettings();
 
+	/* Re-read when a new conversation is started, so the sidebar shows it
+	   without a round trip through the whole page. */
+	event.depends('chat:threads');
+
 	const saved =
 		event.locals.user?.kind === 'customer'
 			? await db
@@ -25,6 +30,7 @@ export const load: LayoutServerLoad = async (event) => {
 			: [];
 
 	return {
+		threads: await listThreads(visitorId(event)),
 		store: config.store,
 		layout: layoutOf(event.cookies.get('layout') ?? config.layout).key,
 		compareIds: getCompareIds(event),

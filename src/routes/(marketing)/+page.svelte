@@ -556,7 +556,10 @@
 				In the shop it does the other half of a shopkeeper's job. A customer describes what they are
 				after — “a gift for my sister under 2000 taka” — and gets real products with a basket button
 				on them. It never writes a price or a stock level: all it does is turn a sentence into a
-				search of your own catalogue, so it cannot promise something you do not have.
+				search of your own catalogue, so it cannot promise something you do not have. Every
+				conversation is kept, on its own page, so a shopper who was interrupted comes back to where
+				they left off — and the prices in it are re-read from the shop each time it is opened, never
+				replayed from what was said.
 			</p>
 		</div>
 

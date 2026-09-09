@@ -702,3 +702,41 @@ export const productEvents = pgTable(
 	},
 	(t) => [index('product_events_idx').on(t.productId, t.kind, t.createdAt)]
 );
+
+/**
+ * One turn of a conversation with the shop assistant.
+ *
+ * Products are kept as ids, never as a copy of the card. A thread reopened a
+ * week later re-reads price and stock from the catalogue, so an old answer can
+ * never quote a price the shop no longer charges.
+ */
+export type ChatTurn = {
+	role: 'user' | 'assistant';
+	content: string;
+	productIds?: string[];
+	total?: number;
+	query?: string;
+	followUps?: string[];
+};
+
+/**
+ * A saved conversation.
+ *
+ * Identity is a cookie, not an account — the shopper asking for a power bank
+ * has not signed in and should not have to. The whole transcript lives in one
+ * row: it is read and written whole, never queried into, and a conversation is
+ * small.
+ */
+export const chatThreads = pgTable(
+	'chat_threads',
+	{
+		id: id(),
+		visitorId: text('visitor_id').notNull(),
+		/** The first thing they asked, trimmed. What the sidebar shows. */
+		title: text().notNull(),
+		turns: jsonb().$type<ChatTurn[]>().notNull().default([]),
+		createdAt: now(),
+		updatedAt: now()
+	},
+	(t) => [index('chat_threads_visitor_idx').on(t.visitorId, t.updatedAt)]
+);
