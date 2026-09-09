@@ -4,12 +4,14 @@ import { db } from '$lib/server/db';
 import { addresses, carts, customers, orders } from '$lib/server/db/schema';
 import { findCart, getLines, summarise } from '$lib/server/cart';
 import { applyCoupon, shippingFor, placeOrder } from '$lib/server/orders';
+import { rememberOrder } from '$lib/server/orderAccess';
 import { getSettings } from '$lib/server/settings';
 import { getRegions, resolveZone } from '$lib/server/regions';
 import { normalizePhone } from '$lib/phone';
 import { sendSms } from '$lib/server/sms';
 import { capiConfigured, purchaseEventId, sendEvents } from '$lib/server/meta';
 import { createSession, paymentConfigured } from '$lib/server/payments';
+import { consume } from '$lib/server/ratelimit';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
@@ -64,7 +66,10 @@ export const actions: Actions = {
 		);
 		const shipping = await shippingFor(place?.zone ?? 'outside_dhaka', subtotal);
 
-		const result = await applyCoupon(String(form.get('code') ?? ''), subtotal, shipping);
+		const result = await applyCoupon(String(form.get('code') ?? ''), subtotal, shipping, {
+			customerId: event.locals.user?.kind === 'customer' ? event.locals.user.id : null,
+			phone: cart.phone
+		});
 		if (!result.ok) return fail(400, { couponError: result.error });
 		return { coupon: { code: result.code, discount: result.discount, label: result.label } };
 	},
@@ -85,6 +90,11 @@ export const actions: Actions = {
 	},
 
 	place: async (event) => {
+		// Each order sends an SMS and burns a number from the day's sequence, so
+		// a script must not be able to place them in a loop.
+		const limit = await consume(`place:${event.getClientAddress()}`, 10, 3600);
+		if (!limit.ok) return fail(429, { error: 'Too many orders from here. Try again later.' });
+
 		const form = await event.request.formData();
 		const cart = await findCart(event);
 		if (!cart) return fail(400, { error: 'Your cart has expired.' });
@@ -137,6 +147,9 @@ export const actions: Actions = {
 		});
 
 		if (!result.ok) return fail(400, { error: result.error });
+
+		// This browser placed it, so this browser may read it back.
+		rememberOrder(event, result);
 
 		// Name the account after the first order so staff have something to call them.
 		if (customerId && !name)

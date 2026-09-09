@@ -4,6 +4,7 @@
  */
 import { json, error } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
+import { safeEqual } from '$lib/server/safeEqual';
 import { getSettings } from '$lib/server/settings';
 import { abandonedCarts, sendReminder } from '$lib/server/recovery';
 import type { RequestHandler } from './$types';
@@ -11,7 +12,8 @@ import type { RequestHandler } from './$types';
 const run: RequestHandler = async ({ request, url }) => {
 	const secret = env.CRON_SECRET;
 	if (!secret) error(503, 'CRON_SECRET is not set');
-	if (request.headers.get('authorization') !== `Bearer ${secret}`) error(403, 'Bad secret');
+	if (!safeEqual(request.headers.get('authorization') ?? '', `Bearer ${secret}`))
+		error(403, 'Bad secret');
 
 	const { recovery } = await getSettings();
 	if (!recovery.enabled) return json({ enabled: false, sent: 0 });

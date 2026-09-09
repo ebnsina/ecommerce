@@ -14,7 +14,8 @@
  *   Meta     — GET hub.challenge handshake, then HMAC-SHA256 body signature
  */
 import { error, json, text } from '@sveltejs/kit';
-import { createHmac, timingSafeEqual } from 'node:crypto';
+import { createHmac } from 'node:crypto';
+import { safeEqual } from '$lib/server/safeEqual';
 import { env } from '$env/dynamic/private';
 import { receiveMessage } from '$lib/server/inbox';
 import type { ChannelKey } from '$lib/server/channels';
@@ -38,12 +39,6 @@ export const GET: RequestHandler = async ({ params, url }) => {
 		return text(url.searchParams.get('hub.challenge') ?? '');
 
 	error(403, 'Verification failed');
-};
-
-const safeEqual = (a: string, b: string) => {
-	const x = Buffer.from(a);
-	const y = Buffer.from(b);
-	return x.length === y.length && timingSafeEqual(x, y);
 };
 
 /** Meta signs the raw body; compare against the untouched bytes, not a re-encode. */

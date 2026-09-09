@@ -67,6 +67,16 @@ export const handle: Handle = async ({ event, resolve }) => {
 		}
 	}
 
+	/**
+	 * A shopper's own pages need a shopper. The account layout's `load` guards
+	 * the pages, but — the same lesson as /admin above — it does not run before
+	 * a form action, so saving an address was reachable without a session.
+	 */
+	if (pathname.startsWith(`${SHOP}/account`) && event.locals.user?.kind !== 'customer') {
+		if (event.request.method !== 'GET') error(403, 'Sign in first.');
+		redirect(303, `${SHOP}/login?next=${encodeURIComponent(pathname)}`);
+	}
+
 	const response = await resolve(event);
 
 	for (const [header, value] of Object.entries(SECURITY_HEADERS))

@@ -4,6 +4,37 @@ User-facing changes, newest first.
 
 ## Unreleased
 
+### Fixed
+
+- **An order is the buyer's to read, not everyone's.** The confirmation page was
+  reachable by order number alone, and order numbers are a per-day counter — so
+  counting through them handed out every customer's name, mobile and home
+  address. It is now shown to the account that owns it, or to the browser that
+  placed it.
+- **A password no longer claims someone else's account.** With codes switched
+  off, signing in with a phone number that had only ever used a code would set
+  that password and let the sender straight in. The first password now waits for
+  a verified sign-in, and the password form is refused outright while codes are
+  on — a form the page does not draw could still be posted to.
+- **A payment settles the order it actually paid for.** The gateway's own
+  transaction reference is now checked against the order, so one real payment
+  can no longer mark a second order of the same amount as paid.
+- **Coupon limits are real limits.** The per-customer limit staff set in the
+  admin was stored and never checked; and two shoppers checking out at the same
+  moment could both take the last use of a limited code. Both are now enforced
+  where the count is written.
+- **Rich text cannot smuggle in a script.** A quote inside an attribute could
+  close it and open an event handler — a staff account could have planted that
+  on every page. Product copy can no longer break out of the search-engine data
+  block on a product page either.
+- **Uploads no longer accept SVG.** It is a document that can carry script, and
+  it is served from the shop's own address.
+- **A shopper's own pages need a shopper.** Saving an address or a wish was
+  reachable without a session, the same gap that was closed for the admin.
+- Orders are rate-limited per visitor, the demo and assistant cookies are marked
+  secure, the scheduled-job secret is compared in constant time, and a quantity
+  that is not a whole number is treated as one.
+
 ### Added
 
 - **A layout audit, and what it found.** Every storefront page checked against

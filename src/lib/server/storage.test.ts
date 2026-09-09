@@ -4,7 +4,8 @@ import { extensionFor, buildKey, keyFromUrl } from './storage';
 describe('storage keys', () => {
 	it('maps only image types to extensions', () => {
 		expect(extensionFor('image/jpeg')).toBe('jpg');
-		expect(extensionFor('image/svg+xml')).toBe('svg');
+		// SVG is script that would run on our origin, so it is not an upload.
+		expect(extensionFor('image/svg+xml')).toBeNull();
 		expect(extensionFor('application/pdf')).toBeNull();
 	});
 

@@ -21,20 +21,15 @@ import { env } from '$env/dynamic/private';
 
 export const MAX_BYTES = Number(env.UPLOAD_MAX_BYTES ?? 5 * 1024 * 1024);
 
-export const ALLOWED = [
-	'image/jpeg',
-	'image/png',
-	'image/webp',
-	'image/avif',
-	'image/svg+xml'
-] as const;
+/* No SVG: it is a document that can carry script, and an upload is served from
+   our own origin, so opening one directly would run it with our cookies. */
+export const ALLOWED = ['image/jpeg', 'image/png', 'image/webp', 'image/avif'] as const;
 
 const EXT: Record<string, string> = {
 	'image/jpeg': 'jpg',
 	'image/png': 'png',
 	'image/webp': 'webp',
-	'image/avif': 'avif',
-	'image/svg+xml': 'svg'
+	'image/avif': 'avif'
 };
 
 const LOCAL_DIR = 'static/uploads';

@@ -6,7 +6,7 @@
 		multiple = true,
 		accept = 'image/*',
 		label = 'Drop images here or click to choose',
-		hint = 'JPG, PNG, WebP, AVIF or SVG · up to 5MB each',
+		hint = 'JPG, PNG, WebP or AVIF · up to 5MB each',
 		onfiles
 	}: {
 		name?: string;

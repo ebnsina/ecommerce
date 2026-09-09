@@ -26,6 +26,15 @@ export async function settleOrder(valId: string, orderNumber: string) {
 	if (!result.ok)
 		return { ok: false as const, error: result.reason ?? 'The bank did not confirm that payment.' };
 
+	// The gateway echoes back the tran_id it was given, which is the order
+	// number. Without this, a val_id from one paid order settles any other order
+	// of the same amount — and the caller supplies both halves.
+	if (result.transactionId !== order.number)
+		return {
+			ok: false as const,
+			error: 'That payment belongs to a different order. Nothing has been marked as paid.'
+		};
+
 	if (result.amount !== order.total)
 		return {
 			ok: false as const,

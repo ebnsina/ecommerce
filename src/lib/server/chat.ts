@@ -21,6 +21,7 @@ export function visitorId(event: RequestEvent): string {
 		path: '/',
 		httpOnly: true,
 		sameSite: 'lax',
+		secure: !import.meta.env.DEV,
 		maxAge: 60 * 60 * 24 * 365
 	});
 	return fresh;

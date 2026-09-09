@@ -19,7 +19,7 @@ async function add(event: RequestEvent, forceTo?: string) {
 		cart.id,
 		String(form.get('productId') ?? ''),
 		String(form.get('variantId') ?? '') || null,
-		Math.max(1, Number(form.get('qty') ?? 1))
+		Math.max(1, Math.floor(Number(form.get('qty'))) || 1)
 	);
 	if (!result.ok) return fail(400, { error: result.error });
 

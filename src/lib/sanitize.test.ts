@@ -43,6 +43,14 @@ describe('sanitizeHtml', () => {
 		expect(sanitizeHtml('<p>5 < 10 & rising</p>')).toBe('<p>5 &lt; 10 &amp; rising</p>');
 	});
 
+	it('does not let a quote in an attribute open a new one', () => {
+		// Single-quoted input carrying a double quote used to close the attribute
+		// this re-emits, turning the rest into onmouseover=.
+		expect(sanitizeHtml(`<a href='/x' title='y" onmouseover="alert(1)'>hover</a>`)).toBe(
+			'<a href="/x" title="y&quot; onmouseover=&quot;alert(1)">hover</a>'
+		);
+	});
+
 	it('handles empty input', () => {
 		expect(sanitizeHtml('')).toBe('');
 	});

@@ -202,9 +202,11 @@
 		<meta name="description" content={data.product.seoDescription} />
 	{/if}
 	<!-- The closing tag is interpolated so the literal characters never appear in
-	     the template: a bare </script> here ends the element for the parser. -->
+	     the template: a bare </script> here ends the element for the parser. The
+	     same is true of one inside the data, which JSON.stringify does not escape
+	     — hence \u003c, which parses back to `<` for any reader. -->
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -- JSON-LD we build ourselves from the product row -->
-	{@html `<script type="application/ld+json">${jsonLd}</${'script'}>`}
+	{@html `<script type="application/ld+json">${jsonLd.replace(/</g, '\\u003c')}</${'script'}>`}
 </svelte:head>
 
 <div class="mx-auto max-w-7xl px-4 py-6">

@@ -10,11 +10,16 @@ import { mergeGuestCart } from '$lib/server/cart';
 import { getSettings } from '$lib/server/settings';
 import type { Actions, PageServerLoad } from './$types';
 
+/** `//evil.com` is a URL a browser will happily leave the site for, and
+    `startsWith('/')` alone lets it through. */
+const safeNext = (next: string | null) =>
+	next?.startsWith('/') && !next.startsWith('//') ? next : '/demo/account';
+
 export const load: PageServerLoad = async ({ locals, url }) => {
-	if (locals.user?.kind === 'customer')
-		redirect(303, url.searchParams.get('next') ?? '/demo/account');
+	const next = safeNext(url.searchParams.get('next'));
+	if (locals.user?.kind === 'customer') redirect(303, next);
 	const { auth } = await getSettings();
-	return { otpEnabled: auth.otpEnabled, next: url.searchParams.get('next') ?? '/demo/account' };
+	return { otpEnabled: auth.otpEnabled, next };
 };
 
 /** Signs the customer in, folding their guest cart into the account. */
@@ -22,7 +27,7 @@ async function signIn(event: Parameters<Actions[string]>[0], customerId: string,
 	await mergeGuestCart(event, customerId);
 	const { token, expiresAt } = await createSession({ customerId });
 	setSessionCookie(event, token, expiresAt);
-	redirect(303, next.startsWith('/') ? next : '/demo/account');
+	redirect(303, safeNext(next));
 }
 
 export const actions: Actions = {
@@ -67,6 +72,12 @@ export const actions: Actions = {
 
 	/** OTP off: phone + password. First sign-in sets the password. */
 	password: async (event) => {
+		// The page only draws one form or the other, but an action is reachable by
+		// direct POST whatever the page drew — so the toggle is checked here, not
+		// only in `load`.
+		const { auth } = await getSettings();
+		if (auth.otpEnabled) return fail(400, { error: 'Sign in with a code instead.' });
+
 		const form = await event.request.formData();
 		const phone = normalizePhone(String(form.get('phone') ?? ''));
 		const password = String(form.get('password') ?? '');
@@ -91,15 +102,10 @@ export const actions: Actions = {
 			return signIn(event, created.id, next);
 		}
 
-		if (!existing.passwordHash) {
-			// Account was created by OTP before the toggle flipped — set it now.
-			await db
-				.update(customers)
-				.set({ passwordHash: await hashPassword(password) })
-				.where(eq(customers.id, existing.id));
-			await reset(`login:${phone}`);
-			return signIn(event, existing.id, next);
-		}
+		// An account created by OTP has no password, and setting one here would
+		// hand it to whoever typed the number first. The code is the only proof
+		// of that phone, so the first password waits for a verified sign-in.
+		if (!existing.passwordHash) return fail(400, { phone, error: 'Wrong number or password.' });
 
 		if (!(await verifyPassword(password, existing.passwordHash)))
 			return fail(400, { phone, error: 'Wrong number or password.' });

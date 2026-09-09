@@ -8,6 +8,7 @@
 import { json, error } from '@sveltejs/kit';
 import { and, eq, isNotNull, inArray } from 'drizzle-orm';
 import { env } from '$env/dynamic/private';
+import { safeEqual } from '$lib/server/safeEqual';
 import { db } from '$lib/server/db';
 import { orders, orderEvents } from '$lib/server/db/schema';
 import { couriers, pipelineStatusFor, type CourierKey } from '$lib/server/couriers';
@@ -22,7 +23,8 @@ const byLabel = (label: string | null): CourierKey | null => {
 const run: RequestHandler = async ({ request }) => {
 	const secret = env.CRON_SECRET;
 	if (!secret) error(503, 'CRON_SECRET is not set');
-	if (request.headers.get('authorization') !== `Bearer ${secret}`) error(403, 'Bad secret');
+	if (!safeEqual(request.headers.get('authorization') ?? '', `Bearer ${secret}`))
+		error(403, 'Bad secret');
 
 	// Only parcels that are actually out: anything delivered or returned is done.
 	const inFlight = await db

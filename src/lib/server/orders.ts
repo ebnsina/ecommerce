@@ -31,10 +31,15 @@ export async function shippingFor(zone: Zone, subtotal: number) {
 export type CouponResult =
 	{ ok: true; code: string; discount: number; label: string } | { ok: false; error: string };
 
+/** Who is redeeming, for the per-customer limit. Guests have no account, so
+    the phone — which is the account key in this shop anyway — stands in. */
+export type Redeemer = { customerId: string | null; phone: string | null };
+
 export async function applyCoupon(
 	code: string,
 	subtotal: number,
-	shipping: number
+	shipping: number,
+	by?: Redeemer
 ): Promise<CouponResult> {
 	const [c] = await db
 		.select()
@@ -54,6 +59,21 @@ export async function applyCoupon(
 			ok: false,
 			error: `Spend at least ৳${Math.round(c.minOrder / 100)} to use this coupon.`
 		};
+
+	// Staff set a per-customer limit in the admin and are entitled to assume it
+	// is enforced; before this it was stored and ignored.
+	const who = by?.customerId
+		? eq(orders.customerId, by.customerId)
+		: by?.phone
+			? eq(orders.phone, by.phone)
+			: null;
+	if (who) {
+		const [{ n }] = await db
+			.select({ n: sql<number>`count(*)::int` })
+			.from(orders)
+			.where(and(eq(orders.couponCode, c.code), who));
+		if (n >= c.perCustomerLimit) return { ok: false, error: 'You have already used this coupon.' };
+	}
 
 	const discount =
 		c.type === 'percent'
@@ -103,7 +123,10 @@ export async function placeOrder(
 	let discount = 0;
 	let couponCode: string | null = null;
 	if (input.couponCode) {
-		const applied = await applyCoupon(input.couponCode, subtotal, shipping);
+		const applied = await applyCoupon(input.couponCode, subtotal, shipping, {
+			customerId: input.customerId,
+			phone: input.phone
+		});
 		if (!applied.ok) return { ok: false, error: applied.error };
 		discount = applied.discount;
 		couponCode = applied.code;
@@ -179,11 +202,22 @@ export async function placeOrder(
 				note: 'Order placed by the customer'
 			});
 
-			if (couponCode)
-				await tx
+			// The limit is checked by the increment itself, not by the earlier read:
+			// simultaneous checkouts all see the same count and would otherwise all
+			// pass. Same shape as the stock guard above.
+			if (couponCode) {
+				const bumped = await tx
 					.update(coupons)
 					.set({ usedCount: sql`${coupons.usedCount} + 1` })
-					.where(eq(coupons.code, couponCode));
+					.where(
+						and(
+							eq(coupons.code, couponCode),
+							sql`${coupons.usageLimit} is null or ${coupons.usedCount} < ${coupons.usageLimit}`
+						)
+					)
+					.returning({ id: coupons.id });
+				if (!bumped.length) throw new Error('That coupon has been fully used.');
+			}
 
 			await tx.delete(cartItems).where(eq(cartItems.cartId, input.cartId));
 

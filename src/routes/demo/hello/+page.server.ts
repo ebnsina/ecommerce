@@ -8,7 +8,8 @@ const REMEMBER = {
 	path: '/',
 	maxAge: 60 * 60 * 24 * 365,
 	httpOnly: true,
-	sameSite: 'lax'
+	sameSite: 'lax',
+	secure: !import.meta.env.DEV
 } as const;
 
 /**

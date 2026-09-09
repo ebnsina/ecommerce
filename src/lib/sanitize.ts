@@ -43,8 +43,11 @@ function safeHref(value: string): string | null {
 	return null;
 }
 
+/** `"` matters as much as `<`: attribute values are re-emitted wrapped in
+    double quotes, so an unescaped one closes the attribute and everything
+    after it — `onmouseover=` included — becomes markup. */
 const escapeText = (s: string) =>
-	s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+	s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 export function sanitizeHtml(input: string): string {
 	if (!input) return '';
