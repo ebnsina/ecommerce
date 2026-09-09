@@ -132,10 +132,12 @@
 	<title>{thread.length ? thread[0].content : 'Tell us what you need'} · My Store</title>
 </svelte:head>
 
-<div class="mx-auto flex min-h-[calc(100vh-4rem)] max-w-5xl flex-col px-4">
+<!-- Two rows: a thread that scrolls and a composer that does not. The window
+     itself never scrolls, so the box you type in is always where you left it. -->
+<div class="flex min-h-0 flex-1 flex-col">
 	{#if thread.length === 0}
 		<!-- Empty state: the orb, one line, and four things to press. -->
-		<div class="flex flex-1 flex-col items-center justify-center py-16 text-center">
+		<div class="flex flex-1 flex-col items-center justify-center px-4 py-16 text-center">
 			<Orb size={44} />
 			<h1 class="mt-5 text-2xl font-semibold tracking-tight text-ink">What are you after?</h1>
 			<p class="mt-2 max-w-md text-sm text-ink-muted">
@@ -158,95 +160,97 @@
 			</ul>
 		</div>
 	{:else}
-		<!-- The page scrolls, not a box inside it. An inner scroller meant the
-		     answer could be off the bottom of its own container while the window
-		     looked still, which is why reading one needed a second scroll. -->
-		<div class="flex-1 space-y-8 pt-8 pb-6">
-			{#each thread as turn, i (i)}
-				{@const newest = i === thread.length - 1}
-				{#if turn.role === 'user'}
-					<div id="turn-{i}" class="flex scroll-mt-24 justify-end">
-						<p
-							class="max-w-[85%] rounded-2xl rounded-br-md bg-primary px-4 py-2.5 text-sm text-white"
-						>
-							{turn.content}
-						</p>
-					</div>
-				{:else}
-					<div class="flex gap-3">
-						{#if newest}
-							<Orb size={22} class="mt-0.5" />
-						{:else}
-							<!-- Older turns get a plain mark: an orb is a WebGL context, and a
-							     browser gives a page about a dozen of them. -->
-							<span class="mt-1 size-4 shrink-0 rounded-full bg-primary/25" aria-hidden="true"
-							></span>
-						{/if}
-						<div class="min-w-0 flex-1">
-							<p class="text-sm text-ink">
-								{turn.shown === undefined
-									? turn.content
-									: (turn.content ?? '').slice(0, turn.shown)}
+		<!-- The one thing on the page that scrolls. The tail of empty space below
+		     is deliberate: without it the last question cannot reach the top of
+		     the view, and the thread appears to ignore being scrolled to. -->
+		<!-- The gutter is reserved whether or not a scrollbar is showing, so the
+		     thread and the box below it do not shift sideways the moment an answer
+		     grows past the fold. -->
+		<div class="min-h-0 flex-1 [scrollbar-gutter:stable] overflow-y-auto overscroll-contain">
+			<div class="mx-auto max-w-3xl space-y-8 px-4 pt-6 pb-[55vh]">
+				{#each thread as turn, i (i)}
+					{@const newest = i === thread.length - 1}
+					{#if turn.role === 'user'}
+						<div id="turn-{i}" class="flex scroll-mt-24 justify-end">
+							<p
+								class="max-w-[85%] rounded-2xl rounded-br-md bg-primary px-4 py-2.5 text-sm text-white"
+							>
+								{turn.content}
 							</p>
-
-							{#if turn.rows?.length}
-								<div class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
-									{#each turn.rows.slice(0, 6) as product (product.id)}
-										<ProductCard {product} />
-									{/each}
-								</div>
-
-								{#if (turn.total ?? 0) > Math.min(turn.rows.length, 6)}
-									<a
-										href="{SHOP}/search?q={encodeURIComponent(turn.query ?? '')}"
-										class="mt-3 inline-flex items-center gap-1 text-xs text-primary hover:underline"
-									>
-										See all {turn.total}
-										<ArrowRight size={13} />
-									</a>
-								{/if}
-							{:else if turn.rows}
-								<p class="mt-3 text-sm text-ink-muted">
-									Nothing in the shop matches that yet — the owner sees every search that found
-									nothing.
-								</p>
-							{/if}
-
-							{#if turn.followUps?.length}
-								<ul class="mt-4 flex flex-wrap gap-2">
-									{#each turn.followUps as followUp (followUp)}
-										<li>
-											<button
-												type="button"
-												onclick={() => send(followUp)}
-												class="rounded-lg border border-border bg-surface px-2.5 py-1.5 text-xs text-ink-muted
-												       transition-colors duration-[180ms] ease-brand hover:border-brand-300 hover:text-ink"
-											>
-												{followUp}
-											</button>
-										</li>
-									{/each}
-								</ul>
-							{/if}
 						</div>
+					{:else}
+						<div class="flex gap-3">
+							{#if newest}
+								<Orb size={22} class="mt-0.5" />
+							{:else}
+								<!-- Older turns get a plain mark: an orb is a WebGL context, and a
+							     browser gives a page about a dozen of them. -->
+								<span class="mt-1 size-4 shrink-0 rounded-full bg-primary/25" aria-hidden="true"
+								></span>
+							{/if}
+							<div class="min-w-0 flex-1">
+								<p class="text-sm text-ink">
+									{turn.shown === undefined
+										? turn.content
+										: (turn.content ?? '').slice(0, turn.shown)}
+								</p>
+
+								{#if turn.rows?.length}
+									<div class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
+										{#each turn.rows.slice(0, 6) as product (product.id)}
+											<ProductCard {product} />
+										{/each}
+									</div>
+
+									{#if (turn.total ?? 0) > Math.min(turn.rows.length, 6)}
+										<a
+											href="{SHOP}/search?q={encodeURIComponent(turn.query ?? '')}"
+											class="mt-3 inline-flex items-center gap-1 text-xs text-primary hover:underline"
+										>
+											See all {turn.total}
+											<ArrowRight size={13} />
+										</a>
+									{/if}
+								{:else if turn.rows}
+									<p class="mt-3 text-sm text-ink-muted">
+										Nothing in the shop matches that yet — the owner sees every search that found
+										nothing.
+									</p>
+								{/if}
+
+								{#if turn.followUps?.length}
+									<ul class="mt-4 flex flex-wrap gap-2">
+										{#each turn.followUps as followUp (followUp)}
+											<li>
+												<button
+													type="button"
+													onclick={() => send(followUp)}
+													class="rounded-lg border border-border bg-surface px-2.5 py-1.5 text-xs text-ink-muted
+												       transition-colors duration-[180ms] ease-brand hover:border-brand-300 hover:text-ink"
+												>
+													{followUp}
+												</button>
+											</li>
+										{/each}
+									</ul>
+								{/if}
+							</div>
+						</div>
+					{/if}
+				{/each}
+
+				{#if busy}
+					<div class="flex items-center gap-3">
+						<Orb size={22} />
+						<span class="text-sm text-ink-muted">Looking…</span>
 					</div>
 				{/if}
-			{/each}
-
-			{#if busy}
-				<div class="flex items-center gap-3">
-					<Orb size={22} />
-					<span class="text-sm text-ink-muted">Looking…</span>
-				</div>
-			{/if}
+			</div>
 		</div>
 	{/if}
 
 	{#if problem}
-		<p
-			class="mb-3 rounded-xl border border-border bg-surface-alt px-4 py-2.5 text-sm text-ink"
-			role="alert"
-		>
+		<p class="mx-auto w-full max-w-3xl px-4 pb-3 text-sm text-ink" role="alert">
 			{problem}
 		</p>
 	{/if}
@@ -257,14 +261,14 @@
 	<form
 		method="GET"
 		action={shop('/ask')}
-		class="sticky bottom-0 bg-page pt-2 pb-6"
+		class="mx-auto w-full max-w-3xl shrink-0 px-4 pt-2 pb-5"
 		onsubmit={(e) => {
 			e.preventDefault();
 			send(draft);
 		}}
 	>
 		<div
-			class="flex items-end gap-2 rounded-2xl border border-border bg-surface p-2
+			class="flex h-14 items-center gap-2 rounded-2xl border border-border bg-surface p-2
 			       focus-within:outline focus-within:outline-2 focus-within:outline-offset-2
 			       focus-within:outline-primary"
 		>
@@ -275,7 +279,7 @@
 				bind:value={draft}
 				placeholder="Ask for anything in the shop"
 				autocomplete="off"
-				class="h-10 flex-1 bg-transparent px-2 text-sm text-ink placeholder:text-ink-faint focus:outline-none"
+				class="h-10 min-w-0 flex-1 bg-transparent px-2 text-sm text-ink placeholder:text-ink-faint focus:outline-none"
 			/>
 			<Button type="submit" disabled={busy || !draft.trim()} aria-label="Send">
 				<ArrowUp size={16} />
