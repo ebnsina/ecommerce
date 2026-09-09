@@ -7,6 +7,9 @@ export const cardColumns = {
 	id: products.id,
 	title: products.title,
 	titleBn: products.titleBn,
+	// The bookshop layout prints it as the author line, and the parts dealer as
+	// the first half of its spec line. Everything else ignores it.
+	brand: products.brand,
 	slug: products.slug,
 	price: products.price,
 	compareAtPrice: products.compareAtPrice,

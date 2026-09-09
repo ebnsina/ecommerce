@@ -28,50 +28,69 @@ export type Layout = {
 	card: CardShape;
 	/** Tailwind grid classes for a full-width product list, phone up. */
 	grid: string;
-	/** The full category bar, or a slim bar that leans on search. */
-	header: 'mega' | 'slim';
+	/** How the top of the page is built.
+	    `mega` spreads categories across a bar, `slim` folds them into a button,
+	    `centered` drops the coloured bar for a white one with the name in the
+	    middle — a shop that sells fewer things, more slowly. */
+	header: 'mega' | 'slim' | 'centered';
+	/** A category rail down the left of the page, the way a grocer and a parts
+	    dealer both do it — the list is the navigation, not a menu you open. */
+	rail: boolean;
+	/** Scoped class on the shell. Retunes radius, ground and border weight —
+	    see `layouts.css`. Colour and type are untouched. */
+	shell: string;
 };
 
 export const LAYOUTS: Record<LayoutKey, Layout> = {
 	marketplace: {
 		key: 'marketplace',
 		label: 'Marketplace',
-		note: 'Everything for everyone. A category bar, big banners, rails of deals.',
+		note: 'Everything for everyone. A category bar, big banners, rails of deals on white.',
 		card: 'square',
 		grid: 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-5',
-		header: 'mega'
+		header: 'mega',
+		rail: false,
+		shell: 'shop-marketplace'
 	},
 	grocery: {
 		key: 'grocery',
 		label: 'Grocery',
-		note: 'Many small things, bought quickly. Tight cards, more of them in a row.',
+		note: 'Many small things, bought quickly. A standing category rail, small square corners, a plus on every card.',
 		card: 'dense',
-		grid: 'grid-cols-2 sm:grid-cols-4 lg:grid-cols-6',
-		header: 'slim'
+		grid: 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-5',
+		header: 'slim',
+		rail: true,
+		shell: 'shop-grocery'
 	},
 	books: {
 		key: 'books',
 		label: 'Books',
-		note: 'Covers are portrait, so the card is too, and the author sits under the title.',
+		note: 'Paper-coloured ground, portrait covers six to a row, the author under the title.',
 		card: 'portrait',
 		grid: 'grid-cols-2 sm:grid-cols-4 lg:grid-cols-6',
-		header: 'slim'
+		header: 'slim',
+		rail: false,
+		shell: 'shop-books'
 	},
 	tech: {
 		key: 'tech',
 		label: 'Electronics',
-		note: 'A list, not a grid. Price first, because that is what is being compared.',
+		note: 'Square corners on a grey ground. A list, not a grid: brand, reviews and stock beside the price.',
 		card: 'row',
-		grid: 'grid-cols-1 lg:grid-cols-2',
-		header: 'mega'
+		grid: 'grid-cols-1',
+		header: 'mega',
+		rail: true,
+		shell: 'shop-tech'
 	},
 	editorial: {
 		key: 'editorial',
 		label: 'Lifestyle',
-		note: 'Fewer products, larger pictures, room around everything.',
+		note: 'No coloured bar and no visible edges. The name centred, the categories spaced out, everything larger.',
 		card: 'square',
 		grid: 'grid-cols-2 lg:grid-cols-3',
-		header: 'slim'
+		header: 'centered',
+		rail: false,
+		shell: 'shop-editorial'
 	}
 };
 

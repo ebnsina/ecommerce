@@ -693,9 +693,9 @@ const homes: Record<string, { title: string; blocks: ReturnType<typeof b>[] }> =
 	grocery: {
 		title: 'Home — Grocery',
 		blocks: [
-			// Categories first and deals right behind them: a grocery run starts
-			// with "where is the rice", not with a season campaign.
-			b('categoryStrip', { limit: 14 }),
+			// No category strip: this layout carries the categories as a standing
+			// rail down the left, and printing them twice is how a page starts to
+			// feel like a directory.
 			b('hotDeals', {
 				heading: "Today's prices",
 				href: '/demo/search',
@@ -798,7 +798,6 @@ const homes: Record<string, { title: string; blocks: ReturnType<typeof b>[] }> =
 				source: { mode: 'rule', rule: 'hot-deal', categoryId: '', ids: [], limit: 8 },
 				countdownTo: ''
 			}),
-			b('categoryStrip', { limit: 12 }),
 			b('productSection', {
 				heading: 'Featured builds',
 				href: '/demo/search',

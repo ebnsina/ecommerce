@@ -6,6 +6,8 @@ User-facing changes, newest first.
 
 ### Added
 
+- **Five shops in one, and five links to try them.** The marketing page lists
+  all five demos; each opens the same shop wearing a different shape.
 - **Five shops in one.** The storefront wears a layout — Marketplace, Grocery,
   Books, Electronics or Lifestyle — chosen in Settings beside the theme. The
   catalogue, colours and typeface are identical in all five; what changes is

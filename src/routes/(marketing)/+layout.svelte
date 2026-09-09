@@ -9,6 +9,7 @@
 		Tag,
 		MessageCircleQuestion,
 		Brain,
+		LayoutGrid,
 		Heart
 	} from '@lucide/svelte';
 	import { integrations } from './integrations';
@@ -72,6 +73,7 @@
 		{ href: '#problem', label: 'Why', Icon: Compass },
 		{ href: '#features', label: 'Product', Icon: Layers },
 		{ href: '#assistant', label: 'Assistant', Icon: Brain },
+		{ href: '#demos', label: 'Demos', Icon: LayoutGrid },
 		{ href: '#integrations', label: 'Integrations', Icon: Plug },
 		{ href: '#pricing', label: 'Pricing', Icon: Tag },
 		{ href: '#faq', label: 'Questions', Icon: MessageCircleQuestion }

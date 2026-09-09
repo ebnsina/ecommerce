@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Heart, ShoppingBag, Scale } from '@lucide/svelte';
+	import { Heart, ShoppingBag, Scale, Plus } from '@lucide/svelte';
 	import { enhance } from '$app/forms';
 	import { page } from '$app/state';
 	import { formatTk, discountPercent } from '$lib/money';
@@ -16,6 +16,7 @@
 		price: number;
 		compareAtPrice: number | null;
 		image: string | null;
+		brand?: string | null;
 		rating: number;
 		reviewCount: number;
 		stock: number;
@@ -78,7 +79,7 @@
 	</span>
 {/snippet}
 
-{#snippet quickAdd()}
+{#snippet quickAdd(compactAdd = false)}
 	<form
 		method="POST"
 		action="/demo/cart?/add"
@@ -98,14 +99,23 @@
 		<input type="hidden" name="redirectTo" value={page.url.pathname + page.url.search} />
 		<button
 			disabled={soldOut}
-			class="flex h-10 w-full items-center justify-center gap-1.5 rounded-xl border border-border
+			class="flex items-center justify-center gap-1.5 rounded-xl border border-border
+			       {compactAdd ? 'size-9' : 'h-10 w-full'}
 			       bg-surface text-sm font-medium text-ink transition-colors duration-[180ms] ease-brand
 			       hover:border-primary hover:bg-primary hover:text-white
 			       disabled:cursor-not-allowed disabled:text-ink-faint disabled:hover:border-border
 			       disabled:hover:bg-surface disabled:hover:text-ink-faint"
 		>
-			<ShoppingBag size={15} />
-			{soldOut ? 'Out of stock' : 'Add to cart'}
+			{#if compactAdd}
+				<!-- The grocer's card: a square button with a plus in it, because the
+				     label would be wider than the card and every one of these is the
+				     same action anyway. -->
+				<Plus size={17} aria-hidden="true" />
+				<span class="sr-only">{soldOut ? 'Out of stock' : `Add ${product.title} to cart`}</span>
+			{:else}
+				<ShoppingBag size={15} />
+				{soldOut ? 'Out of stock' : 'Add to cart'}
+			{/if}
 		</button>
 	</form>
 {/snippet}
@@ -160,7 +170,9 @@
 	<article
 		class="group flex gap-4 rounded-3xl border border-border bg-surface p-4 transition-colors duration-[180ms] ease-brand hover:border-brand-200"
 	>
-		<a href="/demo/p/{product.slug}" class="shrink-0">{@render media('size-36 sm:size-44')}</a>
+		<a href="/demo/p/{product.slug}" class="shrink-0">
+			{@render media(shape === 'row' ? 'size-28 sm:size-32' : 'size-36 sm:size-44')}
+		</a>
 		<div class="flex min-w-0 flex-1 flex-col gap-2">
 			<a
 				href="/demo/p/{product.slug}"
@@ -168,13 +180,33 @@
 			>
 				{product.title}
 			</a>
-			<Rating rating={product.rating} count={product.reviewCount} />
+			{#if shape === 'row'}
+				<!-- The line a parts dealer's shopper reads before the picture: who
+				     made it, how it is rated, and whether it is on the shelf. -->
+				<p class="num text-xs text-ink-muted">
+					{[
+						product.brand,
+						`${product.reviewCount} ${product.reviewCount === 1 ? 'review' : 'reviews'}`,
+						soldOut ? 'Out of stock' : 'In stock'
+					]
+						.filter(Boolean)
+						.join('  ·  ')}
+				</p>
+			{:else}
+				<Rating rating={product.rating} count={product.reviewCount} />
+			{/if}
 			{@render price()}
 			<div class="mt-auto flex items-center gap-2">
-				<Button href="/demo/p/{product.slug}" size="sm" variant="secondary" disabled={soldOut}>
-					<ShoppingBag size={15} />
-					Buy now
-				</Button>
+				{#if shape === 'row'}
+					<!-- A row is wide enough to hold the real action, so it does: the
+					     add lands in the cart rather than on another page. -->
+					<div class="w-40">{@render quickAdd()}</div>
+				{:else}
+					<Button href="/demo/p/{product.slug}" size="sm" variant="secondary" disabled={soldOut}>
+						<ShoppingBag size={15} />
+						Buy now
+					</Button>
+				{/if}
 				{@render wishlistButton('size-9 rounded-xl border border-border hover:border-brand-300')}
 				{@render compareButton('size-9 rounded-xl border border-border hover:border-brand-300')}
 			</div>
@@ -218,6 +250,11 @@
 				>
 					{product.title}
 				</a>
+				{#if shape === 'portrait' && product.brand}
+					<!-- On a bookshop's shelf this is the author; everywhere else it is
+					     the brand, which is why only the portrait card prints it. -->
+					<span class="-mt-0.5 truncate text-xs text-ink-muted">{product.brand}</span>
+				{/if}
 				{#if shape !== 'dense'}
 					<Rating rating={product.rating} count={product.reviewCount} size={12} />
 				{/if}
@@ -226,7 +263,11 @@
 					<span class="num text-xs font-medium text-sale">Only {product.stock} left</span>
 				{/if}
 
-				{#if shape !== 'compact'}
+				{#if shape === 'dense'}
+					<div class="mt-auto flex items-end justify-between gap-2 pt-2">
+						{@render quickAdd(true)}
+					</div>
+				{:else if shape !== 'compact'}
 					<!-- mt-auto, not a margin: "Only 2 left" appears on some cards and not
 					     others, and the button has to ignore it and stay at the floor. -->
 					<div class="mt-auto pt-2.5">{@render quickAdd()}</div>

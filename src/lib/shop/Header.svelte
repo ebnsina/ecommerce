@@ -32,8 +32,9 @@
 		nav: Cat[];
 		menu?: MenuNode[];
 		/** `mega` spreads the categories across a bar; `slim` folds them into one
-		    button and lets search lead, the way a grocer or a bookshop does. */
-		chrome?: 'mega' | 'slim';
+		    button and lets search lead, the way a grocer or a bookshop does;
+		    `centered` drops the coloured bar altogether. */
+		chrome?: 'mega' | 'slim' | 'centered';
 		searchHints?: string[];
 		store: {
 			name: string;
@@ -132,127 +133,207 @@
 		<PromoBar props={promo} />
 	{/if}
 
-	<div class="bg-primary">
-		<div class="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3">
-			<button
-				class="-ml-1 grid size-10 place-items-center rounded-xl text-white/85 transition-colors hover:bg-white/10 hover:text-white lg:hidden"
-				aria-label="Menu"
-				onclick={() => (mobileOpen = !mobileOpen)}
-			>
-				{#if mobileOpen}<X size={20} />{:else}<Menu size={20} />{/if}
-			</button>
-
-			<a href={SHOP} class="flex shrink-0 items-center" aria-label={store.name}>
-				{#if store.logo?.mode === 'image' && store.logo.image}
-					<img src={store.logo.image} alt={store.name} class="h-8 w-auto object-contain" />
-				{:else}
-					<span class="text-lg font-semibold tracking-tight text-white">
-						{store.logo?.text || store.name}
-					</span>
-				{/if}
-			</a>
-
-			{#if chrome === 'slim'}
-				<!-- One button instead of a bar. The panel lists exactly what the bar
-				     would have, so nothing becomes unreachable. -->
-				<div class="relative hidden lg:block">
+	{#if chrome === 'centered'}
+		<!-- A shop with forty things in it does not need a search engine at the
+		     top of every page. The name sits in the middle, the categories sit
+		     under it, and the ground stays the page's own. -->
+		<div class="border-b border-border">
+			<div class="mx-auto max-w-7xl px-4">
+				<div class="relative flex h-20 items-center justify-center">
 					<button
-						class="flex h-11 items-center gap-2 rounded-xl px-3 text-sm text-white/85 transition-colors hover:bg-white/10 hover:text-white"
-						aria-expanded={openMenu === 'all'}
-						onclick={() => (openMenu = openMenu === 'all' ? null : 'all')}
+						class="absolute left-0 grid size-10 place-items-center rounded-xl text-ink-muted transition-colors hover:text-ink lg:hidden"
+						aria-label="Menu"
+						onclick={() => (mobileOpen = !mobileOpen)}
 					>
-						<Menu size={18} />
-						Categories
-						<ChevronDown size={14} />
+						{#if mobileOpen}<X size={20} />{:else}<Menu size={20} />{/if}
 					</button>
 
-					{#if openMenu === 'all'}
-						<div
-							class="absolute top-full left-0 z-50 mt-2 grid w-[26rem] grid-cols-2 gap-1 rounded-2xl border border-border bg-surface p-2"
-							transition:fly={flyUp()}
+					<a href={SHOP} class="flex items-center" aria-label={store.name}>
+						{#if store.logo?.mode === 'image' && store.logo.image}
+							<img src={store.logo.image} alt={store.name} class="h-9 w-auto object-contain" />
+						{:else}
+							<span class="text-xl font-semibold tracking-[0.2em] text-ink uppercase">
+								{store.logo?.text || store.name}
+							</span>
+						{/if}
+					</a>
+
+					<nav class="absolute right-0 flex items-center gap-1">
+						<a
+							href="/demo/search"
+							class="grid size-10 place-items-center rounded-xl text-ink-muted transition-colors hover:text-ink"
+							aria-label="Search"
 						>
-							{#each items as cat (cat.key)}
-								<a
-									href={cat.href}
-									class="rounded-xl px-3 py-2 text-sm text-ink-muted transition-colors hover:bg-surface-alt hover:text-ink"
-									onclick={() => (openMenu = null)}
+							<Search size={19} />
+						</a>
+						<a
+							href="/demo/account/wishlist"
+							class="grid size-10 place-items-center rounded-xl text-ink-muted transition-colors hover:text-ink"
+							aria-label="Wishlist"
+						>
+							<Heart size={19} />
+						</a>
+						<a
+							href="/demo/cart"
+							class="relative grid size-10 place-items-center rounded-xl text-ink-muted transition-colors hover:text-ink"
+							aria-label={cartLabel}
+						>
+							<ShoppingBag size={19} />
+							{#if cartCount > 0}
+								<span
+									class="num absolute top-1 right-1 grid h-4 min-w-4 place-items-center rounded-full bg-primary px-1 text-[10px] font-semibold text-white"
 								>
-									{cat.label}
-								</a>
-							{/each}
-						</div>
-					{/if}
-				</div>
-			{/if}
-
-			<form onsubmit={submit} class="relative hidden min-w-0 flex-1 md:block">
-				<Search
-					size={16}
-					class="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-ink-faint"
-				/>
-				<input
-					bind:value={q}
-					type="search"
-					aria-label="Search products"
-					onfocus={() => (searchFocused = true)}
-					onblur={() => (searchFocused = false)}
-					class="h-11 w-full rounded-xl border border-transparent bg-surface pr-4 pl-10
-					       text-sm text-ink transition-colors duration-[180ms] ease-brand focus:border-brand-200"
-				/>
-
-				{#if showHint}
-					<span
-						class="pointer-events-none absolute inset-y-0 right-4 left-10 flex items-center overflow-hidden
-						       text-sm whitespace-nowrap text-ink-faint"
-						aria-hidden="true"
-					>
-						{typed}<span
-							class="ml-0.5 inline-block h-4 w-px animate-pulse bg-ink-faint align-middle"
-						></span>
-					</span>
-				{/if}
-			</form>
-
-			<nav class="ml-auto flex items-center gap-1">
-				<a
-					href="/demo/compare"
-					class="relative grid size-10 place-items-center rounded-xl text-white/85 transition-colors hover:bg-white/10 hover:text-white"
-					aria-label={compareCount ? `Compare, ${compareCount} products` : 'Compare'}
-				>
-					<Scale size={19} />
-					{#if compareCount > 0}
-						<span
-							class="num absolute top-1 right-1 grid h-4 min-w-4 place-items-center rounded-full
-							       bg-sale px-1 text-[10px] font-semibold text-white ring-2 ring-primary"
+									{cartCount}
+								</span>
+							{/if}
+						</a>
+						<a
+							href={customer ? '/demo/account' : '/demo/login'}
+							class="grid size-10 place-items-center rounded-xl text-ink-muted transition-colors hover:text-ink"
+							aria-label={customer?.name ?? 'Sign in'}
 						>
-							{compareCount}
+							<User size={19} />
+						</a>
+					</nav>
+				</div>
+
+				<ul class="hidden justify-center gap-8 pb-4 lg:flex">
+					{#each items as cat (cat.key)}
+						<li>
+							<a
+								href={cat.href}
+								class="text-xs tracking-[0.14em] text-ink-muted uppercase transition-colors hover:text-ink"
+							>
+								{cat.label}
+							</a>
+						</li>
+					{/each}
+				</ul>
+			</div>
+		</div>
+	{:else}
+		<div class="bg-primary">
+			<div class="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3">
+				<button
+					class="-ml-1 grid size-10 place-items-center rounded-xl text-white/85 transition-colors hover:bg-white/10 hover:text-white lg:hidden"
+					aria-label="Menu"
+					onclick={() => (mobileOpen = !mobileOpen)}
+				>
+					{#if mobileOpen}<X size={20} />{:else}<Menu size={20} />{/if}
+				</button>
+
+				<a href={SHOP} class="flex shrink-0 items-center" aria-label={store.name}>
+					{#if store.logo?.mode === 'image' && store.logo.image}
+						<img src={store.logo.image} alt={store.name} class="h-8 w-auto object-contain" />
+					{:else}
+						<span class="text-lg font-semibold tracking-tight text-white">
+							{store.logo?.text || store.name}
 						</span>
 					{/if}
 				</a>
-				<a
-					href="/demo/account/wishlist"
-					class="grid size-10 place-items-center rounded-xl text-white/85 transition-colors hover:bg-white/10 hover:text-white"
-					aria-label="Wishlist"
-				>
-					<Heart size={19} />
-				</a>
-				<a
-					href="/demo/cart"
-					class="relative grid size-10 place-items-center rounded-xl text-white/85 transition-colors hover:bg-white/10 hover:text-white"
-					aria-label={cartLabel}
-				>
-					<ShoppingBag size={19} />
-				</a>
-				<a
-					href={customer ? '/demo/account' : '/demo/login'}
-					class="flex h-10 items-center gap-2 rounded-xl px-2.5 text-white/85 transition-colors hover:bg-white/10 hover:text-white"
-				>
-					<User size={19} />
-					<span class="hidden text-sm sm:inline">{customer?.name ?? 'Sign in'}</span>
-				</a>
-			</nav>
+
+				{#if chrome === 'slim'}
+					<!-- One button instead of a bar. The panel lists exactly what the bar
+				     would have, so nothing becomes unreachable. -->
+					<div class="relative hidden lg:block">
+						<button
+							class="flex h-11 items-center gap-2 rounded-xl px-3 text-sm text-white/85 transition-colors hover:bg-white/10 hover:text-white"
+							aria-expanded={openMenu === 'all'}
+							onclick={() => (openMenu = openMenu === 'all' ? null : 'all')}
+						>
+							<Menu size={18} />
+							Categories
+							<ChevronDown size={14} />
+						</button>
+
+						{#if openMenu === 'all'}
+							<div
+								class="absolute top-full left-0 z-50 mt-2 grid w-[26rem] grid-cols-2 gap-1 rounded-2xl border border-border bg-surface p-2"
+								transition:fly={flyUp()}
+							>
+								{#each items as cat (cat.key)}
+									<a
+										href={cat.href}
+										class="rounded-xl px-3 py-2 text-sm text-ink-muted transition-colors hover:bg-surface-alt hover:text-ink"
+										onclick={() => (openMenu = null)}
+									>
+										{cat.label}
+									</a>
+								{/each}
+							</div>
+						{/if}
+					</div>
+				{/if}
+
+				<form onsubmit={submit} class="relative hidden min-w-0 flex-1 md:block">
+					<Search
+						size={16}
+						class="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-ink-faint"
+					/>
+					<input
+						bind:value={q}
+						type="search"
+						aria-label="Search products"
+						onfocus={() => (searchFocused = true)}
+						onblur={() => (searchFocused = false)}
+						class="h-11 w-full rounded-xl border border-transparent bg-surface pr-4 pl-10
+					       text-sm text-ink transition-colors duration-[180ms] ease-brand focus:border-brand-200"
+					/>
+
+					{#if showHint}
+						<span
+							class="pointer-events-none absolute inset-y-0 right-4 left-10 flex items-center overflow-hidden
+						       text-sm whitespace-nowrap text-ink-faint"
+							aria-hidden="true"
+						>
+							{typed}<span
+								class="ml-0.5 inline-block h-4 w-px animate-pulse bg-ink-faint align-middle"
+							></span>
+						</span>
+					{/if}
+				</form>
+
+				<nav class="ml-auto flex items-center gap-1">
+					<a
+						href="/demo/compare"
+						class="relative grid size-10 place-items-center rounded-xl text-white/85 transition-colors hover:bg-white/10 hover:text-white"
+						aria-label={compareCount ? `Compare, ${compareCount} products` : 'Compare'}
+					>
+						<Scale size={19} />
+						{#if compareCount > 0}
+							<span
+								class="num absolute top-1 right-1 grid h-4 min-w-4 place-items-center rounded-full
+							       bg-sale px-1 text-[10px] font-semibold text-white ring-2 ring-primary"
+							>
+								{compareCount}
+							</span>
+						{/if}
+					</a>
+					<a
+						href="/demo/account/wishlist"
+						class="grid size-10 place-items-center rounded-xl text-white/85 transition-colors hover:bg-white/10 hover:text-white"
+						aria-label="Wishlist"
+					>
+						<Heart size={19} />
+					</a>
+					<a
+						href="/demo/cart"
+						class="relative grid size-10 place-items-center rounded-xl text-white/85 transition-colors hover:bg-white/10 hover:text-white"
+						aria-label={cartLabel}
+					>
+						<ShoppingBag size={19} />
+					</a>
+					<a
+						href={customer ? '/demo/account' : '/demo/login'}
+						class="flex h-10 items-center gap-2 rounded-xl px-2.5 text-white/85 transition-colors hover:bg-white/10 hover:text-white"
+					>
+						<User size={19} />
+						<span class="hidden text-sm sm:inline">{customer?.name ?? 'Sign in'}</span>
+					</a>
+				</nav>
+			</div>
 		</div>
-	</div>
+	{/if}
 
 	<!-- category bar with mega menu -->
 	{#if chrome === 'mega'}

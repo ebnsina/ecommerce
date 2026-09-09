@@ -22,6 +22,7 @@
 	import { formatTk } from '$lib/money';
 	import { reveal } from '$lib/reveal';
 	import { integrations } from './integrations';
+	import { LAYOUTS } from '$lib/layouts';
 
 	let { data } = $props();
 
@@ -621,6 +622,38 @@
 		</div>
 	</section>
 {/each}
+
+<!-- ── The demos ──────────────────────────────────────────────────────────
+     Five links, because a claim about layouts is only worth as much as the
+     five shops a reader can open and compare. Each one is the same catalogue
+     and the same brand colour wearing a different shape. -->
+<section id="demos" class="shade border-t border-border">
+	<div class="mx-auto max-w-6xl px-4 py-28 sm:px-6 sm:py-36">
+		<p class="eyebrow">Five shops, one platform</p>
+		<h2 class="display h2 mt-4 max-w-xl text-ink">Open them. They are the same shop.</h2>
+		<p class="mt-5 max-w-xl text-base text-ink-muted">
+			Same catalogue, same colours, same typeface — arranged the way each kind of shop is actually
+			arranged. Pick one and it stays picked until you pick another.
+		</p>
+
+		<ul class="mt-16 grid gap-4 sm:mt-20 sm:grid-cols-2 lg:grid-cols-3">
+			{#each Object.values(LAYOUTS) as l, i (l.key)}
+				<li use:reveal={{ delay: Math.min(i, 4) * 50 }}>
+					<a
+						href="/demo?layout={l.key}"
+						class="flat-card flex h-full flex-col gap-2 p-6 transition-colors duration-[180ms] ease-brand hover:border-primary motion-reduce:transition-none"
+					>
+						<span class="flex items-center gap-2 text-base font-medium text-ink">
+							{l.label}
+							<ArrowRight size={15} aria-hidden="true" />
+						</span>
+						<span class="text-sm leading-relaxed text-ink-muted">{l.note}</span>
+					</a>
+				</li>
+			{/each}
+		</ul>
+	</div>
+</section>
 
 <!-- ── Integrations ────────────────────────────────────────────────────────
      A moving belt of twelve nouns was a paragraph pretending to be a shelf.
