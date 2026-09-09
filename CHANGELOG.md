@@ -14,7 +14,9 @@ User-facing changes, newest first.
   turn a sentence into a search the shop already knows how to run, choosing
   from the shop's own categories and brands. With no AI key configured the page
   still answers — the sentence goes to search as typed and a couple of regexes
-  pull the budget out of it.
+  pull the budget out of it. The assistant's mark is Rare UI's Fluid Orb, a
+  WebGL sphere with drifting fluid shading, coloured from the store's own
+  primary so it follows the theme.
 
 - **The demo asks who is looking, once.** A dialog with four questions — two of
   them required — appears a moment after the shop has painted, so a visitor

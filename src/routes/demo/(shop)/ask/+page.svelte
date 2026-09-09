@@ -121,6 +121,7 @@
 	{:else}
 		<div bind:this={log} class="flex-1 space-y-8 overflow-y-auto py-8">
 			{#each thread as turn, i (i)}
+				{@const newest = i === thread.length - 1}
 				{#if turn.role === 'user'}
 					<div class="flex justify-end">
 						<p
@@ -131,7 +132,14 @@
 					</div>
 				{:else}
 					<div class="flex gap-3">
-						<Orb size={22} class="mt-0.5 shrink-0" />
+						{#if newest}
+							<Orb size={22} class="mt-0.5" />
+						{:else}
+							<!-- Older turns get a plain mark: an orb is a WebGL context, and a
+							     browser gives a page about a dozen of them. -->
+							<span class="mt-1 size-4 shrink-0 rounded-full bg-primary/25" aria-hidden="true"
+							></span>
+						{/if}
 						<div class="min-w-0 flex-1">
 							<p class="text-sm text-ink">{turn.content}</p>
 
@@ -181,7 +189,7 @@
 
 			{#if busy}
 				<div class="flex items-center gap-3">
-					<Orb size={22} class="shrink-0" />
+					<Orb size={22} />
 					<span class="text-sm text-ink-muted">Looking…</span>
 				</div>
 			{/if}
