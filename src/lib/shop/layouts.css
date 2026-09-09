@@ -80,9 +80,14 @@
  */
 /* `main` only: the header and the footer are chrome and keep their own width,
    or a narrow shop would wrap its own navigation onto two lines. */
-.shop-grocery main .max-w-7xl,
 .shop-tech main .max-w-7xl {
 	max-width: 98rem;
+}
+/* The grocer works in a shell with a rail and a basket either side of it, so
+   the middle takes whatever is left rather than centring inside it. */
+.shop-grocery main .max-w-7xl {
+	max-width: none;
+	padding-inline: 0.25rem;
 }
 .shop-books main .max-w-7xl {
 	max-width: 88rem;

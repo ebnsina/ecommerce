@@ -36,13 +36,22 @@ export type Layout = {
 	    `mega` spreads categories across a bar, `slim` folds them into a button,
 	    `centered` drops the coloured bar for a white one with the name in the
 	    middle — a shop that sells fewer things, more slowly. */
-	header: 'mega' | 'slim' | 'centered';
+	header: 'mega' | 'slim' | 'centered' | 'grocery';
 	/** A category rail down the left of the page, the way a grocer and a parts
 	    dealer both do it — the list is the navigation, not a menu you open.
 	    `icons` gives every row the category's own picture, which is how a
 	    grocery shopper finds the aisle; `plain` is a text list, which is how a
 	    parts dealer's does it. */
 	rail: false | 'icons' | 'plain';
+	/** The colour this shop wears when it is being shown as a demo. A store that
+	    has chosen this layout in Settings keeps its own theme — see the shop's
+	    layout load. Every value is an existing vetted preset from `$lib/theme`,
+	    so contrast is already known good. */
+	palette: 'blue' | 'emerald' | 'amber' | 'slate' | 'rose';
+	/** A basket that stands on the page rather than behind an icon — a grocery
+	    order is twenty small decisions, and hiding the running total behind a
+	    click is what makes people abandon one. */
+	basket: boolean;
 	/** Scoped class on the shell. Retunes radius, ground and border weight —
 	    see `layouts.css`. Colour and type are untouched. */
 	shell: string;
@@ -52,51 +61,61 @@ export const LAYOUTS: Record<LayoutKey, Layout> = {
 	marketplace: {
 		key: 'marketplace',
 		label: 'Marketplace',
-		note: 'Everything for everyone. A category bar, big banners, rails of deals on white.',
+		note: 'Blue on white. Everything for everyone: a category bar, big banners, rails of deals.',
 		card: 'square',
 		cardMin: '12rem',
 		header: 'mega',
 		rail: false,
+		palette: 'blue',
+		basket: false,
 		shell: 'shop-marketplace'
 	},
 	grocery: {
 		key: 'grocery',
 		label: 'Grocery',
-		note: 'Many small things, bought quickly. A standing category rail, small square corners, a plus on every card.',
+		note: 'Green, and worked like an app: aisles down one side, the basket open down the other, a plus on every card.',
 		card: 'dense',
 		cardMin: '9.5rem',
-		header: 'slim',
+		header: 'grocery',
 		rail: 'icons',
+		palette: 'emerald',
+		basket: true,
 		shell: 'shop-grocery'
 	},
 	books: {
 		key: 'books',
 		label: 'Books',
-		note: 'Paper-coloured ground, portrait covers six to a row, the author under the title.',
+		note: 'Amber on paper. Portrait covers, five to a row, the author under the title.',
 		card: 'portrait',
 		cardMin: '13rem',
 		header: 'slim',
 		rail: false,
+		palette: 'amber',
+		basket: false,
 		shell: 'shop-books'
 	},
 	tech: {
 		key: 'tech',
 		label: 'Electronics',
-		note: 'Square corners on a grey ground. A list, not a grid: brand, reviews and stock beside the price.',
+		note: 'Graphite, square corners, grey ground. A list, not a grid: brand, reviews and stock beside the price.',
 		card: 'row',
 		cardMin: '100%',
 		header: 'mega',
 		rail: 'plain',
+		palette: 'slate',
+		basket: false,
 		shell: 'shop-tech'
 	},
 	editorial: {
 		key: 'editorial',
 		label: 'Lifestyle',
-		note: 'No coloured bar and no visible edges. The name centred, the categories spaced out, everything larger.',
+		note: 'Rose, no coloured bar, no visible edges. The name centred, the categories spaced out, everything larger.',
 		card: 'square',
 		cardMin: '17rem',
 		header: 'centered',
 		rail: false,
+		palette: 'rose',
+		basket: false,
 		shell: 'shop-editorial'
 	}
 };

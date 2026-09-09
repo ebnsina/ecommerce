@@ -38,7 +38,12 @@
 		{/if}
 
 		{#if rest.length}
-			<div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+			<!-- Fills whatever width is left after a rail and a basket, rather than
+			     insisting on four and truncating every title to fit. -->
+			<div
+				class="mt-4 grid gap-3"
+				style="grid-template-columns:repeat(auto-fill,minmax(min(15rem,100%),1fr))"
+			>
 				{#each rest as p (p.id)}
 					<ProductCard product={p} size="compact" />
 				{/each}

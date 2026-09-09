@@ -98,7 +98,7 @@
 			body: 'Every page is stacked from blocks — banners, category tiles, product rails, countdowns, rich text — arranged in the admin and previewed before anyone sees them. Pick the shape that suits what you sell, too: a grocer gets tight rows of many small things, a bookshop gets tall covers, an electronics shop gets a list with the price beside each one. Menus, the blog and the store settings are the same: data, not code.',
 			points: [
 				'A block builder with live preview',
-				'Five shop layouts, one for each kind of shop',
+				'Five shop layouts, each with its own shape and colour',
 				'Menus, settings and theme'
 			]
 		},

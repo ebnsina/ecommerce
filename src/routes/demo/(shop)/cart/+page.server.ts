@@ -51,8 +51,15 @@ export const actions: Actions = {
 		const cart = await findCart(event);
 		if (!cart) return fail(400, { error: 'Your cart has expired.' });
 
+		/* The stepper on a product card posts here from wherever the shopper is
+		   standing, so honour a return path the way `add` does — without it, a
+		   shopper with JavaScript off is dropped onto the cart page every time
+		   they change their mind about how much rice they want. */
+		const back = String(form.get('redirectTo') ?? '');
+
 		if (qty <= 0) {
 			await db.delete(cartItems).where(and(eq(cartItems.id, id), eq(cartItems.cartId, cart.id)));
+			if (back) redirect(303, back);
 			return { ok: true };
 		}
 
@@ -63,6 +70,7 @@ export const actions: Actions = {
 		if (qty > line.stock) return fail(400, { error: `Only ${line.stock} of ${line.title} left.` });
 
 		await db.update(cartItems).set({ qty }).where(eq(cartItems.id, id));
+		if (back) redirect(303, back);
 		return { ok: true };
 	},
 

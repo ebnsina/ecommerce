@@ -11,7 +11,17 @@
 		children: { id: string; name: string; slug: string }[];
 	};
 
-	let { nav, style = 'plain' }: { nav: Cat[]; style?: 'icons' | 'plain' } = $props();
+	let {
+		nav,
+		style = 'plain',
+		scrolls = false
+	}: {
+		nav: Cat[];
+		style?: 'icons' | 'plain';
+		/** True inside the app shell, where this column scrolls on its own
+		    instead of travelling with the page. */
+		scrolls?: boolean;
+	} = $props();
 
 	const here = $derived(page.url.pathname);
 	/* Which row's children are showing. A grocer's rail opens the aisle in
@@ -21,16 +31,18 @@
 
 <!-- Hidden below large, where the header's own menu already carries these —
      a rail on a phone is just a list in the way of the products. -->
-<nav class="hidden w-56 shrink-0 py-4 lg:block" aria-label="Categories">
-	<div
-		class="sticky top-24 {style === 'icons'
-			? 'overflow-hidden rounded-2xl border border-border bg-surface'
-			: ''}"
-	>
+<nav
+	class="hidden w-52 shrink-0 py-3 lg:block {scrolls
+		? 'overflow-y-auto'
+		: 'sticky top-24 self-start'}
+	       {style === 'icons' ? 'border-r border-border bg-surface' : ''}"
+	aria-label="Categories"
+>
+	<div>
 		<p
 			class="px-3 pb-2 text-xs font-semibold tracking-wide text-ink-muted uppercase {style ===
 			'icons'
-				? 'border-b border-border pt-3'
+				? 'pt-1'
 				: ''}"
 		>
 			Categories

@@ -6,6 +6,17 @@ User-facing changes, newest first.
 
 ### Added
 
+- **The grocery layout is an app screen.** The window is the height: aisles
+  pinned down the left, the basket standing open down the right with a stepper
+  on every line and the running total under it, and only the middle scrolling.
+  Every card carries a plus that becomes a quantity once the thing is in the
+  basket, so nobody leaves the shelf to change their mind about how much rice
+  they want — and the header says where it is going and when it will arrive.
+- **Each demo wears its own colour.** Green for the grocer, amber for the
+  bookshop, graphite for the parts dealer, rose for the lifestyle shop, blue
+  for the marketplace — all of them presets already checked for contrast. A
+  real store that picks a layout in Settings keeps the theme it chose: the
+  layout decides shape, the owner decides colour.
 - **The cart and the wishlist show their counts.** Only the compare icon had a
   badge, so the one place a shopper could not tell whether their last tap
   worked was the cart.

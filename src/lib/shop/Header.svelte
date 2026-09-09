@@ -1,6 +1,17 @@
 <script lang="ts">
 	import { SHOP } from '$lib/paths';
-	import { Search, Heart, ShoppingBag, User, Menu, X, ChevronDown, Scale } from '@lucide/svelte';
+	import {
+		Search,
+		Heart,
+		ShoppingBag,
+		User,
+		Menu,
+		X,
+		ChevronDown,
+		Scale,
+		MapPin
+	} from '@lucide/svelte';
+	import { formatTk } from '$lib/money';
 	import { slide, fly } from 'svelte/transition';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
@@ -23,19 +34,25 @@
 		menu = [],
 		store,
 		chrome = 'mega',
+		categoriesButton = true,
 		searchHints = [],
 		promo,
 		customer,
 		cartCount = 0,
+		cartSubtotal = 0,
 		compareCount = 0,
 		wishlistCount = 0
 	}: {
 		nav: Cat[];
 		menu?: MenuNode[];
 		/** `mega` spreads the categories across a bar; `slim` folds them into one
-		    button and lets search lead, the way a grocer or a bookshop does;
-		    `centered` drops the coloured bar altogether. */
-		chrome?: 'mega' | 'slim' | 'centered';
+		    button and lets search lead, the way a bookshop does; `grocery` adds
+		    the delivery slot and a basket carrying its running total; `centered`
+		    drops the coloured bar altogether. */
+		chrome?: 'mega' | 'slim' | 'centered' | 'grocery';
+		/** Set false where a category rail is already on screen — the same list
+		    twice, one of them behind a click, is worse than either alone. */
+		categoriesButton?: boolean;
 		searchHints?: string[];
 		store: {
 			name: string;
@@ -51,6 +68,8 @@
 		};
 		customer: { name: string | null } | null;
 		cartCount?: number;
+		/** Poisha. Shown in the basket button on the grocery chrome. */
+		cartSubtotal?: number;
 		compareCount?: number;
 		wishlistCount?: number;
 	} = $props();
@@ -242,7 +261,23 @@
 					{/if}
 				</a>
 
-				{#if chrome === 'slim'}
+				{#if chrome === 'grocery'}
+					<!-- Where it goes and when it arrives, said before anything is put in
+					     the basket. A grocery order is planned around the slot, so a shop
+					     that makes you find it has already lost the argument. -->
+					<a
+						href="/demo/pages/delivery"
+						class="hidden h-11 shrink-0 items-center gap-2 rounded-xl px-3 text-left text-white/85 transition-colors hover:bg-white/10 hover:text-white lg:flex"
+					>
+						<MapPin size={17} aria-hidden="true" />
+						<span class="leading-tight">
+							<span class="block text-[0.6875rem] opacity-80">Deliver to</span>
+							<span class="block text-xs font-medium">Dhaka · today, 6–9 PM</span>
+						</span>
+					</a>
+				{/if}
+
+				{#if categoriesButton && (chrome === 'slim' || chrome === 'grocery')}
 					<!-- One button instead of a bar. The panel lists exactly what the bar
 				     would have, so nothing becomes unreachable. -->
 					<div class="relative hidden lg:block">
@@ -326,13 +361,27 @@
 					>
 						<Heart size={19} />
 					</a>
-					<a
-						href="/demo/cart"
-						class="relative grid size-10 place-items-center rounded-xl text-white/85 transition-colors hover:bg-white/10 hover:text-white"
-						aria-label={cartLabel}
-					>
-						<ShoppingBag size={19} />
-					</a>
+					{#if chrome === 'grocery'}
+						<!-- The running total, out loud. Twenty small decisions add up, and
+						     the shopper is entitled to watch them adding up. -->
+						<a
+							href="/demo/cart"
+							class="flex h-10 items-center gap-2 rounded-xl bg-white/15 px-3 text-sm font-medium text-white transition-colors hover:bg-white/25"
+							aria-label={cartLabel}
+						>
+							<ShoppingBag size={18} />
+							<span class="num">{formatTk(cartSubtotal)}</span>
+						</a>
+					{:else}
+						<a
+							href="/demo/cart"
+							class="relative grid size-10 place-items-center rounded-xl text-white/85 transition-colors hover:bg-white/10 hover:text-white"
+							aria-label={cartLabel}
+						>
+							<ShoppingBag size={19} />
+							{@render badge(cartCount, true)}
+						</a>
+					{/if}
 					<a
 						href={customer ? '/demo/account' : '/demo/login'}
 						class="flex h-10 items-center gap-2 rounded-xl px-2.5 text-white/85 transition-colors hover:bg-white/10 hover:text-white"

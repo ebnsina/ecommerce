@@ -7,6 +7,7 @@
 	import Rating from './Rating.svelte';
 	import Img from './Img.svelte';
 	import Button from '$lib/ui/Button.svelte';
+	import Stepper from './Stepper.svelte';
 	import { layoutOf, type CardShape } from '$lib/layouts';
 
 	export type CardProduct = {
@@ -288,8 +289,11 @@
 				{/if}
 
 				{#if shape === 'dense'}
-					<div class="mt-auto flex items-end justify-between gap-2 pt-2">
-						{@render quickAdd(true)}
+					<!-- A plus until it is in the basket, then the quantity with a minus
+					     beside it — the shopper never leaves the shelf to change their
+					     mind about how much rice they want. -->
+					<div class="mt-auto flex items-end justify-end pt-2">
+						<Stepper productId={product.id} title={product.title} {soldOut} />
 					</div>
 				{:else if shape !== 'compact'}
 					<!-- mt-auto, not a margin: "Only 2 left" appears on some cards and not
