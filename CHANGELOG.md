@@ -6,6 +6,10 @@ User-facing changes, newest first.
 
 ### Added
 
+- **The grocer's rail is a real one.** A white panel with each category's own
+  picture beside its name, the aisle opening in place, and the current row
+  marked by a bar as well as a tint. The parts dealer keeps a plain text list,
+  which is what a parts dealer has.
 - **Each layout now owns the whole page, not just the card.** How wide the
   shop is, how many products go across a row inside a page block, whether the
   categories stand in a rail — all of it follows the layout. The grocer and

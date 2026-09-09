@@ -45,7 +45,7 @@
 		     grocer and a parts dealer both navigate this way, because their
 		     shoppers arrive knowing the aisle. -->
 		<div class="mx-auto flex w-full max-w-7xl flex-1 gap-6 px-4">
-			<CategoryRail nav={data.nav} />
+			<CategoryRail nav={data.nav} style={shape.rail || 'plain'} />
 			<main class="min-w-0 flex-1">{@render children()}</main>
 		</div>
 	{:else}

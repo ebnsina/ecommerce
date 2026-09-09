@@ -34,8 +34,11 @@ export type Layout = {
 	    middle — a shop that sells fewer things, more slowly. */
 	header: 'mega' | 'slim' | 'centered';
 	/** A category rail down the left of the page, the way a grocer and a parts
-	    dealer both do it — the list is the navigation, not a menu you open. */
-	rail: boolean;
+	    dealer both do it — the list is the navigation, not a menu you open.
+	    `icons` gives every row the category's own picture, which is how a
+	    grocery shopper finds the aisle; `plain` is a text list, which is how a
+	    parts dealer's does it. */
+	rail: false | 'icons' | 'plain';
 	/** Scoped class on the shell. Retunes radius, ground and border weight —
 	    see `layouts.css`. Colour and type are untouched. */
 	shell: string;
@@ -59,7 +62,7 @@ export const LAYOUTS: Record<LayoutKey, Layout> = {
 		card: 'dense',
 		grid: 'grid-cols-2 sm:grid-cols-4 lg:grid-cols-6',
 		header: 'slim',
-		rail: true,
+		rail: 'icons',
 		shell: 'shop-grocery'
 	},
 	books: {
@@ -67,7 +70,7 @@ export const LAYOUTS: Record<LayoutKey, Layout> = {
 		label: 'Books',
 		note: 'Paper-coloured ground, portrait covers six to a row, the author under the title.',
 		card: 'portrait',
-		grid: 'grid-cols-2 sm:grid-cols-4 lg:grid-cols-6',
+		grid: 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-5',
 		header: 'slim',
 		rail: false,
 		shell: 'shop-books'
@@ -79,7 +82,7 @@ export const LAYOUTS: Record<LayoutKey, Layout> = {
 		card: 'row',
 		grid: 'grid-cols-1',
 		header: 'mega',
-		rail: true,
+		rail: 'plain',
 		shell: 'shop-tech'
 	},
 	editorial: {
@@ -113,7 +116,7 @@ export const layoutOf = (v: string | null | undefined): Layout =>
 export function sectionGrid(key: string | null | undefined, columns: number): string {
 	const layout = layoutOf(key);
 	if (layout.card === 'row') return 'lg:grid-cols-2';
-	if (layout.card === 'portrait') return 'sm:grid-cols-4 lg:grid-cols-7';
+	if (layout.card === 'portrait') return 'sm:grid-cols-3 lg:grid-cols-5';
 	if (layout.card === 'dense') return 'sm:grid-cols-4 lg:grid-cols-6';
 	if (layout.key === 'editorial') return 'lg:grid-cols-3';
 	return columns === 4 ? 'sm:grid-cols-3 lg:grid-cols-4' : 'sm:grid-cols-3 lg:grid-cols-5';
