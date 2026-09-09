@@ -26,23 +26,6 @@
  * and only under something that is pretending to be a window.
  */
 
-/* Two faces, landing only. Syne carries the headlines — it has real character
-   at 700 and gets stranger the larger it is set, which is what a headline
-   wants and a paragraph does not. Poppins carries everything else.
-
-   Poppins has no variable build on Fontsource, so it comes as three static
-   weights rather than an axis: 400 for prose, 500 for labels and buttons, 600
-   for the few places a heading is set in it. Anything asking for a weight not
-   in that list gets synthesised, so nothing here does.
-
-   Both are imported here rather than in layout.css, so the admin and the
-   storefront never pay for a font they do not set. Numbers stay Geist Mono
-   everywhere, per the house rule. */
-@import '@fontsource-variable/syne/wght.css';
-@import '@fontsource/poppins/400.css';
-@import '@fontsource/poppins/500.css';
-@import '@fontsource/poppins/600.css';
-
 .marketing {
 	/* The brand ramp is the product's own blue, unchanged — the landing page and
 	   the admin are one company, and a second palette here would say otherwise.
@@ -83,13 +66,6 @@
 	   without needing a border. */
 	background: #fcfcfd;
 	color: var(--color-ink);
-
-	/* The body face for this surface only. Set as the token and applied here,
-	   so every child inherits Poppins while the rest of the app keeps Mona
-	   Sans — and the Bengali fallback is kept, because a shop name in Bangla
-	   can appear anywhere. */
-	--font-sans: 'Poppins', 'Noto Sans Bengali Variable', system-ui, sans-serif;
-	font-family: var(--font-sans);
 }
 
 /* ── Type ─────────────────────────────────────────────────────────────────
@@ -97,17 +73,14 @@
    look like a template. The variation comes from size and measure instead. */
 
 .marketing .display {
-	font-family: 'Syne Variable', var(--font-sans);
 	font-weight: 700;
 	line-height: 1.04;
 	letter-spacing: -0.03em;
 	text-wrap: balance;
 }
 
-/* The wordmark is a headline the size of a label — same face, so the bar and
-   the hero read as one voice. */
+/* The wordmark is a headline the size of a label. */
 .marketing .wordmark {
-	font-family: 'Syne Variable', var(--font-sans);
 	font-weight: 700;
 	letter-spacing: -0.02em;
 }

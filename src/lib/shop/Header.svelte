@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { SHOP } from '$lib/paths';
 	import { Search, Heart, ShoppingBag, User, Menu, X, ChevronDown, Scale } from '@lucide/svelte';
+	import Orb from './Orb.svelte';
 	import { slide, fly } from 'svelte/transition';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
@@ -192,6 +193,15 @@
 						</span>
 					{/if}
 				</a>
+				<!-- Describe it instead of naming it. Beside the search box, because
+				     that is where someone stands when the search box has failed them. -->
+				<a
+					href="/demo/ask"
+					class="hidden h-10 items-center gap-1.5 rounded-xl px-2.5 text-white/85 transition-colors hover:bg-white/10 hover:text-white sm:flex"
+				>
+					<Orb size={17} />
+					<span class="text-sm">Ask</span>
+				</a>
 				<a
 					href="/demo/account/wishlist"
 					class="grid size-10 place-items-center rounded-xl text-white/85 transition-colors hover:bg-white/10 hover:text-white"
@@ -271,6 +281,15 @@
 				/>
 			</form>
 			<ul class="px-2 pb-3">
+				<li>
+					<a
+						href="/demo/ask"
+						class="flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium text-primary"
+					>
+						<Orb size={16} />
+						Tell us what you need
+					</a>
+				</li>
 				{#each nav as cat (cat.id)}
 					<li>
 						<a

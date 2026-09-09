@@ -142,10 +142,10 @@ Specifically:
   (~1.3:1); an invisible border is worse than none.
 - **Radius scales with size**: `rounded-lg` for small controls, `rounded-xl` for
   standard, `rounded-2xl` for large, `rounded-3xl` for cards and panels.
-- **Fonts**: Mona Sans for text, Geist Mono for every number — prices, counts,
-  quantities, order numbers — with `tabular-nums`. The marketing pages set their
-  own faces, imported inside `marketing.css` so the admin and the storefront
-  never download them.
+- **Fonts**: Poppins for text, Geist Mono for every number — prices, counts,
+  quantities, order numbers — with `tabular-nums`. One family across the whole
+  app; Poppins has no variable build, so only 400, 500 and 600 are loaded and
+  nothing should ask for a weight outside them.
 - **Motion is professional, not playful**: 180ms for state, 280ms for movement,
   `cubic-bezier(.2,.7,.3,1)`, using `svelte/transition`.
 

@@ -197,7 +197,7 @@
 					name="logoMode"
 					bind:value={logoMode}
 					options={[
-						{ value: 'text', label: 'Wordmark', hint: 'Your store name, set in Mona Sans' },
+						{ value: 'text', label: 'Wordmark', hint: 'Your store name, set in the shop typeface' },
 						{ value: 'image', label: 'Uploaded image', hint: 'A logo file' }
 					]}
 				/>

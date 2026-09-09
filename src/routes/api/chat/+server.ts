@@ -18,13 +18,26 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		);
 
 	const body = await request.json().catch(() => null);
-	const messages = Array.isArray(body?.messages) ? body.messages : null;
-	if (!messages?.length) return json({ error: 'No messages supplied.' }, { status: 400 });
+	const sent = Array.isArray(body?.messages) ? body.messages : null;
+	if (!sent?.length) return json({ error: 'No messages supplied.' }, { status: 400 });
+
+	/* Callers send the plain {role, content} that every chat API takes; a
+	   UIMessage carries an id and `parts`. Converted here so the inbox does not
+	   have to know the difference. */
+	const messages = sent.map((m: { role?: string; content?: string }, i: number) => ({
+		id: `m${i}`,
+		role: m.role === 'assistant' ? ('assistant' as const) : ('user' as const),
+		parts: [{ type: 'text' as const, content: String(m.content ?? '') }]
+	}));
 
 	try {
 		const stream = chat({
 			adapter: textAdapter(),
-			messages: [{ role: 'system', content: await systemPrompt() }, ...messages]
+			/* Its own option, not a message. Passed as a message with role
+			   'system' it is dropped, and the assistant answers with no idea
+			   which shop it works for. */
+			systemPrompts: [await systemPrompt()],
+			messages
 		});
 		return toServerSentEventsResponse(stream);
 	} catch (e) {

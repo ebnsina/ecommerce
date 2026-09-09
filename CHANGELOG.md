@@ -6,6 +6,16 @@ User-facing changes, newest first.
 
 ### Added
 
+- **Ask for what you need.** A shopper describes it the way they would to a
+  shopkeeper — "a gift for my sister under 2000 taka" — and gets real products
+  with Add to cart on them. It is a conversation: follow-up questions narrow
+  the same thread, and the whole basket-to-checkout path is the shop's own.
+  The model never sees the catalogue and never writes a price; all it does is
+  turn a sentence into a search the shop already knows how to run, choosing
+  from the shop's own categories and brands. With no AI key configured the page
+  still answers — the sentence goes to search as typed and a couple of regexes
+  pull the budget out of it.
+
 - **The demo asks who is looking, once.** A dialog with four questions — two of
   them required — appears a moment after the shop has painted, so a visitor
   sees there is a real thing behind it before being asked for anything. Either
@@ -52,6 +62,14 @@ User-facing changes, newest first.
 
 ### Fixed
 
+- **The AI has never seen its own instructions.** `chat()` takes the system
+  prompt as its own option; both call sites passed it as a message with role
+  `system`, where it was silently dropped. The assistant was answering as a
+  general chatbot with no idea which shop it worked for — ask it about a saree
+  and it wrote an essay on draping. That is why the inbox reply suggestion and
+  the auto-reply gates have quietly done nothing. The inbox endpoint was also
+  sending `{role, content}` where a UIMessage carries `parts`; it converts now.
+
 - **Buy now, and adding to a wishlist as a guest, both led to a 404.** When the
   shop moved to `/demo`, two redirects in `cart-actions.ts` kept pointing at the
   root — so "Buy now" on every product page went to `/checkout`, and a guest
@@ -87,6 +105,9 @@ User-facing changes, newest first.
   a colleague has picked up.
 
 ### Changed
+
+- **One typeface.** Poppins everywhere — the shop, the admin and the landing
+  page — with Geist Mono still on every number. Mona Sans and Syne are gone.
 
 - **The product is called Dukkan.** The landing page carries the new name
   throughout, with headlines set in Syne and body text in Poppins — both loaded

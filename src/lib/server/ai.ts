@@ -128,9 +128,13 @@ export async function generateJson<T>(system: string, user: string): Promise<T |
 	try {
 		const stream = chat({
 			adapter: textAdapter(),
+			/* The system prompt is its own option, not a message with role
+			   'system'. Passed as a message it is silently dropped: the model
+			   never sees the rules, answers the user's words as a general
+			   chatbot, and the JSON we then look for is not there. */
+			systemPrompts: [system],
 			// A UIMessage carries `parts`, not a bare `content` string.
 			messages: [
-				{ id: 'sys', role: 'system' as const, parts: [{ type: 'text' as const, content: system }] },
 				{ id: 'usr', role: 'user' as const, parts: [{ type: 'text' as const, content: user }] }
 			]
 		});

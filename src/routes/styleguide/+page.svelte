@@ -12,7 +12,7 @@
 <main class="mx-auto max-w-4xl px-6 py-16" in:fade={fadeIn()}>
 	<h1 class="text-3xl font-semibold tracking-tight text-ink">Design tokens</h1>
 	<p class="mt-2 text-sm text-ink-muted">
-		Mona Sans for text, Geist Mono for numbers. rounded-xl controls, rounded-3xl cards, borders not
+		Poppins for text, Geist Mono for numbers. rounded-xl controls, rounded-3xl cards, borders not
 		shadows.
 	</p>
 
