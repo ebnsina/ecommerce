@@ -78,27 +78,49 @@
  * row is a warehouse and three is a window. Written as a descendant rule so it
  * outranks the utility without touching a single page.
  */
-/* `main` only: the header and the footer are chrome and keep their own width,
-   or a narrow shop would wrap its own navigation onto two lines. */
-.shop-tech main .max-w-7xl {
+/* How wide a page is allowed to be, per layout.
+   Two axes, not one. `main` only, because the header and the footer are chrome
+   and keep their own width — a narrow shop would otherwise wrap its own
+   navigation onto two lines. And `main.wide` only for the widening layouts,
+   because "wide" belongs to a shelf: a grocer and a parts dealer scan long
+   lists, but their checkout form is read like anyone else's and was running
+   1568px of single-column form before this. */
+.shop-tech main.wide .max-w-7xl {
 	max-width: 98rem;
 }
-/* The grocer works in a shell with a rail and a basket either side of it, so
-   the middle takes whatever is left rather than centring inside it. */
-.shop-grocery main .max-w-7xl {
-	max-width: none;
-	padding-inline: 0.25rem;
-}
-.shop-books main .max-w-7xl {
+.shop-books main.wide .max-w-7xl {
 	max-width: 88rem;
 }
+/* The lifestyle shop is the mirror image: narrow everywhere, because three
+   things in a row is a window and six is a warehouse — except on the pages
+   that are a list or a comparison, which need the room to stay usable. */
 .shop-editorial main .max-w-7xl {
 	max-width: 64rem;
+}
+.shop-editorial main.wide .max-w-7xl {
+	max-width: 80rem;
+}
+/* The footer follows the content width; the header deliberately does not. Nine
+   spaced-out category names do not fit in 64rem, and a navigation that wraps
+   onto two lines is a worse mismatch than a wider bar. */
+.shop-editorial footer .max-w-7xl {
+	max-width: 64rem;
+}
+
+/* Only inside the app shell — where a rail and a basket already flank the
+   middle — does a page stop centring and take what is left. */
+.shop-shell main .max-w-7xl {
+	max-width: none;
+	padding-inline: 0;
+}
+.shop-shell header .max-w-7xl {
+	max-width: none;
 }
 
 /* The lifestyle shop breathes: every band of the page gets more air above and
    below it than the others do. */
-.shop-editorial section,
-.shop-editorial .py-10 {
+/* A band of the page, not every panel that happens to be a <section>: as a
+   descendant rule this was padding the order summary and the policy cards too. */
+.shop-editorial main > section {
 	padding-block: 3.5rem;
 }

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { fade } from 'svelte/transition';
-	import { Smartphone, ArrowLeft, ShieldCheck } from '@lucide/svelte';
+	import { ArrowLeft, ShieldCheck } from '@lucide/svelte';
 	import { formatPhone } from '$lib/phone';
 	import { fadeIn } from '$lib/motion';
 	import Button from '$lib/ui/Button.svelte';
@@ -22,11 +22,8 @@
 <div class="mx-auto max-w-md px-4 py-16">
 	<div class="rounded-3xl border border-border bg-surface p-8" in:fade={fadeIn()}>
 		{#if step === 'phone'}
-			<span class="grid size-11 place-items-center rounded-2xl bg-primary-soft text-primary">
-				<Smartphone size={20} />
-			</span>
-			<h1 class="mt-4 text-xl font-semibold tracking-tight text-ink">Sign in</h1>
-			<p class="mt-1 text-sm text-ink-muted">
+			<h1 class="text-center text-xl font-semibold tracking-tight text-ink">Sign in</h1>
+			<p class="mt-1.5 text-center text-sm text-ink-muted">
 				{#if data.otpEnabled}
 					We will send a code to your mobile. No password to remember.
 				{:else}
@@ -56,7 +53,6 @@
 					autocomplete="tel"
 					numeric
 					required
-					hint="Bangladeshi mobile numbers only."
 				/>
 
 				{#if !data.otpEnabled}

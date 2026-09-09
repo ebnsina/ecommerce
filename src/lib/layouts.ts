@@ -87,7 +87,7 @@ export const LAYOUTS: Record<LayoutKey, Layout> = {
 		label: 'Books',
 		note: 'Amber on paper. Portrait covers, five to a row, the author under the title.',
 		card: 'portrait',
-		cardMin: '13rem',
+		cardMin: '14rem',
 		header: 'slim',
 		rail: false,
 		palette: 'amber',
@@ -140,7 +140,10 @@ export function sectionGrid(key: string | null | undefined, columns: number): st
 	const layout = layoutOf(key);
 	if (layout.card === 'row') return 'lg:grid-cols-2';
 	if (layout.card === 'portrait') return 'sm:grid-cols-3 lg:grid-cols-5';
-	if (layout.card === 'dense') return 'sm:grid-cols-4 lg:grid-cols-6';
+	// Dense cards live in the app shell, where a rail and a basket have already
+	// taken 500px that a `lg:` viewport query knows nothing about — six across
+	// left them at 108px with the stepper hanging out of the card.
+	if (layout.card === 'dense') return 'sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5';
 	if (layout.key === 'editorial') return 'lg:grid-cols-3';
 	return columns === 4 ? 'sm:grid-cols-3 lg:grid-cols-4' : 'sm:grid-cols-3 lg:grid-cols-5';
 }

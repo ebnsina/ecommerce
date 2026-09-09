@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
 	import { fade } from 'svelte/transition';
-	import { HeartOff, Heart } from '@lucide/svelte';
+	import { HeartOff } from '@lucide/svelte';
+	import { page } from '$app/state';
+	import { cardColumns } from '$lib/layouts';
 	import { fadeIn } from '$lib/motion';
 	import ProductCard from '$lib/shop/ProductCard.svelte';
 	import Button from '$lib/ui/Button.svelte';
@@ -14,20 +15,14 @@
 <h1 class="text-2xl font-semibold tracking-tight text-ink">Wishlist</h1>
 
 {#if data.items.length}
-	<div class="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-3">
+	<div class="mt-6 grid gap-4" style={cardColumns(page.data.layout as string)}>
 		{#each data.items as p (p.id)}
-			<div class="relative" transition:fade={fadeIn()}>
+			<!-- The card's own heart is the remove button here: it posts to the same
+			     action with this page as its return path, and putting a second one
+			     on top of it left two controls stacked in the same corner, the
+			     lower one unclickable. -->
+			<div transition:fade={fadeIn()}>
 				<ProductCard product={p} />
-				<form method="POST" action="?/wishlist" use:enhance class="absolute top-4 right-4">
-					<input type="hidden" name="productId" value={p.id} />
-					<input type="hidden" name="redirectTo" value="/demo/account/wishlist" />
-					<button
-						class="grid size-8 place-items-center rounded-lg bg-surface/80 text-sale backdrop-blur-sm transition-colors"
-						aria-label="Remove {p.title} from wishlist"
-					>
-						<Heart size={16} class="fill-sale" />
-					</button>
-				</form>
 			</div>
 		{/each}
 	</div>

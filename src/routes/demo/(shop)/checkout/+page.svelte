@@ -159,8 +159,10 @@
 	<h1 class="text-2xl font-semibold tracking-tight text-ink">Checkout</h1>
 
 	<!-- Stepper. The connector fills as you advance, so progress is legible
-	     without reading the labels. -->
-	<ol class="mt-6 flex items-center gap-2">
+	     without reading the labels. It is as wide as the form it describes —
+	     running it under the order summary as well made the last step look like
+	     a heading for the totals. -->
+	<ol class="mt-6 flex items-center gap-2 lg:max-w-[calc(100%-23.5rem)]">
 		{#each steps as s, i (s.key)}
 			<li class="flex flex-1 items-center gap-2 last:flex-none">
 				<button
@@ -437,7 +439,9 @@
 			{/if}
 		</form>
 
-		<aside class="h-fit rounded-3xl border border-border bg-surface p-5 lg:sticky lg:top-28">
+		<aside
+			class="h-fit rounded-3xl border border-border bg-surface p-5 lg:sticky lg:top-[calc(var(--header-h,7rem)+1rem)]"
+		>
 			<h2 class="text-sm font-medium text-ink">Order summary</h2>
 
 			<ul class="mt-4 flex flex-col gap-3">

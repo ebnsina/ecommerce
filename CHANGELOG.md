@@ -6,6 +6,18 @@ User-facing changes, newest first.
 
 ### Added
 
+- **A layout audit, and what it found.** Every storefront page checked against
+  every layout: the category bar no longer stands next to the category rail
+  (the same list twice, one of them always the wrong one to use); the wishlist
+  no longer stacks two hearts in the same corner, and it follows the layout's
+  grid like every other product list; anything that sits under the sticky
+  header now reads the header's measured height instead of guessing at it; the
+  wide layouts are wide on a shelf and ordinary on a form; a bookshop's product
+  photograph is no longer a square that crops the cover; and the mega bar has
+  an edge again on a white page.
+- **Sign in is plainer.** No phone icon over a page that is about a phone
+  number, the heading and its line centred, and the hint under the field gone —
+  the placeholder already shows the shape of the number.
 - **The grocery layout is an app screen.** The window is the height: aisles
   pinned down the left, the basket standing open down the right with a stepper
   on every line and the running total under it, and only the middle scrolling.

@@ -29,6 +29,11 @@
 	/* The basket stands wherever there is shopping to do — but not beside the
 	   cart page, which is the same list twice. */
 	const showBasket = $derived(shape.basket && onShelf);
+
+	/* Pages that are a list or a comparison want every pixel; a form or an
+	   article does not. `layouts.css` reads this to decide how wide the page's
+	   container may grow. */
+	const wide = $derived(onShelf || path.startsWith(`${SHOP}/compare`));
 	/* Window-height, three columns, no page scroll. */
 	const appShell = $derived(showBasket);
 </script>
@@ -49,7 +54,7 @@
      footer and all. -->
 <div
 	class="flex flex-col bg-page {shape.shell} {appShell
-		? 'h-screen overflow-hidden'
+		? 'shop-shell h-dvh overflow-hidden'
 		: 'min-h-screen'}"
 >
 	<Header
@@ -61,7 +66,6 @@
 		promo={data.settings.promo}
 		customer={data.customer}
 		cartCount={data.cartCount}
-		cartSubtotal={data.cartSubtotal}
 		compareCount={data.compareIds.length}
 		wishlistCount={data.wishlistIds.length}
 		searchHints={data.settings.search?.hints ?? []}
@@ -74,7 +78,7 @@
 			{#if showRail}
 				<CategoryRail nav={data.nav} style={shape.rail || 'plain'} scrolls={appShell} />
 			{/if}
-			<main class="min-w-0 flex-1 {appShell ? 'overflow-y-auto px-3' : ''}">
+			<main class="min-w-0 flex-1 {wide ? 'wide' : ''} {appShell ? 'overflow-y-auto px-3' : ''}">
 				{@render children()}
 			</main>
 			{#if showBasket}
@@ -82,7 +86,7 @@
 			{/if}
 		</div>
 	{:else}
-		<main class="flex-1">{@render children()}</main>
+		<main class="flex-1 {wide ? 'wide' : ''}">{@render children()}</main>
 	{/if}
 
 	<AskButton />

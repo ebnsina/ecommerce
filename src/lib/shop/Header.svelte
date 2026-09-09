@@ -11,7 +11,6 @@
 		Scale,
 		MapPin
 	} from '@lucide/svelte';
-	import { formatTk } from '$lib/money';
 	import { slide, fly } from 'svelte/transition';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
@@ -39,7 +38,6 @@
 		promo,
 		customer,
 		cartCount = 0,
-		cartSubtotal = 0,
 		compareCount = 0,
 		wishlistCount = 0
 	}: {
@@ -50,8 +48,9 @@
 		    the delivery slot and a basket carrying its running total; `centered`
 		    drops the coloured bar altogether. */
 		chrome?: 'mega' | 'slim' | 'centered' | 'grocery';
-		/** Set false where a category rail is already on screen — the same list
-		    twice, one of them behind a click, is worse than either alone. */
+		/** Set false where a category rail is already on screen. The categories
+		    twice over — once standing at the left, once across the top — is the
+		    same list twice, and one of them is always the wrong one to use. */
 		categoriesButton?: boolean;
 		searchHints?: string[];
 		store: {
@@ -68,13 +67,21 @@
 		};
 		customer: { name: string | null } | null;
 		cartCount?: number;
-		/** Poisha. Shown in the basket button on the grocery chrome. */
-		cartSubtotal?: number;
 		compareCount?: number;
 		wishlistCount?: number;
 	} = $props();
 
 	let q = $state(page.url.searchParams.get('q') ?? '');
+
+	/* The header is sticky and its height is not a constant: a promo bar the
+	   owner can switch on, a category bar only some layouts carry, and a
+	   dismiss button that changes it at runtime. Anything that has to sit below
+	   it was using a hardcoded offset and getting it wrong in at least three
+	   layouts, so the header measures itself and publishes the number. */
+	let headerHeight = $state(0);
+	$effect(() => {
+		document.documentElement.style.setProperty('--header-h', `${headerHeight}px`);
+	});
 
 	/* A saved header menu wins; otherwise the visible category tree stands in,
 	   so a new store has a working nav before anyone opens the menu builder. */
@@ -161,7 +168,7 @@
 	{/if}
 {/snippet}
 
-<header class="sticky top-0 z-40 bg-surface">
+<header bind:clientHeight={headerHeight} class="sticky top-0 z-40 bg-surface">
 	<!-- Promo bar is a store-wide setting, not a page block — it shows everywhere. -->
 	{#if promo?.active && promo.text}
 		<PromoBar props={promo} />
@@ -361,27 +368,14 @@
 					>
 						<Heart size={19} />
 					</a>
-					{#if chrome === 'grocery'}
-						<!-- The running total, out loud. Twenty small decisions add up, and
-						     the shopper is entitled to watch them adding up. -->
-						<a
-							href="/demo/cart"
-							class="flex h-10 items-center gap-2 rounded-xl bg-white/15 px-3 text-sm font-medium text-white transition-colors hover:bg-white/25"
-							aria-label={cartLabel}
-						>
-							<ShoppingBag size={18} />
-							<span class="num">{formatTk(cartSubtotal)}</span>
-						</a>
-					{:else}
-						<a
-							href="/demo/cart"
-							class="relative grid size-10 place-items-center rounded-xl text-white/85 transition-colors hover:bg-white/10 hover:text-white"
-							aria-label={cartLabel}
-						>
-							<ShoppingBag size={19} />
-							{@render badge(cartCount, true)}
-						</a>
-					{/if}
+					<a
+						href="/demo/cart"
+						class="relative grid size-10 place-items-center rounded-xl text-white/85 transition-colors hover:bg-white/10 hover:text-white"
+						aria-label={cartLabel}
+					>
+						<ShoppingBag size={19} />
+						{@render badge(cartCount, true)}
+					</a>
 					<a
 						href={customer ? '/demo/account' : '/demo/login'}
 						class="flex h-10 items-center gap-2 rounded-xl px-2.5 text-white/85 transition-colors hover:bg-white/10 hover:text-white"
@@ -395,8 +389,8 @@
 	{/if}
 
 	<!-- category bar with mega menu -->
-	{#if chrome === 'mega'}
-		<div class="hidden bg-surface/70 backdrop-blur-xl lg:block">
+	{#if chrome === 'mega' && categoriesButton}
+		<div class="hidden border-b border-border bg-surface/70 backdrop-blur-xl lg:block">
 			<div class="mx-auto max-w-7xl px-4">
 				<ul class="flex items-center gap-1">
 					{#each items as cat (cat.key)}

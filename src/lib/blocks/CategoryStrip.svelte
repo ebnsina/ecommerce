@@ -9,9 +9,13 @@
 
 {#if items.length}
 	<nav aria-label="Categories" class="mx-auto max-w-7xl px-4 pt-4">
-		<!-- A grid, not a scroller: the whole set fits one row on a phone at four
-		     across and on a desktop at eight, so nothing is hidden off-screen. -->
-		<ul class="grid grid-cols-4 gap-3 sm:grid-cols-6 lg:grid-cols-8">
+		<!-- A grid, not a scroller: the whole set is on screen rather than half of
+		     it hidden off the right. As many as fit rather than always eight —
+		     eight in a narrowed column crushes every name to two syllables. -->
+		<ul
+			class="grid gap-3"
+			style="grid-template-columns:repeat(auto-fit,minmax(min(6.5rem,100%),1fr))"
+		>
 			{#each items as cat (cat.id)}
 				<li>
 					<a

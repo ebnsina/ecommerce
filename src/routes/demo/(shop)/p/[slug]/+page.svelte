@@ -16,6 +16,7 @@
 		Minus,
 		Plus
 	} from '@lucide/svelte';
+	import { layoutOf } from '$lib/layouts';
 	import { assuranceIcon } from '$lib/assuranceIcons';
 	import { formatTk, discountPercent } from '$lib/money';
 	import Rating from '$lib/shop/Rating.svelte';
@@ -222,7 +223,15 @@
 	<div class="mt-5 grid gap-8 lg:grid-cols-2">
 		<!-- gallery -->
 		<div class="flex flex-col gap-3">
-			<div class="aspect-square overflow-hidden rounded-3xl border border-border bg-surface-alt">
+			<!-- The frame follows the layout's card shape. A square crops a book
+			     cover, and a bookshop's largest picture is the one place that is
+			     least forgivable. -->
+			<div
+				class="overflow-hidden rounded-3xl border border-border bg-surface-alt
+				       {layoutOf(page.data.layout as string).card === 'portrait'
+					? 'aspect-[3/4]'
+					: 'aspect-square'}"
+			>
 				{#if gallery[activeImage]}
 					<img src={gallery[activeImage]} alt={data.product.title} class="size-full object-cover" />
 				{/if}

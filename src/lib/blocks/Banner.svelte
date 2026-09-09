@@ -17,8 +17,11 @@
 	<section class={contained ? 'mx-auto max-w-7xl px-4 py-4' : 'py-4'}>
 		<div class="overflow-hidden {contained ? 'rounded-3xl' : ''} {tone}">
 			{#if hasCopy}
-				<!-- Coloured band with its own copy: a section divider that carries a message. -->
-				<div class="flex flex-wrap items-center gap-6 px-6 py-10 sm:px-10">
+				<!-- Coloured band with its own copy: a section divider that carries a
+				     message. The ground runs the width of the window when the block is
+				     uncontained; the words do not, or they start 24px from the edge
+				     while every other band on the page starts in the column. -->
+				<div class="mx-auto flex max-w-7xl flex-wrap items-center gap-6 px-6 py-10 sm:px-10">
 					<div class="min-w-56 flex-1">
 						{#if props.heading}
 							<h2 class="text-2xl font-semibold tracking-tight sm:text-3xl">{props.heading}</h2>

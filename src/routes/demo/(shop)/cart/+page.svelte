@@ -184,7 +184,9 @@
 				<Upsell items={data.upsell} />
 			</div>
 
-			<aside class="h-fit rounded-3xl border border-border bg-surface p-5 lg:sticky lg:top-28">
+			<aside
+				class="h-fit rounded-3xl border border-border bg-surface p-5 lg:sticky lg:top-[calc(var(--header-h,7rem)+1rem)]"
+			>
 				<h2 class="text-sm font-medium text-ink">Order summary</h2>
 				<dl class="mt-4 flex flex-col gap-2.5 text-sm">
 					<div class="flex justify-between">
