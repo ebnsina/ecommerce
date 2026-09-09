@@ -44,10 +44,6 @@ export const load: LayoutServerLoad = async (event) => {
 	const roots = rows.filter((r) => !r.parentId);
 
 	return {
-		/* Whether to ask a first-time visitor who they are. The cookie is set by
-		   either button on the form, so the question is asked once and then never
-		   again — see demo/(shop)/hello. */
-		askLead: !event.cookies.get('lead'),
 		nav: roots.map((r) => ({ ...r, children: rows.filter((c) => c.parentId === r.id) })),
 		menus: Object.fromEntries(menuRows.map((m) => [m.key, m.tree])),
 		settings: config,

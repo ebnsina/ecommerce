@@ -64,6 +64,17 @@ User-facing changes, newest first.
 
 ### Fixed
 
+- **Product cards in a row line up.** A two-line title used to push its card's
+  rating, price and button below its neighbours'. Two lines are reserved
+  whether or not the title needs them, and the button sits at the floor of the
+  card, so "Only 2 left" on one card no longer shifts it.
+- **The assistant's answers had no text.** The endpoint speaks of a `reply` and
+  a turn holds `content`; spreading the body straight in left every answer as
+  products with nothing said above them.
+- **The orb had no edge on white.** Its shading fades to white at the top, so on
+  a white page the sphere looked bitten off. A hairline inside the rim and a
+  soft shadow give the silhouette back without touching the shading.
+
 - **The AI has never seen its own instructions.** `chat()` takes the system
   prompt as its own option; both call sites passed it as a message with role
   `system`, where it was silently dropped. The assistant was answering as a
@@ -107,6 +118,20 @@ User-facing changes, newest first.
   a colleague has picked up.
 
 ### Changed
+
+- **The demo is behind the door, not through it.** The form was a dialog over a
+  shop that had already loaded, which meant the shop was seen either way. It is
+  its own page now, outside the shop's layout — no header, no categories, no
+  cart — and everything under /demo redirects to it until it is answered. The
+  guard is in hooks, so a form post cannot slip past a layout that has not run.
+  Where you were heading is remembered: a link to a product lands on that
+  product once you are through.
+- **The answer is written out rather than dropped in**, and the products wait
+  for the sentence to finish. It is a reveal of an answer already received, not
+  token streaming — the search has to finish before there is anything to say.
+- **The example questions match what the demo actually stocks.** They were
+  written for a catalogue that does not exist here, so every one of them
+  returned nothing, which teaches a visitor the box is broken.
 
 - **The landing page says what the shop can now do.** The assistant section
   covers both halves of its job, the search capability mentions describing a

@@ -171,7 +171,7 @@
 	<!-- The hover target keeps still; only the inner card moves. Lifting the
 	     element that carries :hover makes it slip out from under the pointer at
 	     its own edge, which reads as flicker. -->
-	<article class="group relative">
+	<article class="group relative h-full">
 		<div
 			class="flex h-full flex-col gap-2 rounded-3xl border border-border bg-surface
 			       transition-[border-color,transform] duration-[180ms] ease-brand
@@ -186,10 +186,14 @@
 			</a>
 
 			<div class="flex min-w-0 flex-1 flex-col gap-1.5">
+				<!-- Two lines are reserved whether or not the title needs them, so the
+				     rating, the price and the button below sit on the same line across
+				     a row. A one-line title otherwise pulls its whole card up. -->
 				<a
 					href="/demo/p/{product.slug}"
 					class="line-clamp-2 text-sm leading-snug font-medium text-ink transition-colors
-					       duration-[180ms] ease-brand hover:text-primary"
+					       duration-[180ms] ease-brand hover:text-primary
+					       {size === 'compact' ? '' : 'min-h-[2.6em]'}"
 				>
 					{product.title}
 				</a>
@@ -200,7 +204,9 @@
 				{/if}
 
 				{#if size !== 'compact'}
-					<div class="mt-2.5">{@render quickAdd()}</div>
+					<!-- mt-auto, not a margin: "Only 2 left" appears on some cards and not
+					     others, and the button has to ignore it and stay at the floor. -->
+					<div class="mt-auto pt-2.5">{@render quickAdd()}</div>
 				{/if}
 			</div>
 		</div>

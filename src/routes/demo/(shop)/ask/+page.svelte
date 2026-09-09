@@ -12,6 +12,8 @@
 	type Turn = {
 		role: 'user' | 'assistant';
 		content: string;
+		/** How much of `content` is on screen. Full for anything not just said. */
+		shown?: number;
 		rows?: CardProduct[];
 		total?: number;
 		query?: string;
@@ -39,16 +41,44 @@
 			: []
 	);
 
+	/**
+	 * The answer is written out rather than dropped in.
+	 *
+	 * It is a reveal, not token streaming: the search has to finish before
+	 * there is anything to say, so the whole line is already here. Writing it
+	 * out is what makes the wait feel like an answer being given rather than a
+	 * page that stalled and then jumped.
+	 */
+	function reveal(index: number) {
+		const full = thread[index]?.content ?? '';
+		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+			thread[index].shown = full.length;
+			return;
+		}
+
+		const step = () => {
+			const turn = thread[index];
+			if (!turn || (turn.shown ?? 0) >= full.length) return;
+			// Three characters a frame: about 180 a second, near reading speed.
+			turn.shown = Math.min(full.length, (turn.shown ?? 0) + 3);
+			requestAnimationFrame(step);
+		};
+		requestAnimationFrame(step);
+	}
+
 	let draft = $state('');
 	let busy = $state(false);
 	let problem = $state(untrack(() => data.error) ?? '');
 	let log = $state<HTMLElement | null>(null);
 
+	/* Written against what the demo shop actually stocks — fashion, groceries,
+	   home, gadgets. An example that returns nothing teaches the visitor the
+	   box does not work, which is the opposite of what an example is for. */
 	const examples = [
-		'A gift for my sister under 2000 taka',
-		'Something for the kitchen that is on offer',
-		'Cheap headphones with good reviews',
-		'Winter clothes for a 3 year old'
+		'A saree for my sister under 2000 taka',
+		'Kitchen things that are on offer',
+		'A power bank with good reviews',
+		'Winter clothes for a small child'
 	];
 
 	async function send(text: string) {
@@ -77,7 +107,11 @@
 			if (!res.ok || body.error) {
 				problem = body.error ?? 'The assistant is not answering just now.';
 			} else {
-				thread = [...thread, { role: 'assistant', ...body }];
+				/* The endpoint speaks of a `reply`; a turn holds `content`. Spreading
+				   the body straight in left every answer with no text at all. */
+				const { reply, ...rest } = body;
+				thread = [...thread, { role: 'assistant', content: reply, ...rest, shown: 0 }];
+				reveal(thread.length - 1);
 			}
 		} catch {
 			problem = 'That did not get through. Try again.';
@@ -131,6 +165,7 @@
 						</p>
 					</div>
 				{:else}
+					{@const done = turn.shown === undefined || turn.shown >= (turn.content?.length ?? 0)}
 					<div class="flex gap-3">
 						{#if newest}
 							<Orb size={22} class="mt-0.5" />
@@ -141,9 +176,13 @@
 							></span>
 						{/if}
 						<div class="min-w-0 flex-1">
-							<p class="text-sm text-ink">{turn.content}</p>
+							<p class="text-sm text-ink">
+								{turn.shown === undefined
+									? turn.content
+									: (turn.content ?? '').slice(0, turn.shown)}
+							</p>
 
-							{#if turn.rows?.length}
+							{#if turn.rows?.length && done}
 								<div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
 									{#each turn.rows.slice(0, 6) as product (product.id)}
 										<ProductCard {product} size="compact" />
@@ -159,14 +198,14 @@
 										<ArrowRight size={13} />
 									</a>
 								{/if}
-							{:else if turn.rows}
+							{:else if turn.rows && done}
 								<p class="mt-3 text-sm text-ink-muted">
 									Nothing in the shop matches that yet — the owner sees every search that found
 									nothing.
 								</p>
 							{/if}
 
-							{#if turn.followUps?.length}
+							{#if turn.followUps?.length && done}
 								<ul class="mt-4 flex flex-wrap gap-2">
 									{#each turn.followUps as followUp (followUp)}
 										<li>

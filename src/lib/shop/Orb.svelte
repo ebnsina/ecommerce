@@ -185,11 +185,23 @@ void main() {
 	});
 </script>
 
+<!-- The shader fades to white at the top, which on a white page leaves the
+     sphere looking bitten off. A hairline ring inside the edge and a soft
+     shadow under it give the silhouette back without touching the shading. -->
 <span
-	class="relative inline-block shrink-0 overflow-hidden rounded-full {klass}"
+	class="orb-frame relative inline-block shrink-0 overflow-hidden rounded-full {klass}"
 	style="width: {size}px; height: {size}px"
 	aria-hidden="true"
 	data-testid="assistant-orb"
 >
 	<canvas bind:this={canvas} class="h-full w-full"></canvas>
 </span>
+
+<style>
+	.orb-frame {
+		box-shadow:
+			inset 0 0 0 1px rgb(15 23 42 / 0.1),
+			0 1px 2px rgb(15 23 42 / 0.12),
+			0 4px 10px rgb(15 23 42 / 0.08);
+	}
+</style>

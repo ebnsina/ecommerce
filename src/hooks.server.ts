@@ -48,6 +48,25 @@ export const handle: Handle = async ({ event, resolve }) => {
 		}
 	}
 
+	/**
+	 * The demo is behind the door, not through it.
+	 *
+	 * Someone who has not left a number sees the form and nothing else — the
+	 * same reason the admin guard lives here rather than in a layout: a layout
+	 * `load` does not run before a form action, so a gate there would let an
+	 * unanswered visitor post to the cart. The cookie is set the moment the
+	 * form is accepted, and lasts a year, so this is asked once.
+	 *
+	 * `/demo/hello` is the door itself, and the API routes underneath are for
+	 * webhooks and callbacks that no visitor drives.
+	 */
+	if (pathname.startsWith(SHOP) && !pathname.startsWith(`${SHOP}/hello`)) {
+		if (!event.cookies.get('lead')) {
+			if (event.request.method !== 'GET') error(403, 'Leave your number first.');
+			redirect(303, `${SHOP}/hello?next=${encodeURIComponent(pathname + event.url.search)}`);
+		}
+	}
+
 	const response = await resolve(event);
 
 	for (const [header, value] of Object.entries(SECURITY_HEADERS))

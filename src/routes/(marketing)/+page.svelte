@@ -765,8 +765,8 @@
 			Stop reading about it. The demo is the real thing.
 		</h2>
 		<p class="max-w-xl text-base text-ink-muted">
-			Full catalogue, real orders, the same admin your staff would use. Open it, place an order,
-			then go into the inbox and answer yourself.
+			Full catalogue, real orders, the same admin your staff would use. Leave a name and a number
+			and it opens — then place an order, and go into the inbox and answer yourself.
 		</p>
 		<div class="mt-2 flex flex-wrap gap-3">
 			<a

@@ -12,11 +12,12 @@ const REMEMBER = {
 } as const;
 
 /**
- * Where the demo asks who is looking.
+ * The door to the demo.
  *
- * The form lives in a dialog over the shop, but its action lives here so it
- * works without JavaScript: the dialog posts to this route and comes back, and
- * anyone landing on the page directly gets the same form full width.
+ * Everything under /demo is closed until this form is answered (see
+ * hooks.server.ts), so this is the first thing a visitor sees and the only
+ * page they can reach. `next` carries where they were heading, so a link
+ * straight to a product still lands on that product afterwards.
  */
 export const actions: Actions = {
 	save: async ({ request, cookies, getClientAddress }) => {
@@ -38,15 +39,6 @@ export const actions: Actions = {
 		if (!result.ok) return fail(400, { error: result.error, field: result.field });
 
 		cookies.set('lead', 'given', REMEMBER);
-		redirect(303, back.startsWith('/') ? back : SHOP);
-	},
-
-	/* Not now. The same cookie, so the question is asked once either way — a
-	   dialog that reappears on every page is the fastest way to lose the visit. */
-	skip: async ({ request, cookies }) => {
-		const f = await request.formData();
-		const back = String(f.get('redirectTo') ?? SHOP);
-		cookies.set('lead', 'skipped', REMEMBER);
 		redirect(303, back.startsWith('/') ? back : SHOP);
 	}
 };

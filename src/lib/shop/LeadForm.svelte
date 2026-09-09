@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/state';
 	import Input from '$lib/ui/Input.svelte';
 	import Select from '$lib/ui/Select.svelte';
 	import Button from '$lib/ui/Button.svelte';
@@ -15,8 +14,9 @@
 	let {
 		source = 'demo',
 		error,
-		field
-	}: { source?: string; error?: string; field?: 'name' | 'phone' } = $props();
+		field,
+		next = SHOP
+	}: { source?: string; error?: string; field?: 'name' | 'phone'; next?: string } = $props();
 
 	const sellsOn = [
 		{ value: '', label: 'Not yet — this would be the first' },
@@ -30,7 +30,7 @@
 </script>
 
 <form method="POST" action="{SHOP}/hello?/save" class="flex flex-col gap-4">
-	<input type="hidden" name="redirectTo" value={page.url.pathname + page.url.search} />
+	<input type="hidden" name="redirectTo" value={next} />
 	<input type="hidden" name="source" value={source} />
 
 	<div class="grid gap-4 sm:grid-cols-2">
@@ -69,13 +69,6 @@
 
 	<div class="mt-2 flex flex-wrap items-center gap-3">
 		<Button type="submit">Take me in</Button>
-		<button
-			type="submit"
-			formaction="{SHOP}/hello?/skip"
-			class="rounded-lg px-2 py-1 text-sm text-ink-muted underline-offset-4 hover:underline"
-		>
-			Just let me look
-		</button>
 	</div>
 
 	<p class="text-xs text-ink-muted">
