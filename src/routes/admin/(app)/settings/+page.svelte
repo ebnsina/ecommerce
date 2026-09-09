@@ -514,19 +514,13 @@
 					value={JSON.stringify(paymentMethods.filter((p) => p.name))}
 				/>
 				<FieldInput field={paymentField} bind:value={paymentMethods} />
-				<Input
-					label="Footer note"
-					name="note"
-					value={s.footer?.note ?? ''}
-					hint="Small print under the payment badges."
-				/>
 			</div>
 		{/snippet}
 		{@render section(
 			'footer',
 			PanelBottom,
 			'Footer',
-			'Payment badges and small print.',
+			'The badges shown beside the copyright line.',
 			footerBody
 		)}
 

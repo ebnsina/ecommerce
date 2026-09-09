@@ -16,7 +16,7 @@ export type StoreSettings = {
 	payment: { cod: boolean; sslcommerz: boolean; codMaxOrder: number };
 	social: { facebook: string; instagram: string; youtube: string };
 	contact: { whatsapp: string; messenger: string; callEnabled: boolean };
-	footer: { paymentMethods: { name: string; logo: string }[]; note: string };
+	footer: { paymentMethods: { name: string; logo: string }[] };
 	/** Reassurance list on every product page. */
 	assurances: { icon: string; title: string; note: string }[];
 	/** Rotating hints typed out in the header search box. */
@@ -61,7 +61,7 @@ const FALLBACK: StoreSettings = {
 	payment: { cod: true, sslcommerz: false, codMaxOrder: 5000000 },
 	social: { facebook: '', instagram: '', youtube: '' },
 	contact: { whatsapp: '', messenger: '', callEnabled: true },
-	footer: { paymentMethods: [], note: '' },
+	footer: { paymentMethods: [] },
 	assurances: [],
 	search: { hints: [] },
 	theme: { preset: 'blue', surface: 'white' },

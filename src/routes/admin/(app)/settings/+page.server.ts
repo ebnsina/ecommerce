@@ -197,8 +197,7 @@ export const actions: Actions = {
 						? { name: m, logo: '' }
 						: { name: String(m?.name ?? '').trim(), logo: String(m?.logo ?? '').trim() }
 				)
-				.filter((m) => m.name),
-			note: str(f, 'note')
+				.filter((m) => m.name)
 		});
 		return { saved: 'footer' };
 	},

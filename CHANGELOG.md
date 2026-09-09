@@ -6,6 +6,19 @@ User-facing changes, newest first.
 
 ### Added
 
+- **The cart and the wishlist show their counts.** Only the compare icon had a
+  badge, so the one place a shopper could not tell whether their last tap
+  worked was the cart.
+- **A tidier footer.** The four link columns sit on one row instead of leaving
+  the last one stranded under the brand block with the width of the page beside
+  it, and the payment badges moved up beside the copyright line — one last row
+  rather than two thin rules with a strip of nothing between them. The footer
+  small print is gone, and so is the setting for it.
+- **Product lists fit their container.** A list now names the smallest card it
+  will show and fills the row with as many as fit, so the same layout works
+  beside the filter sidebar, beside the category rail, or with neither — where
+  before a fixed column count made the same page airy in one place and cramped
+  in another.
 - **The grocer's rail is a real one.** A white panel with each category's own
   picture beside its name, the aisle opening in place, and the current row
   marked by a bar as well as a tint. The parts dealer keeps a plain text list,

@@ -27,7 +27,8 @@
 		promo,
 		customer,
 		cartCount = 0,
-		compareCount = 0
+		compareCount = 0,
+		wishlistCount = 0
 	}: {
 		nav: Cat[];
 		menu?: MenuNode[];
@@ -51,6 +52,7 @@
 		customer: { name: string | null } | null;
 		cartCount?: number;
 		compareCount?: number;
+		wishlistCount?: number;
 	} = $props();
 
 	let q = $state(page.url.searchParams.get('q') ?? '');
@@ -127,6 +129,19 @@
 	}
 </script>
 
+{#snippet badge(n: number, onBrand: boolean)}
+	{#if n > 0}
+		<!-- The count is the point of the icon; leaving it off the cart was the
+		     one place a shopper could not tell whether the last tap worked. -->
+		<span
+			class="num absolute top-1 right-1 grid h-4 min-w-4 place-items-center rounded-full bg-sale px-1
+			       text-[10px] font-semibold text-white {onBrand ? 'ring-2 ring-primary' : ''}"
+		>
+			{n > 99 ? '99+' : n}
+		</span>
+	{/if}
+{/snippet}
+
 <header class="sticky top-0 z-40 bg-surface">
 	<!-- Promo bar is a store-wide setting, not a page block — it shows everywhere. -->
 	{#if promo?.active && promo.text}
@@ -168,10 +183,11 @@
 						</a>
 						<a
 							href="/demo/account/wishlist"
-							class="grid size-10 place-items-center rounded-xl text-ink-muted transition-colors hover:text-ink"
-							aria-label="Wishlist"
+							class="relative grid size-10 place-items-center rounded-xl text-ink-muted transition-colors hover:text-ink"
+							aria-label={wishlistCount ? `Wishlist, ${wishlistCount} saved` : 'Wishlist'}
 						>
 							<Heart size={19} />
+							{@render badge(wishlistCount, false)}
 						</a>
 						<a
 							href="/demo/cart"
@@ -179,13 +195,7 @@
 							aria-label={cartLabel}
 						>
 							<ShoppingBag size={19} />
-							{#if cartCount > 0}
-								<span
-									class="num absolute top-1 right-1 grid h-4 min-w-4 place-items-center rounded-full bg-primary px-1 text-[10px] font-semibold text-white"
-								>
-									{cartCount}
-								</span>
-							{/if}
+							{@render badge(cartCount, false)}
 						</a>
 						<a
 							href={customer ? '/demo/account' : '/demo/login'}

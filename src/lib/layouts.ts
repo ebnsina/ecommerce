@@ -26,8 +26,12 @@ export type Layout = {
 	/** One line for the admin, so the choice is not a guess. */
 	note: string;
 	card: CardShape;
-	/** Tailwind grid classes for a full-width product list, phone up. */
-	grid: string;
+	/** The narrowest a card may be in a product list, as a CSS length.
+	    The list fills its container with as many of those as fit, so the same
+	    layout works with a filter sidebar beside it, with the category rail, or
+	    with neither — nothing has to know which page it is on. `100%` means one
+	    per row, which is what a full-width row wants. */
+	cardMin: string;
 	/** How the top of the page is built.
 	    `mega` spreads categories across a bar, `slim` folds them into a button,
 	    `centered` drops the coloured bar for a white one with the name in the
@@ -50,7 +54,7 @@ export const LAYOUTS: Record<LayoutKey, Layout> = {
 		label: 'Marketplace',
 		note: 'Everything for everyone. A category bar, big banners, rails of deals on white.',
 		card: 'square',
-		grid: 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-5',
+		cardMin: '12rem',
 		header: 'mega',
 		rail: false,
 		shell: 'shop-marketplace'
@@ -60,7 +64,7 @@ export const LAYOUTS: Record<LayoutKey, Layout> = {
 		label: 'Grocery',
 		note: 'Many small things, bought quickly. A standing category rail, small square corners, a plus on every card.',
 		card: 'dense',
-		grid: 'grid-cols-2 sm:grid-cols-4 lg:grid-cols-6',
+		cardMin: '9.5rem',
 		header: 'slim',
 		rail: 'icons',
 		shell: 'shop-grocery'
@@ -70,7 +74,7 @@ export const LAYOUTS: Record<LayoutKey, Layout> = {
 		label: 'Books',
 		note: 'Paper-coloured ground, portrait covers six to a row, the author under the title.',
 		card: 'portrait',
-		grid: 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-5',
+		cardMin: '13rem',
 		header: 'slim',
 		rail: false,
 		shell: 'shop-books'
@@ -80,7 +84,7 @@ export const LAYOUTS: Record<LayoutKey, Layout> = {
 		label: 'Electronics',
 		note: 'Square corners on a grey ground. A list, not a grid: brand, reviews and stock beside the price.',
 		card: 'row',
-		grid: 'grid-cols-1',
+		cardMin: '100%',
 		header: 'mega',
 		rail: 'plain',
 		shell: 'shop-tech'
@@ -90,7 +94,7 @@ export const LAYOUTS: Record<LayoutKey, Layout> = {
 		label: 'Lifestyle',
 		note: 'No coloured bar and no visible edges. The name centred, the categories spaced out, everything larger.',
 		card: 'square',
-		grid: 'grid-cols-2 lg:grid-cols-3',
+		cardMin: '17rem',
 		header: 'centered',
 		rail: false,
 		shell: 'shop-editorial'
@@ -121,3 +125,13 @@ export function sectionGrid(key: string | null | undefined, columns: number): st
 	if (layout.key === 'editorial') return 'lg:grid-cols-3';
 	return columns === 4 ? 'sm:grid-cols-3 lg:grid-cols-4' : 'sm:grid-cols-3 lg:grid-cols-5';
 }
+
+/**
+ * `grid-template-columns` for a product list.
+ *
+ * As many cards as fit, never narrower than the layout's minimum, and never
+ * wider than the container — `min(…, 100%)` is what stops a 17rem minimum from
+ * pushing a phone into a horizontal scroll.
+ */
+export const cardColumns = (key: string | null | undefined) =>
+	`grid-template-columns: repeat(auto-fill, minmax(min(${layoutOf(key).cardMin}, 100%), 1fr))`;

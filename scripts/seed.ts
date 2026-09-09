@@ -50,8 +50,7 @@ const defaults: Record<string, unknown> = {
 			{ name: 'Visa', logo: '' },
 			{ name: 'Mastercard', logo: '' },
 			{ name: 'Cash on delivery', logo: '' }
-		],
-		note: 'Prices include VAT where applicable.'
+		]
 	},
 	assurances: [
 		{ icon: 'Truck', title: 'Delivery in 2–5 days', note: 'Anywhere in Bangladesh' },

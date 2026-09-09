@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import ProductCard, { type CardProduct } from '$lib/shop/ProductCard.svelte';
-	import { layoutOf } from '$lib/layouts';
+	import { cardColumns } from '$lib/layouts';
 	import Select from '$lib/ui/Select.svelte';
 	import Button from '$lib/ui/Button.svelte';
 
@@ -51,9 +51,10 @@
 </div>
 
 {#if rows.length}
-	<!-- How many fit across is part of the shop's layout, not this component's
-	     opinion: a grocer wants six small ones, a parts dealer wants two rows. -->
-	<div class="grid gap-4 {layoutOf(page.data.layout as string).grid}">
+	<!-- How many fit across is the layout's business, not this component's: it
+	     names a smallest card and the row fills itself. That also means the same
+	     grid works beside a filter sidebar and without one. -->
+	<div class="grid gap-4" style={cardColumns(page.data.layout as string)}>
 		{#each rows as p (p.id)}
 			<ProductCard product={p} />
 		{/each}

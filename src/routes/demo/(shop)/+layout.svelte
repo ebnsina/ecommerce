@@ -38,6 +38,7 @@
 		customer={data.customer}
 		cartCount={data.cartCount}
 		compareCount={data.compareIds.length}
+		wishlistCount={data.wishlistIds.length}
 		searchHints={data.settings.search?.hints ?? []}
 	/>
 	{#if showRail}
@@ -60,6 +61,5 @@
 		menu={data.menus.footer ?? []}
 		paymentMethods={data.settings.footer?.paymentMethods ?? []}
 		assurances={data.settings.assurances ?? []}
-		note={data.settings.footer?.note ?? ''}
 	/>
 </div>
