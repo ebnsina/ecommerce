@@ -5,6 +5,8 @@ import { getSettings } from '$lib/server/settings';
 import { findCart, getLines, summarise } from '$lib/server/cart';
 import { getCompareIds } from '$lib/server/compare';
 import { normalizeTheme, themeCss } from '$lib/theme';
+import { isLayoutKey, layoutOf } from '$lib/layouts';
+import { SHOP } from '$lib/paths';
 import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async (event) => {
@@ -41,6 +43,14 @@ export const load: LayoutServerLoad = async (event) => {
 					.where(eq(wishlist.customerId, locals.user.id))
 			: [];
 
+	/* Which layout this visitor sees. `?layout=grocery` switches and sticks, so
+	   one deployment can be shown as five different shops in five tabs without
+	   five databases behind it. Absent that, the store's own setting stands. */
+	const wanted = event.url.searchParams.get('layout');
+	if (isLayoutKey(wanted))
+		event.cookies.set('layout', wanted, { path: SHOP, maxAge: 60 * 60 * 24 * 365 });
+	const layout = layoutOf(wanted ?? event.cookies.get('layout') ?? config.layout).key;
+
 	const roots = rows.filter((r) => !r.parentId);
 
 	return {
@@ -51,6 +61,7 @@ export const load: LayoutServerLoad = async (event) => {
 		cartCount: cartSummary.count,
 		compareIds: getCompareIds(event),
 		wishlistIds: saved.map((w) => w.productId),
+		layout,
 		themeCss: themeCss(normalizeTheme(config.theme))
 	};
 };

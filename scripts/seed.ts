@@ -684,6 +684,213 @@ await db
 	})
 	.onConflictDoNothing({ target: s2.pages.slug });
 
+/* A front page per layout.
+   The catalogue, the colours and the type are the same in all of them; what
+   differs is the order things appear in and how much room each gets, because
+   that is what actually differs between a grocer, a bookshop and a parts
+   dealer. A layout with no page of its own falls back to `home`. */
+const homes: Record<string, { title: string; blocks: ReturnType<typeof b>[] }> = {
+	grocery: {
+		title: 'Home — Grocery',
+		blocks: [
+			// Categories first and deals right behind them: a grocery run starts
+			// with "where is the rice", not with a season campaign.
+			b('categoryStrip', { limit: 14 }),
+			b('hotDeals', {
+				heading: "Today's prices",
+				href: '/demo/search',
+				source: { mode: 'rule', rule: 'hot-deal', categoryId: '', ids: [], limit: 12 },
+				countdownTo: ''
+			}),
+			b('productGrid', {
+				heading: 'Everyday essentials',
+				href: '/demo/c/grocery-foods',
+				source: { mode: 'rule', rule: 'best-seller', categoryId: '', ids: [], limit: 18 },
+				columns: '5'
+			}),
+			b('banner', {
+				slides: [],
+				heading: 'Free delivery over ৳500',
+				subtitle: 'Ordered before noon, at your door the same evening inside Dhaka.',
+				cta: 'Start your basket',
+				background: 'brand',
+				aspect: '4 / 1',
+				contained: true,
+				interval: 6
+			}),
+			b('productSection', {
+				heading: 'Bought again and again',
+				href: '/demo/search?sort=popular',
+				source: { mode: 'rule', rule: 'best-seller', categoryId: '', ids: [], limit: 12 },
+				columns: '5',
+				cardSize: 'standard'
+			}),
+			b('policyStrip', {
+				items: [
+					{
+						icon: 'Truck',
+						title: 'Same-day inside Dhaka',
+						subtitle: 'Order by noon',
+						href: '/demo/pages/delivery'
+					},
+					{
+						icon: 'ShieldCheck',
+						title: 'Fresh or refunded',
+						subtitle: 'Tell us at the door',
+						href: '/demo/pages/returns'
+					},
+					{
+						icon: 'Headphones',
+						title: 'Call to order',
+						subtitle: '9 AM - 10 PM',
+						href: '/demo/pages/contact'
+					}
+				]
+			})
+		]
+	},
+	books: {
+		title: 'Home — Books',
+		blocks: [
+			b('categoryStrip', { limit: 12 }),
+			b('productSection', {
+				heading: 'New this week',
+				href: '/demo/search?sort=newest',
+				source: { mode: 'rule', rule: 'new-arrival', categoryId: '', ids: [], limit: 12 },
+				columns: '5',
+				cardSize: 'standard'
+			}),
+			b('productSection', {
+				heading: 'Readers keep coming back to these',
+				href: '/demo/search?sort=popular',
+				source: { mode: 'rule', rule: 'best-seller', categoryId: '', ids: [], limit: 12 },
+				columns: '5',
+				cardSize: 'standard'
+			}),
+			b('banner', {
+				slides: [],
+				heading: 'Boi Mela picks',
+				subtitle: 'The titles everyone carried home this year, gathered in one place.',
+				cta: 'Browse the collection',
+				background: 'brand',
+				aspect: '4 / 1',
+				contained: true,
+				interval: 6
+			}),
+			b('productSection', {
+				heading: 'Highest rated',
+				href: '/demo/search?sort=rating',
+				source: { mode: 'rule', rule: 'top-rated', categoryId: '', ids: [], limit: 12 },
+				columns: '5',
+				cardSize: 'standard'
+			}),
+			b('brands', { heading: 'Publishers', limit: 8 })
+		]
+	},
+	tech: {
+		title: 'Home — Electronics',
+		blocks: [
+			// Price first, all the way down: deals, then rows that put the number
+			// beside the specification instead of under a picture.
+			b('hotDeals', {
+				heading: 'Price drops today',
+				href: '/demo/search',
+				source: { mode: 'rule', rule: 'hot-deal', categoryId: '', ids: [], limit: 8 },
+				countdownTo: ''
+			}),
+			b('categoryStrip', { limit: 12 }),
+			b('productSection', {
+				heading: 'Featured builds',
+				href: '/demo/search',
+				source: { mode: 'rule', rule: 'featured', categoryId: '', ids: [], limit: 6 },
+				columns: '4',
+				cardSize: 'standard'
+			}),
+			b('bannerGrid', {
+				banners: [
+					{
+						image: 'https://picsum.photos/seed/tech-1/700/300',
+						href: '/demo/c/electronics',
+						alt: 'Laptop offers'
+					},
+					{
+						image: 'https://picsum.photos/seed/tech-2/700/300',
+						href: '/demo/search?sort=newest',
+						alt: 'Just landed'
+					}
+				],
+				layout: '2+3',
+				background: 'soft'
+			}),
+			b('productSection', {
+				heading: 'Best sellers',
+				href: '/demo/search?sort=popular',
+				source: { mode: 'rule', rule: 'best-seller', categoryId: '', ids: [], limit: 6 },
+				columns: '4',
+				cardSize: 'standard'
+			}),
+			b('brands', { heading: 'Brands we carry', limit: 8 }),
+			b('contactBand', {
+				heading: 'Not sure which one fits?',
+				subtitle: 'Tell us what it is for and we will tell you what to buy — no account needed.',
+				chatLabel: 'Ask on WhatsApp'
+			})
+		]
+	},
+	editorial: {
+		title: 'Home — Lifestyle',
+		blocks: [
+			// Few things, large. One campaign, one row, one story, one row.
+			b('heroSplit', {
+				slides: [
+					{
+						image: 'https://picsum.photos/seed/edit-1/1400/600',
+						href: '/demo/search',
+						alt: 'The new season'
+					}
+				],
+				tiles: [],
+				interval: 6,
+				aspect: '16 / 7',
+				layout: '1+1+2'
+			}),
+			b('productSection', {
+				heading: 'The edit',
+				href: '/demo/search',
+				source: { mode: 'rule', rule: 'featured', categoryId: '', ids: [], limit: 6 },
+				columns: '4',
+				cardSize: 'standard'
+			}),
+			b('richText', {
+				heading: 'Made near where you live',
+				body: '<p>Every piece here comes from a workshop we have visited, in Dhaka, Sylhet or Rangamati. We buy in small runs, which is why some of it sells out and does not come back.</p>',
+				width: 'narrow'
+			}),
+			b('productSection', {
+				heading: 'New in',
+				href: '/demo/search?sort=newest',
+				source: { mode: 'rule', rule: 'new-arrival', categoryId: '', ids: [], limit: 6 },
+				columns: '4',
+				cardSize: 'standard'
+			}),
+			b('categoryStrip', { limit: 6 }),
+			b('contactBand', {
+				heading: 'Questions? Talk to a real person.',
+				subtitle: 'Call or message us and we will help you place the order.',
+				chatLabel: 'Message us'
+			})
+		]
+	}
+};
+
+for (const [key, page] of Object.entries(homes)) {
+	await db
+		.insert(s2.pages)
+		.values({ slug: `home-${key}`, title: page.title, published: true, blocks: page.blocks })
+		.onConflictDoNothing({ target: s2.pages.slug });
+}
+console.log(`pages: ${Object.keys(homes).length} layout homepages`);
+
 /* Demo data — SEED_DEMO=1 pnpm db:seed. Gives the dashboard something to draw. */
 if (process.env.SEED_DEMO) {
 	const names = [

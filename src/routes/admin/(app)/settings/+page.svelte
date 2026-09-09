@@ -31,6 +31,7 @@
 	import FieldInput from '$lib/admin/FieldInput.svelte';
 	import type { Field } from '$lib/blocks/schema';
 	import { PRESETS, SURFACES, normalizeTheme } from '$lib/theme';
+	import { LAYOUTS, layoutOf } from '$lib/layouts';
 
 	let { data, form } = $props();
 
@@ -102,6 +103,7 @@
 	const initialTheme = normalizeTheme(s.theme);
 	let preset = $state<string>(initialTheme.preset);
 	let surface = $state<string>(initialTheme.surface);
+	let layout = $state<string>(layoutOf(s.layout).key);
 
 	let logoMode = $state(s.store.logo?.mode ?? 'text');
 	let logoImage = $state(s.store.logo?.image ?? '');
@@ -453,6 +455,29 @@
 					</div>
 				</div>
 
+				<div>
+					<span class="mb-2 block text-sm font-medium text-ink">Layout</span>
+					<!-- Colour and type stay the same across all of these. What changes is
+					     shape: how a product card is proportioned and how many fit a row. -->
+					<input type="hidden" name="layout" value={layout} />
+					<div class="grid gap-2 sm:grid-cols-2">
+						{#each Object.values(LAYOUTS) as l (l.key)}
+							<button
+								type="button"
+								onclick={() => (layout = l.key)}
+								aria-pressed={layout === l.key}
+								class="rounded-2xl border px-3 py-2.5 text-left transition-colors duration-[180ms] ease-brand
+								       {layout === l.key
+									? 'border-primary bg-primary-soft'
+									: 'border-border hover:border-brand-300'}"
+							>
+								<span class="block text-sm text-ink">{l.label}</span>
+								<span class="block text-xs leading-snug text-ink-muted">{l.note}</span>
+							</button>
+						{/each}
+					</div>
+				</div>
+
 				<p class="text-xs text-ink-muted">
 					Every palette here is checked for legibility: buttons, links and their labels stay
 					readable whichever you pick.
@@ -463,7 +488,7 @@
 			'theme',
 			Palette,
 			'Theme',
-			'The colour of your storefront and this admin.',
+			'The colour of your storefront and this admin, and the shape of its shelves.',
 			themeBody
 		)}
 

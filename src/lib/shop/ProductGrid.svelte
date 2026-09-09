@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import ProductCard, { type CardProduct } from '$lib/shop/ProductCard.svelte';
+	import { layoutOf } from '$lib/layouts';
 	import Select from '$lib/ui/Select.svelte';
 	import Button from '$lib/ui/Button.svelte';
 
@@ -50,7 +51,9 @@
 </div>
 
 {#if rows.length}
-	<div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+	<!-- How many fit across is part of the shop's layout, not this component's
+	     opinion: a grocer wants six small ones, a parts dealer wants two rows. -->
+	<div class="grid gap-4 {layoutOf(page.data.layout as string).grid}">
 		{#each rows as p (p.id)}
 			<ProductCard product={p} />
 		{/each}

@@ -7,6 +7,7 @@
 	import Rating from './Rating.svelte';
 	import Img from './Img.svelte';
 	import Button from '$lib/ui/Button.svelte';
+	import { layoutOf, type CardShape } from '$lib/layouts';
 
 	export type CardProduct = {
 		id: string;
@@ -34,6 +35,15 @@
 	   is how half of them end up not showing it. */
 	const compared = $derived(((page.data.compareIds as string[]) ?? []).includes(product.id));
 	const saved = $derived(((page.data.wishlistIds as string[]) ?? []).includes(product.id));
+
+	/* The shop's layout decides the card's proportions — square, dense, portrait
+	   or a row — the same way it decides how many fit across. Read from the
+	   layout data rather than passed in, for the reason the shortlist above is:
+	   every grid on the site renders this card. `compact` and `feature` are
+	   asked for explicitly by a caller and still win. */
+	const shape = $derived<CardShape | 'compact' | 'feature'>(
+		size === 'standard' ? layoutOf(page.data.layout as string).card : size
+	);
 
 	const off = $derived(discountPercent(product.price, product.compareAtPrice));
 	const soldOut = $derived(!product.hasVariants && product.stock <= 0);
@@ -143,7 +153,10 @@
 	</span>
 {/snippet}
 
-{#if size === 'feature'}
+<!-- A row: picture at the left, then everything that gets compared — title,
+     rating, price — running down beside it. The layout an electronics shop
+     uses, and the one a `feature` slot in a page block asks for by name. -->
+{#if shape === 'feature' || shape === 'row'}
 	<article
 		class="group flex gap-4 rounded-3xl border border-border bg-surface p-4 transition-colors duration-[180ms] ease-brand hover:border-brand-200"
 	>
@@ -177,11 +190,19 @@
 			       transition-[border-color,transform] duration-[180ms] ease-brand
 			       group-hover:-translate-y-0.5 group-hover:border-brand-200
 			       motion-reduce:transform-none motion-reduce:transition-none
-			       {size === 'compact' ? 'flex-row items-center gap-3 p-3' : 'p-3.5'}"
+			       {shape === 'compact'
+				? 'flex-row items-center gap-3 p-3'
+				: shape === 'dense'
+					? 'p-2.5'
+					: 'p-3.5'}"
 		>
 			<a href="/demo/p/{product.slug}" class="contents">
 				{@render media(
-					size === 'compact' ? 'size-16 rounded-xl' : 'aspect-square w-full rounded-2xl'
+					shape === 'compact'
+						? 'size-16 rounded-xl'
+						: shape === 'portrait'
+							? 'aspect-[2/3] w-full rounded-2xl'
+							: 'aspect-square w-full rounded-2xl'
 				)}
 			</a>
 
@@ -193,17 +214,19 @@
 					href="/demo/p/{product.slug}"
 					class="line-clamp-2 text-sm leading-snug font-medium text-ink transition-colors
 					       duration-[180ms] ease-brand hover:text-primary
-					       {size === 'compact' ? '' : 'min-h-[2.6em]'}"
+					       {shape === 'compact' ? '' : 'min-h-[2.6em]'}"
 				>
 					{product.title}
 				</a>
-				<Rating rating={product.rating} count={product.reviewCount} size={12} />
+				{#if shape !== 'dense'}
+					<Rating rating={product.rating} count={product.reviewCount} size={12} />
+				{/if}
 				{@render price()}
 				{#if !product.hasVariants && product.stock > 0 && product.stock <= 5}
 					<span class="num text-xs font-medium text-sale">Only {product.stock} left</span>
 				{/if}
 
-				{#if size !== 'compact'}
+				{#if shape !== 'compact'}
 					<!-- mt-auto, not a margin: "Only 2 left" appears on some cards and not
 					     others, and the button has to ignore it and stay at the floor. -->
 					<div class="mt-auto pt-2.5">{@render quickAdd()}</div>
@@ -211,7 +234,7 @@
 			</div>
 		</div>
 
-		{#if size !== 'compact'}
+		{#if shape !== 'compact' && shape !== 'dense'}
 			<!-- Outside the lifting wrapper, so the buttons stay under the pointer. -->
 			<div class="absolute top-4 right-4 flex flex-col gap-1.5">
 				{@render wishlistButton('size-8 rounded-lg bg-surface/80 backdrop-blur-sm')}

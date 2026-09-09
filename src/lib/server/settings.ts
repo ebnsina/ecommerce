@@ -1,5 +1,6 @@
 import { db } from './db';
 import { settings } from './db/schema';
+import { DEFAULT_LAYOUT, type LayoutKey } from '$lib/layouts';
 
 export type StoreSettings = {
 	store: {
@@ -21,6 +22,8 @@ export type StoreSettings = {
 	/** Rotating hints typed out in the header search box. */
 	search: { hints: string[] };
 	theme: { preset: string; surface: string };
+	/** Which shop layout the storefront wears. See `$lib/layouts`. */
+	layout: LayoutKey;
 	analytics: {
 		metaPixelId: string;
 		tiktokPixelId: string;
@@ -62,6 +65,7 @@ const FALLBACK: StoreSettings = {
 	assurances: [],
 	search: { hints: [] },
 	theme: { preset: 'blue', surface: 'white' },
+	layout: DEFAULT_LAYOUT,
 	analytics: { metaPixelId: '', tiktokPixelId: '', gtmId: '', ga4Id: '' },
 	// Off, on no channels, at a high bar. Every one of those has to be changed
 	// deliberately before a customer hears from a machine.

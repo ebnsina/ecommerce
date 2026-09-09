@@ -4,6 +4,7 @@ import { settings } from '$lib/server/db/schema';
 import { getSettings } from '$lib/server/settings';
 import { parseTk } from '$lib/money';
 import { normalizeTheme } from '$lib/theme';
+import { layoutOf } from '$lib/layouts';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => ({ settings: await getSettings() });
@@ -163,6 +164,9 @@ export const actions: Actions = {
 		// normalizeTheme rejects anything not in the preset list, so a hand-posted
 		// value cannot inject arbitrary CSS into every page.
 		await put('theme', normalizeTheme({ preset: str(f, 'preset'), surface: str(f, 'surface') }));
+		// layoutOf falls back to the default for anything unknown, so a hand-posted
+		// value can only ever select one of the five.
+		await put('layout', layoutOf(str(f, 'layout')).key);
 		return { saved: 'theme' };
 	},
 

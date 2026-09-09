@@ -94,10 +94,10 @@
 			Icon: LayoutTemplate,
 			eyebrow: 'Pages and posts',
 			title: 'The shop is edited by the person who runs it.',
-			body: 'Every page is stacked from blocks — banners, category tiles, product rails, countdowns, rich text — arranged in the admin and previewed before anyone sees them. Menus, the blog and the store settings are the same: data, not code.',
+			body: 'Every page is stacked from blocks — banners, category tiles, product rails, countdowns, rich text — arranged in the admin and previewed before anyone sees them. Pick the shape that suits what you sell, too: a grocer gets tight rows of many small things, a bookshop gets tall covers, an electronics shop gets a list with the price beside each one. Menus, the blog and the store settings are the same: data, not code.',
 			points: [
 				'A block builder with live preview',
-				'A blog with drafts',
+				'Five shop layouts, one for each kind of shop',
 				'Menus, settings and theme'
 			]
 		},

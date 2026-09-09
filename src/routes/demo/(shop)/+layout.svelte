@@ -3,6 +3,8 @@
 	import Footer from '$lib/shop/Footer.svelte';
 	import Pixels from '$lib/shop/Pixels.svelte';
 	import AskButton from '$lib/shop/AskButton.svelte';
+	import LayoutSwitcher from '$lib/shop/LayoutSwitcher.svelte';
+	import { layoutOf } from '$lib/layouts';
 
 	let { data, children } = $props();
 </script>
@@ -18,6 +20,7 @@
 
 <div class="flex min-h-screen flex-col">
 	<Header
+		chrome={layoutOf(data.layout).header}
 		nav={data.nav}
 		menu={data.menus.header ?? []}
 		store={data.settings.store}
@@ -29,6 +32,7 @@
 	/>
 	<main class="flex-1">{@render children()}</main>
 	<AskButton />
+	<LayoutSwitcher current={data.layout} />
 	<Footer
 		store={data.settings.store}
 		social={data.settings.social}

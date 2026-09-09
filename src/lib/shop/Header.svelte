@@ -22,6 +22,7 @@
 		nav,
 		menu = [],
 		store,
+		chrome = 'mega',
 		searchHints = [],
 		promo,
 		customer,
@@ -30,6 +31,9 @@
 	}: {
 		nav: Cat[];
 		menu?: MenuNode[];
+		/** `mega` spreads the categories across a bar; `slim` folds them into one
+		    button and lets search lead, the way a grocer or a bookshop does. */
+		chrome?: 'mega' | 'slim';
 		searchHints?: string[];
 		store: {
 			name: string;
@@ -148,6 +152,39 @@
 				{/if}
 			</a>
 
+			{#if chrome === 'slim'}
+				<!-- One button instead of a bar. The panel lists exactly what the bar
+				     would have, so nothing becomes unreachable. -->
+				<div class="relative hidden lg:block">
+					<button
+						class="flex h-11 items-center gap-2 rounded-xl px-3 text-sm text-white/85 transition-colors hover:bg-white/10 hover:text-white"
+						aria-expanded={openMenu === 'all'}
+						onclick={() => (openMenu = openMenu === 'all' ? null : 'all')}
+					>
+						<Menu size={18} />
+						Categories
+						<ChevronDown size={14} />
+					</button>
+
+					{#if openMenu === 'all'}
+						<div
+							class="absolute top-full left-0 z-50 mt-2 grid w-[26rem] grid-cols-2 gap-1 rounded-2xl border border-border bg-surface p-2"
+							transition:fly={flyUp()}
+						>
+							{#each items as cat (cat.key)}
+								<a
+									href={cat.href}
+									class="rounded-xl px-3 py-2 text-sm text-ink-muted transition-colors hover:bg-surface-alt hover:text-ink"
+									onclick={() => (openMenu = null)}
+								>
+									{cat.label}
+								</a>
+							{/each}
+						</div>
+					{/if}
+				</div>
+			{/if}
+
 			<form onsubmit={submit} class="relative hidden min-w-0 flex-1 md:block">
 				<Search
 					size={16}
@@ -218,43 +255,45 @@
 	</div>
 
 	<!-- category bar with mega menu -->
-	<div class="hidden bg-surface/70 backdrop-blur-xl lg:block">
-		<div class="mx-auto max-w-7xl px-4">
-			<ul class="flex items-center gap-1">
-				{#each items as cat (cat.key)}
-					<li
-						class="relative"
-						onpointerenter={() => (openMenu = cat.key)}
-						onpointerleave={() => (openMenu = null)}
-					>
-						<a
-							href={cat.href}
-							class="flex items-center gap-1 px-3 py-3 text-sm text-ink-muted transition-colors hover:text-primary"
+	{#if chrome === 'mega'}
+		<div class="hidden bg-surface/70 backdrop-blur-xl lg:block">
+			<div class="mx-auto max-w-7xl px-4">
+				<ul class="flex items-center gap-1">
+					{#each items as cat (cat.key)}
+						<li
+							class="relative"
+							onpointerenter={() => (openMenu = cat.key)}
+							onpointerleave={() => (openMenu = null)}
 						>
-							{cat.label}
-							{#if cat.children.length}<ChevronDown size={14} />{/if}
-						</a>
-
-						{#if openMenu === cat.key && cat.children.length}
-							<div
-								class="absolute top-full left-0 z-50 min-w-56 rounded-2xl border border-border bg-surface p-2"
-								transition:fly={flyUp()}
+							<a
+								href={cat.href}
+								class="flex items-center gap-1 px-3 py-3 text-sm text-ink-muted transition-colors hover:text-primary"
 							>
-								{#each cat.children as sub (sub.key)}
-									<a
-										href={sub.href}
-										class="block rounded-xl px-3 py-2 text-sm text-ink-muted transition-colors hover:bg-surface-alt hover:text-ink"
-									>
-										{sub.label}
-									</a>
-								{/each}
-							</div>
-						{/if}
-					</li>
-				{/each}
-			</ul>
+								{cat.label}
+								{#if cat.children.length}<ChevronDown size={14} />{/if}
+							</a>
+
+							{#if openMenu === cat.key && cat.children.length}
+								<div
+									class="absolute top-full left-0 z-50 min-w-56 rounded-2xl border border-border bg-surface p-2"
+									transition:fly={flyUp()}
+								>
+									{#each cat.children as sub (sub.key)}
+										<a
+											href={sub.href}
+											class="block rounded-xl px-3 py-2 text-sm text-ink-muted transition-colors hover:bg-surface-alt hover:text-ink"
+										>
+											{sub.label}
+										</a>
+									{/each}
+								</div>
+							{/if}
+						</li>
+					{/each}
+				</ul>
+			</div>
 		</div>
-	</div>
+	{/if}
 
 	{#if mobileOpen}
 		<div class="border-b border-border lg:hidden" transition:slide={slideOpen()}>

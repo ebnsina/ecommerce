@@ -6,6 +6,20 @@ User-facing changes, newest first.
 
 ### Added
 
+- **Five shops in one.** The storefront wears a layout — Marketplace, Grocery,
+  Books, Electronics or Lifestyle — chosen in Settings beside the theme. The
+  catalogue, colours and typeface are identical in all five; what changes is
+  shape: a grocer gets tight cards six to a row and one Categories button, a
+  bookshop gets tall covers, an electronics shop gets a list with the price
+  beside each product, a lifestyle shop gets fewer and larger. Each layout can
+  bring its own front page, and `?layout=grocery` on the demo switches and
+  sticks, so one deployment can be shown as five different shops.
+
+- **The assistant has its own screen.** No header, no category bar, no footer
+  — the window is the conversation. The thread scrolls inside a fixed frame
+  with the box you type in pinned below it, so an answer can no longer arrive
+  below the fold of a page that itself looks still, and nothing shifts
+  sideways when a scrollbar appears.
 - **Ask for what you need.** A shopper describes it the way they would to a
   shopkeeper — "a gift for my sister under 2000 taka" — and gets real products
   with Add to cart on them. It is a conversation: follow-up questions narrow
