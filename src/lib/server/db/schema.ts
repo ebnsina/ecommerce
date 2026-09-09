@@ -255,6 +255,45 @@ export const productQuestions = pgTable(
 	(t) => [index('questions_product_idx').on(t.productId, t.createdAt)]
 );
 
+/* ── leads ───────────────────────────────────────────────────────────── */
+
+export const leadStatus = pgEnum('lead_status', ['new', 'contacted', 'qualified', 'lost']);
+
+/**
+ * Someone who looked at the demo and left a way to reach them.
+ *
+ * The phone number is the identity, because that is what a shop owner here
+ * actually answers on, and it is unique: a visitor who fills the form again
+ * from another device updates their row rather than creating a second one, so
+ * a follow-up list never has the same person on it twice.
+ *
+ * Deliberately not a customer. A customer bought something from the demo shop;
+ * a lead is someone interested in running a shop of their own, which is a
+ * different relationship and a different table.
+ */
+export const leads = pgTable(
+	'leads',
+	{
+		id: id(),
+		name: text().notNull(),
+		phone: text().notNull().unique(),
+		/** What they would be selling. Free text — the answers are the research. */
+		shopName: text('shop_name'),
+		sells: text(),
+		/** Where they sell today: a Facebook page, a shop, a marketplace, nowhere yet. */
+		sellsOn: text('sells_on'),
+		status: leadStatus().notNull().default('new'),
+		/** Whatever the person following up wants to remember. */
+		note: text(),
+		/** Which surface the form was on, so a second one can be added later. */
+		source: text().notNull().default('demo'),
+		createdAt: now(),
+		/** Bumped when they come back and fill it in again. */
+		seenAt: timestamp('seen_at', { withTimezone: true }).defaultNow().notNull()
+	},
+	(t) => [index('leads_created_idx').on(t.createdAt), index('leads_status_idx').on(t.status)]
+);
+
 /* ── bundles ─────────────────────────────────────────────────────────── */
 
 /**

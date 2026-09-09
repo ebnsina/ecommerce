@@ -6,6 +6,17 @@ User-facing changes, newest first.
 
 ### Added
 
+- **The demo asks who is looking, once.** A dialog with four questions — two of
+  them required — appears a moment after the shop has painted, so a visitor
+  sees there is a real thing behind it before being asked for anything. Either
+  button sets a cookie that lasts a year, so nobody is asked twice, and the
+  form posts to a real route so it works with JavaScript off.
+- **Leads, in the admin.** Everyone who left a number, newest first, with a
+  status, a note, and their number as a `tel:` link. The phone number is the
+  identity: the same person from a phone and then a laptop updates one row
+  rather than making two, and a status or note set by whoever is following up
+  survives a later submission.
+
 - **A page explaining the product** at `/platform` — what it is, what it does,
   what it connects to, what it costs, and the questions people actually ask.
 
