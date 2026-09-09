@@ -64,6 +64,20 @@ User-facing changes, newest first.
 
 ### Fixed
 
+- **Search found nothing for a product that was right there.** Without the
+  search engine — which in development is always, and in production whenever it
+  is not connected — the fallback matched the whole phrase as one substring, so
+  "winner saree m size" missed "Winner Saree Jamdani — M" even though every word
+  was in the title. Each word is matched on its own now, noise words are
+  dropped, and results are ranked by how close the title is using the trigram
+  index that was already there. This is the path most people meet, not an edge.
+- **The chat needed a second scroll to read an answer**, because the thread was
+  a scrolling box inside a page that looked still. The page scrolls now, and a
+  new question is brought to the top of the window with the answer written
+  underneath it.
+- **The answer stopped jumping.** Products and follow-ups used to wait for the
+  sentence to finish and then push everything down; they arrive with it.
+
 - **Product cards in a row line up.** A two-line title used to push its card's
   rating, price and button below its neighbours'. Two lines are reserved
   whether or not the title needs them, and the button sits at the floor of the

@@ -99,6 +99,66 @@ const sorts: Record<string, ReturnType<typeof desc>> = {
 	popular: desc(products.soldCount)
 };
 
+/* Words that carry no product meaning. Short enough to read, long enough that
+   a sentence typed at the assistant does not demand every preposition in it
+   appear in a title. */
+const STOP_WORDS = new Set([
+	'the',
+	'and',
+	'for',
+	'with',
+	'from',
+	'that',
+	'this',
+	'have',
+	'has',
+	'are',
+	'was',
+	'you',
+	'your',
+	'our',
+	'want',
+	'need',
+	'looking',
+	'look',
+	'show',
+	'me',
+	'my',
+	'some',
+	'any',
+	'get',
+	'buy',
+	'order',
+	'please',
+	'under',
+	'below',
+	'above',
+	'over',
+	'less',
+	'more',
+	'than',
+	'taka',
+	'tk',
+	'bdt',
+	'size',
+	'item',
+	'items',
+	'thing',
+	'things',
+	'something',
+	'anything',
+	'good',
+	'best',
+	'cheap',
+	'new',
+	'a',
+	'an',
+	'in',
+	'on',
+	'of',
+	'to'
+]);
+
 export async function listProducts({
 	categoryIds,
 	q,
@@ -124,9 +184,32 @@ export async function listProducts({
 			};
 	}
 
+	/* Every word has to appear somewhere in the title or the brand, rather than
+	   the whole phrase appearing as one substring. "winner saree m" found
+	   nothing against "Winner Saree Jamdani — M" before this: the words are all
+	   there, just not in that order and not next to each other, which is how
+	   people type. Noise words are dropped so "a saree for my sister" does not
+	   demand the word "for" appear in a product title.
+
+	   This is the path taken whenever the search engine is not reachable, which
+	   in development is always — so it is the one most people meet. */
+	const words = (q ?? '')
+		.toLowerCase()
+		.split(/[^\p{L}\p{N}]+/u)
+		.filter((w) => w.length > 1 && !STOP_WORDS.has(w))
+		.slice(0, 6);
+
 	const where = and(
 		eq(products.status, 'active'),
-		q ? or(ilike(products.title, `%${q}%`), ilike(products.brand, `%${q}%`)) : undefined,
+		q
+			? words.length
+				? and(
+						...words.map((w) =>
+							or(ilike(products.title, `%${w}%`), ilike(products.brand, `%${w}%`))
+						)
+					)
+				: or(ilike(products.title, `%${q}%`), ilike(products.brand, `%${q}%`))
+			: undefined,
 		categoryIds?.length
 			? sql`exists (select 1 from ${productCategories}
 					where ${productCategories.productId} = ${products.id}
@@ -140,7 +223,14 @@ export async function listProducts({
 			.select(cardColumns)
 			.from(products)
 			.where(where)
-			.orderBy(sorts[sort] ?? sorts.newest)
+			/* A worded search is ranked by how close the title is, which is what
+			   the pg_trgm index on products.title is there for. Browsing keeps
+			   whatever order the shopper asked for. */
+			.orderBy(
+				q && sort === 'newest'
+					? sql`similarity(${products.title}, ${q}) desc, ${products.createdAt} desc`
+					: (sorts[sort] ?? sorts.newest)
+			)
 			.limit(perPage)
 			.offset((page - 1) * perPage),
 		db.select({ n: count() }).from(products).where(where)

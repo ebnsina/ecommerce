@@ -69,7 +69,14 @@
 	let draft = $state('');
 	let busy = $state(false);
 	let problem = $state(untrack(() => data.error) ?? '');
-	let log = $state<HTMLElement | null>(null);
+	/* Brings the question just asked to the top of the window. The answer is
+	   written underneath it, and a view pinned to the bottom of a growing page
+	   is a view that keeps moving under the reader. */
+	function showLatestQuestion() {
+		document
+			.getElementById(`turn-${thread.length - 1}`)
+			?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+	}
 
 	/* Written against what the demo shop actually stocks — fashion, groceries,
 	   home, gadgets. An example that returns nothing teaches the visitor the
@@ -90,7 +97,7 @@
 		thread = [...thread, { role: 'user', content: message }];
 		busy = true;
 		await tick();
-		log?.scrollTo({ top: log.scrollHeight, behavior: 'smooth' });
+		showLatestQuestion();
 
 		try {
 			const res = await fetch(shop('/ask/turn'), {
@@ -117,8 +124,6 @@
 			problem = 'That did not get through. Try again.';
 		} finally {
 			busy = false;
-			await tick();
-			log?.scrollTo({ top: log.scrollHeight, behavior: 'smooth' });
 		}
 	}
 </script>
@@ -153,11 +158,14 @@
 			</ul>
 		</div>
 	{:else}
-		<div bind:this={log} class="flex-1 space-y-8 overflow-y-auto py-8">
+		<!-- The page scrolls, not a box inside it. An inner scroller meant the
+		     answer could be off the bottom of its own container while the window
+		     looked still, which is why reading one needed a second scroll. -->
+		<div class="flex-1 space-y-8 pt-8 pb-6">
 			{#each thread as turn, i (i)}
 				{@const newest = i === thread.length - 1}
 				{#if turn.role === 'user'}
-					<div class="flex justify-end">
+					<div id="turn-{i}" class="flex scroll-mt-24 justify-end">
 						<p
 							class="max-w-[85%] rounded-2xl rounded-br-md bg-primary px-4 py-2.5 text-sm text-white"
 						>
@@ -165,7 +173,6 @@
 						</p>
 					</div>
 				{:else}
-					{@const done = turn.shown === undefined || turn.shown >= (turn.content?.length ?? 0)}
 					<div class="flex gap-3">
 						{#if newest}
 							<Orb size={22} class="mt-0.5" />
@@ -182,7 +189,7 @@
 									: (turn.content ?? '').slice(0, turn.shown)}
 							</p>
 
-							{#if turn.rows?.length && done}
+							{#if turn.rows?.length}
 								<div class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
 									{#each turn.rows.slice(0, 6) as product (product.id)}
 										<ProductCard {product} />
@@ -198,14 +205,14 @@
 										<ArrowRight size={13} />
 									</a>
 								{/if}
-							{:else if turn.rows && done}
+							{:else if turn.rows}
 								<p class="mt-3 text-sm text-ink-muted">
 									Nothing in the shop matches that yet — the owner sees every search that found
 									nothing.
 								</p>
 							{/if}
 
-							{#if turn.followUps?.length && done}
+							{#if turn.followUps?.length}
 								<ul class="mt-4 flex flex-wrap gap-2">
 									{#each turn.followUps as followUp (followUp)}
 										<li>
