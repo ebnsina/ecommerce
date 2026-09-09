@@ -131,7 +131,7 @@
 			points: [
 				'Forgives typos and near-misses',
 				'Bangla and English in the same box',
-				'Filters by category, brand and price'
+				'Or describe it — "a gift for my sister under 2000" — and get real products'
 			]
 		},
 		{
@@ -241,6 +241,10 @@
 		{
 			q: 'Is cash on delivery really supported?',
 			a: 'It is the default path, not a fallback. Stock is committed when the order is confirmed on the phone rather than at checkout. Return is a real outcome in the pipeline, not an edit to a delivered order. The refusal rate is reported on its own, because a refused parcel is paid for twice and sold none. Courier sync marks a delivered parcel paid.'
+		},
+		{
+			q: 'Can a customer just describe what they want?',
+			a: 'Yes. There is a box in the shop that takes a sentence — "a gift for my sister under 2000 taka" — and comes back with real products they can put in a basket. The assistant never writes a price or a stock level; all it does is turn the sentence into a search of your own catalogue, choosing from your own categories and brands, so it cannot offer something you do not sell. Every question is recorded, so the ones you had no answer for show up in Insights.'
 		},
 		{
 			q: 'Does the AI assistant reply to customers by itself?',
@@ -538,7 +542,7 @@
 				The assistant
 			</p>
 			<h2 class="display h2 mt-4 text-ink">
-				It answers the same four questions all night, so nobody has to.
+				It answers the same four questions all night, and helps the rest find what they came for.
 			</h2>
 			<p class="mt-6 max-w-xl text-base text-ink-muted">
 				Delivery charge, delivery time, payment methods, opening hours. Every one is answerable from
@@ -546,6 +550,12 @@
 				everything else alone. Off until you switch it on, one channel at a time — and it is not
 				tied to any one AI company, so a price rise or an outage on their side is a setting you
 				change rather than a shop that stops answering.
+			</p>
+			<p class="mt-5 max-w-xl text-base text-ink-muted">
+				In the shop it does the other half of a shopkeeper's job. A customer describes what they are
+				after — “a gift for my sister under 2000 taka” — and gets real products with a basket button
+				on them. It never writes a price or a stock level: all it does is turn a sentence into a
+				search of your own catalogue, so it cannot promise something you do not have.
 			</p>
 		</div>
 

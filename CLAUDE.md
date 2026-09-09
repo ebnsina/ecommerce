@@ -155,6 +155,21 @@ Specifically:
 menus, page blocks — and ships with sensible defaults seeded. Interface language
 (button labels, validation messages, empty states) may stay in code.
 
+**The marketing page is part of every change.** `src/routes/(marketing)` sells
+the product by describing what it does, so a change that alters what is true of
+it is not finished until the page says so. Before calling a feature done, check:
+
+- the eight `capabilities` and the three `pillars` — does one now claim less
+  than the product does, or claim something that has moved?
+- the `faqs` — a new answer, or an old one that is no longer accurate?
+- the assistant section, if anything about the AI changed
+- the `tiers` and their points, if the change affects what a plan includes
+
+The page is the one place in the repo where a stale sentence is a lie to a
+customer rather than an out-of-date comment. When a change makes a claim
+untrue, fix the claim in the same commit; when it adds something a shop owner
+would want, say so there too.
+
 ## Money
 
 Integer **poisha** everywhere — never floats, which produce one-poisha order

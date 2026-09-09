@@ -108,6 +108,11 @@ User-facing changes, newest first.
 
 ### Changed
 
+- **The landing page says what the shop can now do.** The assistant section
+  covers both halves of its job, the search capability mentions describing a
+  thing rather than naming it, and there is a question about it. Keeping the
+  page current with the product is a rule in CLAUDE.md now, not a habit.
+
 - **One typeface.** Poppins everywhere — the shop, the admin and the landing
   page — with Geist Mono still on every number. Mona Sans and Syne are gone.
 
