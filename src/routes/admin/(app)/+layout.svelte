@@ -4,6 +4,7 @@
 	import { fade } from 'svelte/transition';
 	import { fadeIn } from '$lib/motion';
 	import { navGroups, breadcrumbs } from '$lib/nav';
+	import { mayVisit } from '$lib/permissions';
 	import Dropdown from '$lib/ui/Dropdown.svelte';
 	import MenuItem from '$lib/ui/MenuItem.svelte';
 	import Breadcrumbs from '$lib/ui/Breadcrumbs.svelte';
@@ -16,6 +17,14 @@
 		href === '/admin' ? page.url.pathname === '/admin' : page.url.pathname.startsWith(href);
 
 	const crumbs = $derived(breadcrumbs(page.url.pathname));
+
+	/* A link to a 403 is worse than no link. Groups left empty drop out too. */
+	const role = $derived(data.admin?.role ?? 'staff');
+	const groups = $derived(
+		navGroups
+			.map((g) => ({ ...g, items: g.items.filter((i) => mayVisit(i.href, role)) }))
+			.filter((g) => g.items.length)
+	);
 	const initials = $derived(
 		(data.admin?.name ?? '?')
 			.split(' ')
@@ -43,7 +52,7 @@
 
 		<!-- Grouped nav; scrolls independently so the account menu stays pinned -->
 		<nav class="flex-1 overflow-y-auto px-3 pb-4">
-			{#each navGroups as group (group.title)}
+			{#each groups as group (group.title)}
 				<p class="px-3 pt-4 pb-1.5 text-[11px] font-medium tracking-wide text-ink-faint uppercase">
 					{group.title}
 				</p>
@@ -94,10 +103,12 @@
 
 				<p class="truncate px-3 py-1.5 text-xs text-ink-muted">{data.admin?.email}</p>
 				<div class="my-1 h-px bg-border"></div>
-				<MenuItem href="/admin/settings">
-					<Settings size={16} />
-					Store settings
-				</MenuItem>
+				{#if mayVisit('/admin/settings', role)}
+					<MenuItem href="/admin/settings">
+						<Settings size={16} />
+						Store settings
+					</MenuItem>
+				{/if}
 				<MenuItem href="/">
 					<Store size={16} />
 					View storefront

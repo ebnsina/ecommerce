@@ -1,6 +1,7 @@
 import { error, redirect, type Handle } from '@sveltejs/kit';
 import { validateSession, readSessionCookie } from '$lib/server/auth';
 import { SHOP } from '$lib/paths';
+import { mayVisit } from '$lib/permissions';
 
 /**
  * Security headers.
@@ -46,6 +47,11 @@ export const handle: Handle = async ({ event, resolve }) => {
 			if (event.request.method !== 'GET') error(403, 'Sign in first.');
 			redirect(303, `/admin/login?next=${encodeURIComponent(pathname)}`);
 		}
+
+		// Being staff is not being the owner. The sidebar hides these sections for
+		// the other roles; this is what makes hiding them mean something.
+		if (!mayVisit(pathname, event.locals.user.role))
+			error(403, 'Only the owner can open this. Ask them to make the change.');
 	}
 
 	/**

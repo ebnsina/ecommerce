@@ -4,6 +4,15 @@ User-facing changes, newest first.
 
 ## Unreleased
 
+### Added
+
+- **Settings and Integrations are the owner's.** A staff or manager account can
+  run the shop — orders, products, pages, customers — but cannot change what the
+  shop charges, how it signs people in, or the courier, gateway and messaging
+  credentials. Those two sections disappear from the sidebar for them, and the
+  screens refuse a direct visit or a posted form either way. The role was always
+  stored and shown; now it decides something.
+
 ### Fixed
 
 - **An order is the buyer's to read, not everyone's.** The confirmation page was

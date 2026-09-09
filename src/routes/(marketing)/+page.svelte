@@ -165,7 +165,7 @@
 			points: [
 				'Guided tours on the hardest screens',
 				'One list pattern everywhere',
-				'Staff accounts with their own sign-in'
+				'Staff accounts with their own sign-in, settings kept to the owner'
 			]
 		}
 	];
