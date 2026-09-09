@@ -127,7 +127,7 @@
 	<title>{thread.length ? thread[0].content : 'Tell us what you need'} · My Store</title>
 </svelte:head>
 
-<div class="mx-auto flex min-h-[calc(100vh-4rem)] max-w-3xl flex-col px-4">
+<div class="mx-auto flex min-h-[calc(100vh-4rem)] max-w-5xl flex-col px-4">
 	{#if thread.length === 0}
 		<!-- Empty state: the orb, one line, and four things to press. -->
 		<div class="flex flex-1 flex-col items-center justify-center py-16 text-center">
@@ -183,9 +183,9 @@
 							</p>
 
 							{#if turn.rows?.length && done}
-								<div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+								<div class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
 									{#each turn.rows.slice(0, 6) as product (product.id)}
-										<ProductCard {product} size="compact" />
+										<ProductCard {product} />
 									{/each}
 								</div>
 
@@ -257,7 +257,9 @@
 		}}
 	>
 		<div
-			class="flex items-end gap-2 rounded-2xl border border-border bg-surface p-2 focus-within:border-brand-300"
+			class="flex items-end gap-2 rounded-2xl border border-border bg-surface p-2
+			       focus-within:outline focus-within:outline-2 focus-within:outline-offset-2
+			       focus-within:outline-primary"
 		>
 			<label class="sr-only" for="ask">What are you looking for?</label>
 			<input

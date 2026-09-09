@@ -2,6 +2,7 @@
 	import Header from '$lib/shop/Header.svelte';
 	import Footer from '$lib/shop/Footer.svelte';
 	import Pixels from '$lib/shop/Pixels.svelte';
+	import AskButton from '$lib/shop/AskButton.svelte';
 
 	let { data, children } = $props();
 </script>
@@ -27,6 +28,7 @@
 		searchHints={data.settings.search?.hints ?? []}
 	/>
 	<main class="flex-1">{@render children()}</main>
+	<AskButton />
 	<Footer
 		store={data.settings.store}
 		social={data.settings.social}

@@ -119,6 +119,15 @@ User-facing changes, newest first.
 
 ### Changed
 
+- **The assistant lives in the corner, not the header.** A bare orb, bottom
+  right, with no plate, border or label — a thing that moves in the corner of a
+  shop is understood, and the header is one item cleaner for it. The link
+  carries the name for a reader, since the orb is decoration.
+- **A result found by asking looks like a result found by browsing.** The chat
+  used a compact card of its own; it uses the shop's, so the two ways round the
+  catalogue feel like one shop. The composer takes the app's focus ring rather
+  than a border tint of its own.
+
 - **The demo is behind the door, not through it.** The form was a dialog over a
   shop that had already loaded, which meant the shop was seen either way. It is
   its own page now, outside the shop's layout — no header, no categories, no
