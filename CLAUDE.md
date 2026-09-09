@@ -142,6 +142,10 @@ Specifically:
   (~1.3:1); an invisible border is worse than none.
 - **Radius scales with size**: `rounded-lg` for small controls, `rounded-xl` for
   standard, `rounded-2xl` for large, `rounded-3xl` for cards and panels.
+- **A form's actions sit at its right end** — `justify-end`, or `ml-auto` on a
+  lone button — so the eye finishes a form where the next step is. The one
+  exception is a single-purpose auth form, where the button is `block` and
+  spans the width instead.
 - **Fonts**: Poppins for text, Geist Mono for every number — prices, counts,
   quantities, order numbers — with `tabular-nums`. One family across the whole
   app; Poppins has no variable build, so only 400, 500 and 600 are loaded and

@@ -119,6 +119,12 @@ User-facing changes, newest first.
 
 ### Changed
 
+- **The door wears the wordmark, not the orb.** The orb means the assistant, and
+  this gate has nothing to do with it. Centred, with every field carrying a
+  placeholder, the note under the number gone — what the number is for is said
+  once at the foot of the form, and saying it twice reads as protesting — and
+  the button at the right end, where a form should finish.
+
 - **The assistant lives in the corner, not the header.** A bare orb, bottom
   right, with no plate, border or label — a thing that moves in the corner of a
   shop is understood, and the header is one item cleaner for it. The link

@@ -39,8 +39,11 @@
 			label="Your name"
 			required
 			autocomplete="name"
+			placeholder="Nusrat Jahan"
 			error={field === 'name' ? error : undefined}
 		/>
+		<!-- No hint under the number: what it is for, and what it is not, is said
+		     once at the foot of the form. Saying it twice reads as protesting. -->
 		<Input
 			name="phone"
 			label="Mobile number"
@@ -49,7 +52,6 @@
 			inputmode="tel"
 			autocomplete="tel"
 			placeholder="01XXXXXXXXX"
-			hint="So we can call you back."
 			error={field === 'phone' ? error : undefined}
 		/>
 	</div>
@@ -57,8 +59,8 @@
 	<Input
 		name="shopName"
 		label="Shop name"
-		hint="If you have one yet."
 		autocomplete="organization"
+		placeholder="If you have one yet"
 	/>
 	<Input name="sells" label="What do you sell?" placeholder="Sarees, electronics, home things…" />
 	<Select name="sellsOn" label="Where do you sell now?" options={sellsOn} value="" />
@@ -67,7 +69,7 @@
 		<p class="text-sm text-sale" role="alert">{error}</p>
 	{/if}
 
-	<div class="mt-2 flex flex-wrap items-center gap-3">
+	<div class="mt-2 flex flex-wrap items-center justify-end gap-3">
 		<Button type="submit">Take me in</Button>
 	</div>
 
