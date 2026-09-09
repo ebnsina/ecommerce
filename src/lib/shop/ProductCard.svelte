@@ -163,16 +163,60 @@
 	</span>
 {/snippet}
 
-<!-- A row: picture at the left, then everything that gets compared — title,
-     rating, price — running down beside it. The layout an electronics shop
-     uses, and the one a `feature` slot in a page block asks for by name. -->
-{#if shape === 'feature' || shape === 'row'}
+<!-- A parts dealer's row: picture, then what gets compared, then the price and
+     the buttons in their own column at the right — the shape of a price list,
+     which is what a shopper is reading here. The three columns are also why
+     this fills a wide screen instead of leaving half of it blank. -->
+{#if shape === 'row'}
+	<article
+		class="group flex gap-4 rounded-2xl border border-border bg-surface p-3 transition-colors duration-[180ms] ease-brand hover:border-brand-200 sm:gap-5 sm:p-4"
+	>
+		<a href="/demo/p/{product.slug}" class="shrink-0">{@render media('size-28 sm:size-32')}</a>
+
+		<div class="flex min-w-0 flex-1 flex-col gap-1.5">
+			<a
+				href="/demo/p/{product.slug}"
+				class="line-clamp-2 text-[0.9375rem] font-medium text-ink transition-colors hover:text-primary"
+			>
+				{product.title}
+			</a>
+			{#if product.brand}
+				<p class="text-xs text-ink-muted">{product.brand}</p>
+			{/if}
+			<Rating rating={product.rating} count={product.reviewCount} size={12} />
+			<p class="num mt-auto text-xs {soldOut ? 'text-ink-faint' : 'text-success'}">
+				{soldOut ? 'Out of stock' : 'In stock'}
+			</p>
+		</div>
+
+		<div
+			class="flex w-36 shrink-0 flex-col items-end justify-between gap-2 border-l border-border pl-4 sm:w-44 sm:pl-5"
+		>
+			<span class="flex flex-col items-end">
+				<span class="num text-lg font-semibold tracking-tight text-ink">
+					{formatTk(product.price)}
+				</span>
+				{#if off > 0 && product.compareAtPrice}
+					<span class="num text-xs text-ink-faint line-through">
+						{formatTk(product.compareAtPrice)}
+					</span>
+				{/if}
+			</span>
+
+			<div class="flex w-full flex-col items-end gap-1.5">
+				<div class="w-full">{@render quickAdd()}</div>
+				<div class="flex gap-1">
+					{@render wishlistButton('size-8 rounded-lg hover:bg-surface-alt')}
+					{@render compareButton('size-8 rounded-lg hover:bg-surface-alt')}
+				</div>
+			</div>
+		</div>
+	</article>
+{:else if shape === 'feature'}
 	<article
 		class="group flex gap-4 rounded-3xl border border-border bg-surface p-4 transition-colors duration-[180ms] ease-brand hover:border-brand-200"
 	>
-		<a href="/demo/p/{product.slug}" class="shrink-0">
-			{@render media(shape === 'row' ? 'size-28 sm:size-32' : 'size-36 sm:size-44')}
-		</a>
+		<a href="/demo/p/{product.slug}" class="shrink-0">{@render media('size-36 sm:size-44')}</a>
 		<div class="flex min-w-0 flex-1 flex-col gap-2">
 			<a
 				href="/demo/p/{product.slug}"
@@ -180,33 +224,13 @@
 			>
 				{product.title}
 			</a>
-			{#if shape === 'row'}
-				<!-- The line a parts dealer's shopper reads before the picture: who
-				     made it, how it is rated, and whether it is on the shelf. -->
-				<p class="num text-xs text-ink-muted">
-					{[
-						product.brand,
-						`${product.reviewCount} ${product.reviewCount === 1 ? 'review' : 'reviews'}`,
-						soldOut ? 'Out of stock' : 'In stock'
-					]
-						.filter(Boolean)
-						.join('  ·  ')}
-				</p>
-			{:else}
-				<Rating rating={product.rating} count={product.reviewCount} />
-			{/if}
+			<Rating rating={product.rating} count={product.reviewCount} />
 			{@render price()}
 			<div class="mt-auto flex items-center gap-2">
-				{#if shape === 'row'}
-					<!-- A row is wide enough to hold the real action, so it does: the
-					     add lands in the cart rather than on another page. -->
-					<div class="w-40">{@render quickAdd()}</div>
-				{:else}
-					<Button href="/demo/p/{product.slug}" size="sm" variant="secondary" disabled={soldOut}>
-						<ShoppingBag size={15} />
-						Buy now
-					</Button>
-				{/if}
+				<Button href="/demo/p/{product.slug}" size="sm" variant="secondary" disabled={soldOut}>
+					<ShoppingBag size={15} />
+					Buy now
+				</Button>
 				{@render wishlistButton('size-9 rounded-xl border border-border hover:border-brand-300')}
 				{@render compareButton('size-9 rounded-xl border border-border hover:border-brand-300')}
 			</div>

@@ -3,13 +3,13 @@
 	import type { BlockProps } from './schema';
 	import { ArrowRight } from '@lucide/svelte';
 	import ProductCard from '$lib/shop/ProductCard.svelte';
+	import { sectionGrid } from '$lib/layouts';
+	import { page } from '$app/state';
 
 	/** Multi-row grid. Same card as the rows, just no horizontal limit. */
 	let { props, products }: { props: BlockProps; products: CardProduct[] } = $props();
 
-	const cols = $derived(
-		Number(props.columns) === 4 ? 'sm:grid-cols-3 lg:grid-cols-4' : 'sm:grid-cols-3 lg:grid-cols-5'
-	);
+	const cols = $derived(sectionGrid(page.data.layout as string, Number(props.columns)));
 </script>
 
 {#if products.length}

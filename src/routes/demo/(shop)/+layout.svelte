@@ -6,11 +6,17 @@
 	import LayoutSwitcher from '$lib/shop/LayoutSwitcher.svelte';
 	import CategoryRail from '$lib/shop/CategoryRail.svelte';
 	import { layoutOf } from '$lib/layouts';
+	import { page } from '$app/state';
+	import { SHOP } from '$lib/paths';
 	import '$lib/shop/layouts.css';
 
 	let { data, children } = $props();
 
 	const shape = $derived(layoutOf(data.layout));
+
+	/* Search brings its own sidebar of filters, and two columns of navigation
+	   either side of the results is one too many. The rail stands down there. */
+	const showRail = $derived(shape.rail && !page.url.pathname.startsWith(`${SHOP}/search`));
 </script>
 
 <!-- Theme variables land in the head, so a change in Settings re-themes every
@@ -34,7 +40,7 @@
 		compareCount={data.compareIds.length}
 		searchHints={data.settings.search?.hints ?? []}
 	/>
-	{#if shape.rail}
+	{#if showRail}
 		<!-- The categories as a standing list rather than a menu that opens. A
 		     grocer and a parts dealer both navigate this way, because their
 		     shoppers arrive knowing the aisle. -->

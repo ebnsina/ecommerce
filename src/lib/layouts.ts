@@ -57,7 +57,7 @@ export const LAYOUTS: Record<LayoutKey, Layout> = {
 		label: 'Grocery',
 		note: 'Many small things, bought quickly. A standing category rail, small square corners, a plus on every card.',
 		card: 'dense',
-		grid: 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-5',
+		grid: 'grid-cols-2 sm:grid-cols-4 lg:grid-cols-6',
 		header: 'slim',
 		rail: true,
 		shell: 'shop-grocery'
@@ -100,3 +100,21 @@ export const isLayoutKey = (v: string | null | undefined): v is LayoutKey => !!v
 
 export const layoutOf = (v: string | null | undefined): Layout =>
 	LAYOUTS[isLayoutKey(v) ? v : DEFAULT_LAYOUT];
+
+/**
+ * The grid for a product row inside a page block.
+ *
+ * The block's own `columns` is what the person editing the page asked for, but
+ * it was chosen against square cards: the same number of portrait covers is a
+ * wall of enormous books, and the same number of full-width rows does not fit
+ * at all. So the layout has the last word on how many go across, and the
+ * block's choice stands only where it still makes sense.
+ */
+export function sectionGrid(key: string | null | undefined, columns: number): string {
+	const layout = layoutOf(key);
+	if (layout.card === 'row') return 'lg:grid-cols-2';
+	if (layout.card === 'portrait') return 'sm:grid-cols-4 lg:grid-cols-7';
+	if (layout.card === 'dense') return 'sm:grid-cols-4 lg:grid-cols-6';
+	if (layout.key === 'editorial') return 'lg:grid-cols-3';
+	return columns === 4 ? 'sm:grid-cols-3 lg:grid-cols-4' : 'sm:grid-cols-3 lg:grid-cols-5';
+}

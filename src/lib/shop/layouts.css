@@ -67,3 +67,33 @@
 .shop-tech {
 	font-size: 0.9375rem;
 }
+
+/**
+ * How wide the shop is allowed to be.
+ *
+ * Every page in the storefront centres its content in `max-w-7xl`, so one
+ * override per layout re-proportions all of them at once — a grocer and a
+ * parts dealer use the whole screen, because their shoppers are scanning a
+ * long list; a lifestyle shop deliberately does not, because six things in a
+ * row is a warehouse and three is a window. Written as a descendant rule so it
+ * outranks the utility without touching a single page.
+ */
+/* `main` only: the header and the footer are chrome and keep their own width,
+   or a narrow shop would wrap its own navigation onto two lines. */
+.shop-grocery main .max-w-7xl,
+.shop-tech main .max-w-7xl {
+	max-width: 98rem;
+}
+.shop-books main .max-w-7xl {
+	max-width: 88rem;
+}
+.shop-editorial main .max-w-7xl {
+	max-width: 64rem;
+}
+
+/* The lifestyle shop breathes: every band of the page gets more air above and
+   below it than the others do. */
+.shop-editorial section,
+.shop-editorial .py-10 {
+	padding-block: 3.5rem;
+}

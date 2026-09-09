@@ -2,6 +2,8 @@
 	import ProductCard, { type CardProduct } from '$lib/shop/ProductCard.svelte';
 	import SectionHeader from './SectionHeader.svelte';
 	import { reveal } from '$lib/reveal';
+	import { sectionGrid } from '$lib/layouts';
+	import { page } from '$app/state';
 
 	let {
 		title,
@@ -21,7 +23,8 @@
 		size?: 'standard' | 'compact';
 	} = $props();
 
-	const cols = { 4: 'sm:grid-cols-3 lg:grid-cols-4', 5: 'sm:grid-cols-3 lg:grid-cols-5' };
+	// How many go across is the layout's call — see `sectionGrid`.
+	const cols = $derived(sectionGrid(page.data.layout as string, Number(columns)));
 </script>
 
 {#if products.length}
@@ -29,7 +32,7 @@
 		<div use:reveal>
 			<SectionHeader {title} {eyebrow} {subtitle} {href} linkLabel="See all" />
 		</div>
-		<div class="grid grid-cols-2 gap-4 sm:gap-5 {cols[columns]}">
+		<div class="grid grid-cols-2 gap-4 sm:gap-5 {cols}">
 			{#each products as p, i (p.id)}
 				<!-- Staggered by column, capped: a row that takes a second to arrive
 				     reads as slow, not considered. -->

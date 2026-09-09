@@ -6,6 +6,12 @@ User-facing changes, newest first.
 
 ### Added
 
+- **Each layout now owns the whole page, not just the card.** How wide the
+  shop is, how many products go across a row inside a page block, whether the
+  categories stand in a rail — all of it follows the layout. The grocer and
+  the parts dealer use the full screen; the lifestyle shop deliberately does
+  not. The parts dealer's row is a price list: picture, then what gets
+  compared, then the price and the buttons in their own column at the right.
 - **Five shops in one, and five links to try them.** The marketing page lists
   all five demos; each opens the same shop wearing a different shape.
 - **Five shops in one.** The storefront wears a layout — Marketplace, Grocery,
